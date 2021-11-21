@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.0.0)
+project(Roobik VERSION 0.1.0)
+
+set(CMAKE_CPP_COMPILER g++-10)
+set(CMAKE_CXX_COMPILER g++-10)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-O3 -pthread")
+
+# include(CTest)
+# enable_testing()
+
+
+set(SOURCES
+    src/main.cpp
+    src/board.cpp
+)
+
+add_executable(Gomook ${SOURCES})
+target_include_directories(Gomook
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+
+)
+
+# find_package(PythonLibs REQUIRED)
+# include_directories(${PYTHON_INCLUDE_DIRS})
+# target_link_libraries(Roobik ${PYTHON_LIBRARIES})
+
+set_property(TARGET Gomook PROPERTY CXX_STANDARD 17)
+# set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+# set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+# include(CPack)
