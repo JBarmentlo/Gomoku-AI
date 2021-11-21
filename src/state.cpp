@@ -5,7 +5,7 @@
 
 #include <string>
 #include <iostream>
-
+#include <iomanip>
 
 State::State(/* args */)
 {
@@ -59,6 +59,13 @@ int			State::get_square(int row, int col)
 void		State::print(void)
 {
 	std::string symbols[3] = {"O", "X", " "};
+
+	for (int c = 0; c < BOARD_WIDTH; c++)
+	{
+		std::cout << " " << std::setw(2) << c << " ";
+	}
+	std::cout << std::endl;
+
 	for (int r = 0; r <= BOARD_HEIGHT; r++)
 	{
 		for (int c = 0; c <= BOARD_WIDTH; c++)
@@ -66,12 +73,16 @@ void		State::print(void)
 			std::cout << "+   ";
 		}
 		std::cout << std::endl;
-		for (int c = 0; c < BOARD_WIDTH; c++)
+		if (r != BOARD_HEIGHT)
 		{
-			std::cout << "  " << symbols[this->get_square(r, c)] << " ";
+			for (int c = 0; c < BOARD_WIDTH; c++)
+			{
+				std::cout << "  " << symbols[this->get_square(r, c)] << " ";
+			}
+			std::cout << std::setw(4) << r << std::endl;			
 		}
-		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 }
 
 int			State::find_pattern(pattern pat)
