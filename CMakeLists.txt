@@ -12,7 +12,10 @@ set(CMAKE_CXX_FLAGS "-O3 -pthread")
 
 set(SOURCES
     src/main.cpp
-    src/board.cpp
+    src/state.cpp
+    src/utils.cpp
+
+
 )
 
 add_executable(Gomook ${SOURCES})

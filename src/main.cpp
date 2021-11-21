@@ -2,18 +2,40 @@
 #include <iostream>
 
 #include "defines.hpp"
-#include "board.hpp"
+#include "utils.hpp"
+#include "state.hpp"
 
 int main()
 {
+	State s;
+
+	s.set_piece(18,16);
+	s.set_piece(18,18);
+	s.set_piece(18,17);
+	s.set_piece(18, 14);
+	s.set_piece(18, 15);
+
+	s.print();
+
+	std::cout << "" << std::endl;
 
 
-	t_state state;
-	t_fullboard board;
-	state.board = board;
-	set_piece(2, 3, WHITE, state);
-	set_piece(2, 7, WHITE, state);
-	set_piece(3, 6, BLACK, state);
+	pattern p;
+	p.w_bits.set(0);
+	p.w_bits.set(1);
+	// p.b_bits.set(0);
+	// p.b_bits.set(3);
+	p.width = 2;
+	p.height = 1;
+	print_pattern(p);
 
-	print_state(state);
+	std::cout << s.count_pattern(p) << std::endl;
+
+
+
+	// state.board.white = state.board.white >> 4;
+	// state.board.black = state.board.black >> 4;
+
+	// print_state(state);
+
 }
