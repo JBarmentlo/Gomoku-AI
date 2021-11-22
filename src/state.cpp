@@ -223,8 +223,6 @@ int				State::compute_captures(void)
 		score += 1;
 	}
 	
-
-
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
@@ -255,6 +253,30 @@ int				State::compute_captures(void)
 	player_captures += (score * 2);
 	return (score);
 }
+
+int		State::find_pattern_around_last_move(pattern_generator gen, int player)
+{
+	int directions[3] = {DOWN, RIGHT, DOWN_RIGHT};
+	int score = 0;
+	pattern p;
+	int last_move_r = this->last_move / BOARD_WIDTH;
+	int last_move_c = this->last_move % BOARD_WIDTH;
+
+	for (int dir : directions)
+	{
+		p = gen(dir, player);
+		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
+		{
+			score += 1;
+		}
+		if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+		{
+			score += 1;
+		}
+	}
+	return (score);
+}
+
 
 inline bool State::operator==(const pattern& rhs) const
 {

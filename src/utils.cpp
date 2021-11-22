@@ -158,3 +158,37 @@ int	get_move_keyboard(void)
 
 	return (r * BOARD_WIDTH + c);
 }
+
+pattern 	create_pair_pattern(int direction, int player)
+{
+	pattern p;
+	if (direction == DOWN)
+	{
+		p.height = 2;
+		p.width = 1;
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 0)] = true; 
+	}
+	if (direction == RIGHT)
+	{
+		p.height = 2;
+		p.width = 1;
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(0, 1)] = true; 
+	}
+	if (direction == DOWN_RIGHT)
+	{
+		p.height = 2;
+		p.width = 2;
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 1)] = true; 
+	}
+	if (player == BLACK)
+	{
+		swap_colors(p);
+	}
+	p.r_shift = 0;
+	p.c_shift = 0;
+
+	return (p);	
+}

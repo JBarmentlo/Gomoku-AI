@@ -52,26 +52,27 @@ int main()
 
 	// print_state(state);
 
-	int move;
-	while (true)
-	{
-		if (s.player == WHITE)
-			std::cout << "White to play" << std::endl;
-		else
-			std::cout << "Black to play" << std::endl;
+	s.find_pattern_around_last_move(create_capture_pattern);
+	// int move;
+	// while (true)
+	// {
+	// 	if (s.player == WHITE)
+	// 		std::cout << "White to play" << std::endl;
+	// 	else
+	// 		std::cout << "Black to play" << std::endl;
 
-		move = get_move_keyboard();
-		std::cout << "Move: " << move << std::endl;
-		s.set_piece(move / BOARD_WIDTH, move % BOARD_WIDTH);
-		std::cout << "Moved: " << std::endl;
+	// 	move = get_move_keyboard();
+	// 	std::cout << "Move: " << move << std::endl;
+	// 	s.set_piece(move / BOARD_WIDTH, move % BOARD_WIDTH);
+	// 	std::cout << "Moved: " << std::endl;
 
-		if (s.compute_captures() != 0)
-			std::cout << "Captured" << std::endl;
+	// 	if (s.compute_captures() != 0)
+	// 		std::cout << "Captured" << std::endl;
 		
-		s.print();
-		std::cout << pair_eval(s) << std::endl;
-		s.player = (s.player + 1) % 2;
-	}
+	// 	s.print();
+	// 	std::cout << pair_eval(s) << std::endl;
+	// 	s.player = (s.player + 1) % 2;
+	// }
 
 
 	// s.set_piece(1, 0);

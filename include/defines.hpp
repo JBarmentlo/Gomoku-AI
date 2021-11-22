@@ -26,6 +26,8 @@
 
 typedef std::bitset<BOARD_SIZE> bitboard;
 
+
+
 typedef struct	s_pattern{
 	bitboard 	b_bits;
 	bitboard 	w_bits;
@@ -34,5 +36,8 @@ typedef struct	s_pattern{
 	int			r_shift = 0;
 	int			c_shift = 0;
 }				pattern;
+
+typedef pattern (*pattern_generator)(int, int);
+
 
 #endif
