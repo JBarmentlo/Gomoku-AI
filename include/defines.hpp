@@ -13,6 +13,15 @@
 
 #define PATTERN_MISSING	-1
 
+#define UP				8
+#define DOWN			1
+#define LEFT			2
+#define RIGHT			4
+#define UP_RIGHT		(UP | RIGHT)
+#define UP_LEFT			(UP | LEFT)
+#define DOWN_RIGHT		(DOWN | RIGHT)
+#define DOWN_LEFT		(DOWN | LEFT)
+
 
 
 typedef std::bitset<BOARD_SIZE> bitboard;

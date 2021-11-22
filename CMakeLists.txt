@@ -14,7 +14,7 @@ set(SOURCES
     src/main.cpp
     src/state.cpp
     src/utils.cpp
-
+    src/eval.cpp
 
 )
 
