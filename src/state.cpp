@@ -1,5 +1,7 @@
 #include "defines.hpp"
 #include "state.hpp"
+#include "eval.hpp"
+
 #include "utils.hpp"
 
 
@@ -19,7 +21,7 @@ State::~State()
 }
 
 
-void		State::set_piece(int row, int col)
+void			State::set_piece(int row, int col)
 {
 	/*
 	Sets a piece at the given position.
@@ -41,7 +43,7 @@ void		State::set_piece(int row, int col)
 	this->last_move = row * BOARD_WIDTH + col;
 }
 
-void		State::set_piece(int coord)
+void			State::set_piece(int coord)
 {
 	/*
 	Sets a piece at the given position.
@@ -63,8 +65,7 @@ void		State::set_piece(int coord)
 	this->last_move = coord;
 }
 
-
-int			State::get_square(int row, int col)
+int				State::get_square(int row, int col)
 {
 	if (this->b_board[row * BOARD_WIDTH + col])
 	{
@@ -77,7 +78,7 @@ int			State::get_square(int row, int col)
 	return  (EMPTY);
 }
 
-void		State::print(void)
+void			State::print(void)
 {
 	std::string symbols[3] = {"O", "X", " "};
 
@@ -106,8 +107,7 @@ void		State::print(void)
 	std::cout << std::endl;
 }
 
-
-int			State::find_pattern(pattern pat)
+int				State::find_pattern(pattern pat)
 {
 	int last_r = 0;
 	int last_c = 0;
@@ -127,8 +127,7 @@ int			State::find_pattern(pattern pat)
 	return (PATTERN_MISSING);
 }
 
-
-int			State::count_pattern(pattern pat)
+int				State::count_pattern(pattern pat)
 {
 	int last_r = 0;
 	int last_c = 0;
@@ -150,8 +149,7 @@ int			State::count_pattern(pattern pat)
 	return (out);
 }
 
-
-bitboard&			State::get_player_board(void)
+bitboard&		State::get_player_board(void)
 {
 	if (this->player == WHITE)
 	{
@@ -160,8 +158,7 @@ bitboard&			State::get_player_board(void)
 	return this->b_board;
 }
 
-
-bitboard&			State::get_enemy_board(void)
+bitboard&		State::get_enemy_board(void)
 {
 	if (this->player == WHITE)
 	{
@@ -178,7 +175,6 @@ int&			State::get_player_captures(void)
 	}
 	return this->b_captures;
 }
-
 
 int&			State::get_enemy_captures(void)
 {
@@ -202,9 +198,6 @@ int				State::compute_captures(void)
 	int last_move_c = this->last_move % BOARD_WIDTH;
 	int last_coord = this->last_move;
 
-	int	pat_shift_r = 0;
-	int	pat_shift_c = 0;
-
 	bitboard& player_board = this->get_player_board();
 	bitboard& enemy_board = this->get_enemy_board();
 	int& player_captures = this->get_player_captures();
@@ -212,49 +205,53 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		enemy_board[last_coord + 1] = false;
-		enemy_board[last_coord + 2] = false;
+		// this->this->value_coord_fun(*this);
+		enemy_board.set(last_coord + 1) = false;
+		enemy_board.set(last_coord + 2) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
-		enemy_board[last_coord - 1] = false;
-		enemy_board[last_coord - 2] = false;
+		// print_pattern(oldp);
+		enemy_board.set(last_coord - 1) = false;
+		enemy_board.set(last_coord - 2) = false;
 		score += 1;
 	}
 	
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		enemy_board[last_coord + BOARD_WIDTH + 1] = false;
-		enemy_board[last_coord + 2 * BOARD_WIDTH + 2] = false;
+
+		enemy_board.set(last_coord + BOARD_WIDTH + 1) = false;
+		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
-		enemy_board[last_coord - BOARD_WIDTH - 1]= false;
-		enemy_board[last_coord - 2 * BOARD_WIDTH - 2] = false;
+
+		enemy_board.set(last_coord - BOARD_WIDTH - 1)= false;
+		enemy_board.set(last_coord - 2 * BOARD_WIDTH - 2) = false;
 		score += 1;
 	}
 
 	p = create_capture_pattern(DOWN, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		enemy_board[last_coord + BOARD_WIDTH] = false;
-		enemy_board[last_coord + 2 * BOARD_WIDTH] = false;
+		enemy_board.set(last_coord + BOARD_WIDTH) = false;
+		enemy_board.set(last_coord + 2 * BOARD_WIDTH) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
-		enemy_board[last_coord - BOARD_WIDTH]= false;
-		enemy_board[last_coord - 2 * BOARD_WIDTH] = false;
+		enemy_board.set(last_coord - BOARD_WIDTH)= false;
+		enemy_board.set(last_coord - 2 * BOARD_WIDTH) = false;
 		score += 1;
 	}
 	player_captures += (score * 2);
 	return (score);
 }
 
-int		State::find_pattern_around_last_move(pattern_generator gen, int player) const
+int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
 {
 	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
 	int score = 0;
@@ -277,8 +274,48 @@ int		State::find_pattern_around_last_move(pattern_generator gen, int player) con
 	return (score);
 }
 
-
-inline bool State::operator==(const pattern& rhs) const
+inline bool 	State::operator==(const pattern& rhs) const
 {
 	return (((this->w_board & rhs.w_bits) == rhs.w_bits) and ((this->b_board & rhs.b_bits) == rhs.b_bits));
+}
+
+inline bool 	State::operator<(const State& rhs) const
+{
+	return (this->score < rhs.score);
+}
+
+bool			State::contains(pattern& pat) const
+{
+	return (*this == pat);
+}
+
+void			State::update_live_board(void)
+{
+	this->live_board = this->b_board & (this->b_board << 1) & ((this->b_board << 1) << BOARD_WIDTH) & ((this->b_board << 1) >> BOARD_WIDTH) & (this->b_board >> 1) & ((this->b_board >> 1) << BOARD_WIDTH) & ((this->b_board >> 1) >> BOARD_WIDTH) & this->w_board & (this->w_board << 1) & ((this->w_board << 1) >> BOARD_WIDTH) & ((this->w_board << 1) << BOARD_WIDTH) & (this->w_board >> 1) & ((this->w_board >> 1) >> BOARD_WIDTH) & ((this->w_board >> 1) << BOARD_WIDTH);
+}
+
+State			State::make_baby_from_coord(int coord)
+{
+	State s = *this;
+	s.set_piece(coord);
+	s.compute_captures();
+	update_pair_eval(s);
+	s.player = (s.player + 1) % 2;
+	s.update_live_board();
+	return (s);
+}
+#include <set>
+
+std::multiset<State> State::make_ordered_babies()
+{
+	std::multiset<State> out;
+
+	for (int coord = 0; coord < BOARD_SIZE; coord++)
+	{
+		if (this->live_board[coord])
+		{
+			out.insert(this->make_baby_from_coord(coord));
+		}
+	}
+	return out;
 }

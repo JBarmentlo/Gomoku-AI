@@ -15,6 +15,8 @@ set(SOURCES
     src/state.cpp
     src/utils.cpp
     src/eval.cpp
+    src/minimax.cpp
+
 
 )
 

@@ -5,13 +5,36 @@
 #include "utils.hpp"
 #include "state.hpp"
 #include "eval.hpp"
+#include "minimax.hpp"
 
 
 int main()
 {
 	State s;
-
+	s.value_coord_fun = pairs_at_coord;
+	
 	// s.set_piece(0,0);
+	// minimax(s, true, 5);
+	for (int i = 0; i < 1000000; i++)
+	{
+		// s.set_piece(i % BOARD_SIZE);
+		// s.compute_captures();
+		// s.update_live_board();
+		// s.score += pairs_at_coord(s);
+		s.make_baby_from_coord(i % BOARD_SIZE);
+	}
+	// pattern p = create_capture_pattern(RIGHT, WHITE);
+	// print_pattern(p);
+	// shift_pattern_to(p, 0, 0);
+	// print_pattern(p);
+
+
+	// s.set_piece(0,1);
+	// State s2 = s.make_baby_from_coord(2);
+	// s2.print();
+
+	// int v = s.value_coord_fun(s);
+	// std::cout << v << std::endl; 
 	// s.set_piece(18, 14);
 
 	// s.set_piece(1,0);
@@ -74,19 +97,19 @@ int main()
 	// 	std::cout << "scor: " << s.score << std::endl;
 	// 	std::cout << "eval: " << pair_eval(s) << std::endl;
 	// 	s.player = (s.player + 1) % 2;
+	// // }
+	// pattern p = create_pair_pattern(DOWN_LEFT, WHITE);
+	// for (int i = 0; i < 19; i++)
+	// {
+	// 	for (int j = 0; j < 19; j++)
+	// 	{
+	// 		if (shift_pattern_to_other_end(p, i, j))
+	// 		{
+	// 			std::cout << "r: " << i << "c: " << j << std::endl;
+	// 			print_pattern(p);
+	// 		}
+	// 	}
 	// }
-	pattern p = create_pair_pattern(DOWN_LEFT, WHITE);
-	for (int i = 0; i < 19; i++)
-	{
-		for (int j = 0; j < 19; j++)
-		{
-			if (shift_pattern_to_other_end(p, i, j))
-			{
-				std::cout << "r: " << i << "c: " << j << std::endl;
-				print_pattern(p);
-			}
-		}
-	}
 	// std::cout << "r: " << 1 << "c: " << 1 << std::endl;
 	// shift_pattern_to_other_end(p, 1, 1);
 	// print_pattern(p);

@@ -3,7 +3,7 @@
 #include "defines.hpp"
 
 
-int pair_eval(State &state)
+int 			pair_eval(State &state)
 {
 	pattern p;
 	int score = 0;
@@ -44,13 +44,35 @@ int pair_eval(State &state)
 	swap_colors(p);
 	score -= state.count_pattern(p);
 	swap_colors(p);
-	print_pattern(p);
 
 	return (score);
 }
 
-void	update_pair_eval(State &state)
+void			update_pair_eval(State &state)
 {
 	state.score += state.find_pattern_around_last_move(create_pair_pattern, WHITE);
 	state.score -= state.find_pattern_around_last_move(create_pair_pattern, BLACK);
+}
+
+int				pairs_at_coord(State &state)
+{
+	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
+	int score = 0;
+	pattern p;
+	int last_move_r = state.last_move / BOARD_WIDTH;
+	int last_move_c = state.last_move % BOARD_WIDTH;
+
+	for (int dir : directions)
+	{
+		p = create_pair_pattern(dir, state.player);
+		if (shift_pattern_to(p, last_move_r, last_move_c) and (state.contains(p)))
+		{
+			score += 1;
+		}
+		if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (state.contains(p)))
+		{
+			score += 1;
+		}
+	}
+	return (score * PAIR_VALUE);
 }

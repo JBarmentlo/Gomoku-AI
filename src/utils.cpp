@@ -61,6 +61,7 @@ void 		print_pattern(pattern &pat)
 		}
 		std::cout << std::endl;
 	}
+	std::cout << "r_shift: " << pat.r_shift << " c_shift: " <<  pat.c_shift << " start_r: " << pat.start_r <<  " start_c: " << pat.start_c << " end_r: " << pat.end_r << " end_c: " << pat.end_c << std::endl;
 	std::cout << std::endl;
 }
 
@@ -118,7 +119,11 @@ pattern 	create_capture_pattern(int direction, int player)
 		p.w_bits[flat_coord(0, 0)] = true;
 		p.w_bits[flat_coord(3, 0)] = true; 
 		p.b_bits[flat_coord(1, 0)] = true; 
-		p.b_bits[flat_coord(2, 0)] = true; 
+		p.b_bits[flat_coord(2, 0)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 3;
+		p.end_c = 0;
 	}
 	if (direction == RIGHT)
 	{
@@ -127,7 +132,11 @@ pattern 	create_capture_pattern(int direction, int player)
 		p.w_bits[flat_coord(0, 0)] = true;
 		p.w_bits[flat_coord(0, 3)] = true; 
 		p.b_bits[flat_coord(0, 1)] = true; 
-		p.b_bits[flat_coord(0, 2)] = true; 
+		p.b_bits[flat_coord(0, 2)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 0;
+		p.end_c = 3;
 	}
 	if (direction == DOWN_RIGHT)
 	{
@@ -136,7 +145,11 @@ pattern 	create_capture_pattern(int direction, int player)
 		p.w_bits[flat_coord(0, 0)] = true;
 		p.w_bits[flat_coord(3, 3)] = true; 
 		p.b_bits[flat_coord(1, 1)] = true; 
-		p.b_bits[flat_coord(2, 2)] = true; 
+		p.b_bits[flat_coord(2, 2)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 3;
+		p.end_c = 3;
 	}
 	if (direction == DOWN_LEFT)
 	{
@@ -145,7 +158,11 @@ pattern 	create_capture_pattern(int direction, int player)
 		p.w_bits[flat_coord(3, 0)] = true;
 		p.w_bits[flat_coord(0, 3)] = true; 
 		p.b_bits[flat_coord(2, 1)] = true; 
-		p.b_bits[flat_coord(1, 2)] = true; 
+		p.b_bits[flat_coord(1, 2)] = true;
+		p.start_r = 0;
+		p.start_c = 3;
+		p.end_r = 3;
+		p.end_c = 0;
 	}
 	if (player == BLACK)
 	{

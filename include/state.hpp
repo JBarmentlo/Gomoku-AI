@@ -3,26 +3,30 @@
 #define STATE_H
 
 #include "defines.hpp"
-
+#include <set>
 
 class State
 {
 	private:
+	public:
+
 		bitboard 	b_board;
 		bitboard 	w_board;
+		bitboard	live_board;
 		int			w_captures = 0;
 		int			last_move;
 
-	public:
 		int			player = WHITE;
 		int			b_captures = 0;
 		int			score = 0;
 
+		int			(*value_coord_fun)(State&);
 		State(/* args */);
 		~State();
 
 		void				set_piece(int row, int col);
 		void				set_piece(int coord);
+		void				update_live_board(void);
 		// bool				DOUBLE_THREE				
 		int					compute_captures(void);
 		void				print(void);
@@ -36,7 +40,12 @@ class State
 		int&				get_enemy_captures(void);
 		int&				get_player_captures(void);
 
-		inline bool operator==(const pattern& rhs) const;
+		bool				contains(pattern& pat) const;
+		inline bool 		operator==(const pattern& rhs) const;
+		inline bool 		operator<(const State& rhs) const;
+
+		State				make_baby_from_coord(int coord);
+		std::multiset<State> make_ordered_babies();
 
 };
 

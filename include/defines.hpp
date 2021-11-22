@@ -22,6 +22,8 @@
 #define DOWN_RIGHT		(DOWN | RIGHT)
 #define DOWN_LEFT		(DOWN | LEFT)
 
+#define PAIR_VALUE		2
+#define CAPTURE_VALUE	2
 
 
 typedef std::bitset<BOARD_SIZE> bitboard;
