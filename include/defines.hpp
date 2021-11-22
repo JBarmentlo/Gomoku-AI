@@ -35,6 +35,10 @@ typedef struct	s_pattern{
 	int			width;
 	int			r_shift = 0;
 	int			c_shift = 0;
+	int			start_r;
+	int			start_c;
+	int			end_r;
+	int			end_c;
 }				pattern;
 
 typedef pattern (*pattern_generator)(int, int);

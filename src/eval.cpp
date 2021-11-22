@@ -44,7 +44,13 @@ int pair_eval(State &state)
 	swap_colors(p);
 	score -= state.count_pattern(p);
 	swap_colors(p);
+	print_pattern(p);
 
 	return (score);
 }
 
+void	update_pair_eval(State &state)
+{
+	state.score += state.find_pattern_around_last_move(create_pair_pattern, WHITE);
+	state.score -= state.find_pattern_around_last_move(create_pair_pattern, BLACK);
+}

@@ -4,7 +4,9 @@
 #include "defines.hpp"
 #include "state.hpp"
 
-int	pair_eval(State &state);
+int		pair_eval(State &state);
+void	update_pair_eval(State &state);
+
 
 
 typedef int (*evaluation_function)(State&);

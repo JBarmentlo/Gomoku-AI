@@ -16,6 +16,8 @@ class State
 	public:
 		int			player = WHITE;
 		int			b_captures = 0;
+		int			score = 0;
+
 		State(/* args */);
 		~State();
 
@@ -26,7 +28,7 @@ class State
 		void				print(void);
 		int					get_square(int row, int col);
 		int					find_pattern(pattern pat);
-		int					find_pattern_around_last_move(pattern_generator gen, int player);
+		int					find_pattern_around_last_move(pattern_generator gen, int player) const;
 		int					count_pattern(pattern pat);
 
 		bitboard&			get_player_board(void);

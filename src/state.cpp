@@ -254,9 +254,9 @@ int				State::compute_captures(void)
 	return (score);
 }
 
-int		State::find_pattern_around_last_move(pattern_generator gen, int player)
+int		State::find_pattern_around_last_move(pattern_generator gen, int player) const
 {
-	int directions[3] = {DOWN, RIGHT, DOWN_RIGHT};
+	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
 	int score = 0;
 	pattern p;
 	int last_move_r = this->last_move / BOARD_WIDTH;

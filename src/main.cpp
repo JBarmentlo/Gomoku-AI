@@ -52,8 +52,8 @@ int main()
 
 	// print_state(state);
 
-	s.find_pattern_around_last_move(create_capture_pattern);
-	// int move;
+	// s.find_pattern_around_last_move(create_capture_pattern);
+	int move;
 	// while (true)
 	// {
 	// 	if (s.player == WHITE)
@@ -70,10 +70,26 @@ int main()
 	// 		std::cout << "Captured" << std::endl;
 		
 	// 	s.print();
-	// 	std::cout << pair_eval(s) << std::endl;
+	// 	update_pair_eval(s);
+	// 	std::cout << "scor: " << s.score << std::endl;
+	// 	std::cout << "eval: " << pair_eval(s) << std::endl;
 	// 	s.player = (s.player + 1) % 2;
 	// }
-
+	pattern p = create_pair_pattern(DOWN_LEFT, WHITE);
+	for (int i = 0; i < 19; i++)
+	{
+		for (int j = 0; j < 19; j++)
+		{
+			if (shift_pattern_to_other_end(p, i, j))
+			{
+				std::cout << "r: " << i << "c: " << j << std::endl;
+				print_pattern(p);
+			}
+		}
+	}
+	// std::cout << "r: " << 1 << "c: " << 1 << std::endl;
+	// shift_pattern_to_other_end(p, 1, 1);
+	// print_pattern(p);
 
 	// s.set_piece(1, 0);
 	// s.set_piece(2, 0);
