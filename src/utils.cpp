@@ -244,3 +244,76 @@ pattern 	create_pair_pattern(int direction, int player)
 
 	return (p);	
 }
+
+pattern 	create_victory_pattern(int direction, int player)
+{
+	pattern p;
+	if (direction == DOWN)
+	{
+		p.height = 5;
+		p.width = 1;
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 0)] = true; 
+		p.w_bits[flat_coord(2, 0)] = true; 
+		p.w_bits[flat_coord(3, 0)] = true; 
+		p.w_bits[flat_coord(4, 0)] = true; 
+
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 4;
+		p.end_c = 0;
+	}
+	if (direction == RIGHT)
+	{
+		p.height = 1;
+		p.width = 5;
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(0, 1)] = true; 
+		p.w_bits[flat_coord(0, 2)] = true; 
+		p.w_bits[flat_coord(0, 3)] = true; 
+		p.w_bits[flat_coord(0, 4)] = true; 
+
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 0;
+		p.end_c = 4;
+	}
+	if (direction == DOWN_RIGHT)
+	{
+		p.height = 5;
+		p.width = 5;
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 1)] = true; 
+		p.w_bits[flat_coord(2, 2)] = true; 
+		p.w_bits[flat_coord(3, 3)] = true; 
+		p.w_bits[flat_coord(4, 4)] = true; 
+
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 4;
+		p.end_c = 4;
+	}
+	if (direction == DOWN_LEFT)
+	{
+		p.height = 5;
+		p.width = 5;
+		p.w_bits[flat_coord(0, 4)] = true;
+		p.w_bits[flat_coord(1, 3)] = true; 
+		p.w_bits[flat_coord(2, 2)] = true; 
+		p.w_bits[flat_coord(3, 1)] = true; 
+		p.w_bits[flat_coord(4, 0)] = true; 
+
+		p.start_r = 0;
+		p.start_c = 4;
+		p.end_r = 4;
+		p.end_c = 0;
+	}
+	if (player == BLACK)
+	{
+		swap_colors(p);
+	}
+	p.r_shift = 0;
+	p.c_shift = 0;
+
+	return (p);	
+}

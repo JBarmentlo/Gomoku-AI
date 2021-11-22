@@ -50,14 +50,14 @@ void			State::set_piece(int coord)
 	*/
 	if (this->player == WHITE)
 	{
-		if (not this->w_board[coord])
+		if (not this->w_board.test(coord))
 		{
 			this->w_board.set(coord, true);
 		}
 	}
 	else
 	{
-		if (not this->b_board[coord])
+		if (not this->b_board.test(coord))
 		{
 			this->b_board.set(coord, true);
 		}		
@@ -205,15 +205,18 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->this->value_coord_fun(*this);
+		this->score += this->value_coord_fun(*this, last_coord + 1, (this->player + 1) % 2);
 		enemy_board.set(last_coord + 1) = false;
+		this->score += this->value_coord_fun(*this, last_coord + 2, (this->player + 1) % 2);
 		enemy_board.set(last_coord + 2) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// print_pattern(oldp);
+		this->score += this->value_coord_fun(*this, last_coord - 1, (this->player + 1) % 2);
 		enemy_board.set(last_coord - 1) = false;
+		this->score += this->value_coord_fun(*this, last_coord - 2, (this->player + 1) % 2);
 		enemy_board.set(last_coord - 2) = false;
 		score += 1;
 	}
@@ -221,15 +224,17 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-
+		this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH + 1, (this->player + 1) % 2);
 		enemy_board.set(last_coord + BOARD_WIDTH + 1) = false;
+		this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH + 2, (this->player + 1) % 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
-
+		this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH - 1, (this->player + 1) % 2);
 		enemy_board.set(last_coord - BOARD_WIDTH - 1)= false;
+		this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH - 2, (this->player + 1) % 2);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH - 2) = false;
 		score += 1;
 	}
@@ -237,17 +242,21 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
+		this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH, (this->player + 1) % 2);
 		enemy_board.set(last_coord + BOARD_WIDTH) = false;
+		this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH, (this->player + 1) % 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
+		this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, (this->player + 1) % 2);
 		enemy_board.set(last_coord - BOARD_WIDTH)= false;
+		this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH, (this->player + 1) % 2);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH) = false;
 		score += 1;
 	}
-	player_captures += (score * 2);
+	this->score += score * CAPTURE_VALUE * 2;
 	return (score);
 }
 
@@ -291,17 +300,24 @@ bool			State::contains(pattern& pat) const
 
 void			State::update_live_board(void)
 {
-	this->live_board = this->b_board & (this->b_board << 1) & ((this->b_board << 1) << BOARD_WIDTH) & ((this->b_board << 1) >> BOARD_WIDTH) & (this->b_board >> 1) & ((this->b_board >> 1) << BOARD_WIDTH) & ((this->b_board >> 1) >> BOARD_WIDTH) & this->w_board & (this->w_board << 1) & ((this->w_board << 1) >> BOARD_WIDTH) & ((this->w_board << 1) << BOARD_WIDTH) & (this->w_board >> 1) & ((this->w_board >> 1) >> BOARD_WIDTH) & ((this->w_board >> 1) << BOARD_WIDTH);
+	this->live_board = ((this->b_board << 1) | ((this->b_board << 1) << BOARD_WIDTH) | ((this->b_board << 1) >> BOARD_WIDTH) | (this->b_board >> 1) | ((this->b_board >> 1) << BOARD_WIDTH) | ((this->b_board >> 1) >> BOARD_WIDTH) | (this->w_board << 1) | ((this->w_board << 1) >> BOARD_WIDTH) | ((this->w_board << 1) << BOARD_WIDTH) | (this->w_board >> 1) | ((this->w_board >> 1) >> BOARD_WIDTH) | ((this->w_board >> 1) << BOARD_WIDTH)) & ~(this->w_board | this->b_board);
 }
 
 State			State::make_baby_from_coord(int coord)
 {
 	State s = *this;
+	// std::cout << "Set piece: " << coord << std::endl;
 	s.set_piece(coord);
+	// std::cout << "Captures" << std::endl;
 	s.compute_captures();
+	// std::cout << "Update eval" << std::endl;
 	update_pair_eval(s);
+	// std::cout << "Player and live board" << std::endl;
 	s.player = (s.player + 1) % 2;
+	// std::cout << "player is: " << s.player << std::endl;
 	s.update_live_board();
+	// std::cout << "baby done" << std::endl;
+	// std::cout  << std::endl;
 	return (s);
 }
 #include <set>

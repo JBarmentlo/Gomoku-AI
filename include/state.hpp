@@ -20,7 +20,7 @@ class State
 		int			b_captures = 0;
 		int			score = 0;
 
-		int			(*value_coord_fun)(State&);
+		int			(*value_coord_fun)(State&, int, int);
 		State(/* args */);
 		~State();
 

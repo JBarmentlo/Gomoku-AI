@@ -76,3 +76,29 @@ int				pairs_at_coord(State &state)
 	}
 	return (score * PAIR_VALUE);
 }
+
+int				pairs_at_coord_color(State &state, int coord, int player)
+{
+	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
+	int score = 0;
+	pattern p;
+	int last_move_r = coord / BOARD_WIDTH;
+	int last_move_c = coord % BOARD_WIDTH;
+
+	for (int dir : directions)
+	{
+		p = create_pair_pattern(dir, player);
+		if (shift_pattern_to(p, last_move_r, last_move_c) and (state.contains(p)))
+		{
+			score += 1;
+		}
+		if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (state.contains(p)))
+		{
+			score += 1;
+		}
+	}
+	if (player == BLACK)
+		return (-score * PAIR_VALUE);
+	else
+		return (score * PAIR_VALUE);
+}
