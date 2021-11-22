@@ -170,9 +170,31 @@ bitboard&			State::get_enemy_board(void)
 	return this->w_board;
 }
 
+int&			State::get_player_captures(void)
+{
+	if (this->player == WHITE)
+	{
+		return this->w_captures;
+	}
+	return this->b_captures;
+}
+
+
+int&			State::get_enemy_captures(void)
+{
+	if (this->player == WHITE)
+	{
+		return this->b_captures;
+	}
+	return this->w_captures;
+}
 
 int				State::compute_captures(void)
 {
+	/*
+	Finds and removes the captured pieces
+	updates this -< captures
+	*/
 	pattern p;
 	int score = 0;
 
@@ -185,6 +207,7 @@ int				State::compute_captures(void)
 
 	bitboard& player_board = this->get_player_board();
 	bitboard& enemy_board = this->get_enemy_board();
+	int& player_captures = this->get_player_captures();
 
 	p = create_capture_pattern(RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
@@ -229,7 +252,7 @@ int				State::compute_captures(void)
 		enemy_board[last_coord - 2 * BOARD_WIDTH] = false;
 		score += 1;
 	}
-
+	player_captures += (score * 2);
 	return (score);
 }
 

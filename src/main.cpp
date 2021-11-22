@@ -67,6 +67,7 @@ int main()
 		if (s.compute_captures() != 0)
 			std::cout << "Captured" << std::endl;
 		s.print();
+		std::cout << s.b_captures << std::endl;
 		s.player = (s.player + 1) % 2;
 	}
 
