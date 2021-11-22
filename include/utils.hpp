@@ -4,7 +4,10 @@
 #include "defines.hpp"
 
 void 		shift_pattern(pattern &pat, int row, int col);
+bool 		shift_pattern_to(pattern &pat, int row, int col);
+
 void 		shift_pattern_other_end(pattern &pat, int row, int col);
+bool 		shift_pattern_to_other_end(pattern &pat, int row, int col);
 
 
 void 		print_pattern(pattern &pat);

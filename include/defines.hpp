@@ -31,6 +31,8 @@ typedef struct	s_pattern{
 	bitboard 	w_bits;
 	int			height;
 	int			width;
+	int			r_shift = 0;
+	int			c_shift = 0;
 }				pattern;
 
 #endif

@@ -10,12 +10,12 @@ class State
 	private:
 		bitboard 	b_board;
 		bitboard 	w_board;
-		int			w_captures;
-		int			b_captures;
+		int			w_captures = 0;
+		int			b_captures = 0;
 		int			last_move;
 
 	public:
-		int			player;
+		int			player = WHITE;
 		State(/* args */);
 		~State();
 

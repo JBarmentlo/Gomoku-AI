@@ -11,40 +11,28 @@ int main()
 {
 	State s;
 
-	s.set_piece(0,0);
-	s.set_piece(18, 14);
+	// s.set_piece(0,0);
+	// s.set_piece(18, 14);
 
-	s.set_piece(1,0);
-	s.set_piece(18, 12);
+	// s.set_piece(1,0);
+	// s.set_piece(18, 12);
 
-	s.set_piece(1,1);
-	s.set_piece(18, 13);
+	// s.set_piece(1,1);
+	// s.set_piece(18, 13);
 
-	s.set_piece(0, 1);
-	s.set_piece(18, 15);
-
-
-	s.set_piece(0, 2);
-	s.set_piece(18, 7);
-
-	s.set_piece(0, 3);
-	s.set_piece(18, 1);
-	s.print();
-
-	std::cout << count_pairs(s, BLACK) << std::endl;
+	// s.set_piece(0, 1);
+	// s.set_piece(18, 15);
 
 
-	// struct Foo {
-    // int n;
-    // Foo() {
-    //    std::cout << "Enter n: "; // no flush needed
-    //    std::cin >> n;
-    // }
-	// };
-	// int n;
-	// std::cout << "Enter n: "; // no flush needed
-	// std::cin >> n;
-	// std::cout << "f.n is " << n << '\n';
+	// s.set_piece(0, 2);
+	// s.set_piece(18, 7);
+
+	// s.set_piece(0, 3);
+	// s.set_piece(18, 1);
+	// s.print();
+
+	// std::cout << count_pairs(s, BLACK) << std::endl;
+
 
 	// pattern p;
 	// p.w_bits.set(0);
@@ -76,13 +64,50 @@ int main()
 		std::cout << "Move: " << move << std::endl;
 		s.set_piece(move / BOARD_WIDTH, move % BOARD_WIDTH);
 		std::cout << "Moved: " << std::endl;
-		s.compute_captures();
+		if (s.compute_captures() != 0)
+			std::cout << "Captured" << std::endl;
 		s.print();
 		s.player = (s.player + 1) % 2;
 	}
+
+
+	// s.set_piece(1, 0);
+	// s.set_piece(2, 0);
+	// s.player = BLACK;
+	// s.set_piece(3, 0);
+	// s.set_piece(0, 0);
+	// s.print();
+	// int a = s.compute_captures();
+	// if (a != 0)
+	// 	std::cout << "Captured: " << a << std::endl;
+	// s.print();
+
+
+	// bitboard b;
+	// b[10] = true;
+	// b = b << -9;
+	// std::cout << b << std::endl;
+
 	// std::cout << (DOWN | RIGHT) << std::endl;
 	// pattern p = create_capture_pattern(DOWN_RIGHT, BLACK);
 	// print_pattern(p);
-
-
+	// int move;
+	// while (true)
+	// {
+	// 	move = get_move_keyboard();
+	// 	s.set_piece(move / BOARD_WIDTH, move % BOARD_WIDTH);
+	// 	pattern p = create_capture_pattern(DOWN_RIGHT, s.player);
+	// 	if (shift_pattern_to(p, move / BOARD_WIDTH, move % BOARD_WIDTH))
+	// 	{
+	// 		std::cout << "posible pattern" << std::endl;
+	// 		print_pattern(p);
+	// 	}
+	// 	else
+	// 	{
+	// 		std::cout << "Impossible" << std::endl;
+	// 	}
+	// 	// std::cout << "State" << std::endl;
+	// 	// s.print();
+	// 	std::cout << std::endl << std::endl;
+	// }
 }

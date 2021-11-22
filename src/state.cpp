@@ -174,53 +174,62 @@ bitboard&			State::get_enemy_board(void)
 int				State::compute_captures(void)
 {
 	pattern p;
-	int coord;
-	int score;
+	int score = 0;
 
-	std::cout << "message" << std::endl;
+	int last_move_r = this->last_move / BOARD_WIDTH;
+	int last_move_c = this->last_move % BOARD_WIDTH;
+	int last_coord = this->last_move;
+
+	int	pat_shift_r = 0;
+	int	pat_shift_c = 0;
+
 	bitboard& player_board = this->get_player_board();
 	bitboard& enemy_board = this->get_enemy_board();
-	std::cout << "/* got board */" << std::endl;
-
 
 	p = create_capture_pattern(RIGHT, this->player);
-	coord = 1;
-	while(coord != PATTERN_MISSING)
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		coord = this->find_pattern(p);
-		if (coord != PATTERN_MISSING)
-		{
-			enemy_board[coord + 1] = false;
-			enemy_board[coord + 2] = false;
-			score +=  1;
-		}
+		enemy_board[last_coord + 1] = false;
+		enemy_board[last_coord + 2] = false;
+		score += 1;
 	}
+	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	{
+		enemy_board[last_coord - 1] = false;
+		enemy_board[last_coord - 2] = false;
+		score += 1;
+	}
+	
+
 
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
-	coord = 1;
-	while(coord != PATTERN_MISSING)
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		coord = this->find_pattern(p);
-		if (coord != PATTERN_MISSING)
-		{
-			enemy_board[coord + BOARD_WIDTH + 1] = false;
-			enemy_board[coord + 2 * BOARD_WIDTH + 2] = false;
-			score +=  1;
-		}
+		enemy_board[last_coord + BOARD_WIDTH + 1] = false;
+		enemy_board[last_coord + 2 * BOARD_WIDTH + 2] = false;
+		score += 1;
+	}
+	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	{
+		enemy_board[last_coord - BOARD_WIDTH - 1]= false;
+		enemy_board[last_coord - 2 * BOARD_WIDTH - 2] = false;
+		score += 1;
 	}
 
 	p = create_capture_pattern(DOWN, this->player);
-	coord = 1;
-	while(coord != PATTERN_MISSING)
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		coord = this->find_pattern(p);
-		if (coord != PATTERN_MISSING)
-		{
-			enemy_board[coord + BOARD_WIDTH] = false;
-			enemy_board[coord + 2 * BOARD_WIDTH] = false;
-			score +=  1;
-		}
+		enemy_board[last_coord + BOARD_WIDTH] = false;
+		enemy_board[last_coord + 2 * BOARD_WIDTH] = false;
+		score += 1;
 	}
+	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	{
+		enemy_board[last_coord - BOARD_WIDTH]= false;
+		enemy_board[last_coord - 2 * BOARD_WIDTH] = false;
+		score += 1;
+	}
+
 	return (score);
 }
 
