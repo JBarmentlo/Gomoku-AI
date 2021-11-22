@@ -3,53 +3,48 @@
 #include "defines.hpp"
 
 
-int count_pairs(State &state, int player)
+int pair_eval(State &state)
 {
 	pattern p;
 	int score = 0;
-	bitboard *b;
-	if (player == WHITE)
-		b = &p.w_bits;
 
-	if (player == BLACK)
-		b = &p.b_bits;
-
-	b[0] = true;
-	(*b)[1] = true;
+	p.w_bits[0] = true;
+	p.w_bits[1] = true;
 	p.width = 2;
 	p.height = 1;
 	score += state.count_pattern(p);
+	swap_colors(p);
+	score -= state.count_pattern(p);
+	swap_colors(p);
 
-	(*b)[1] = false;
-	(*b)[19] = true;
+	p.w_bits[1] = false;
+	p.w_bits[19] = true;
 	p.width = 1;
 	p.height = 2;
 	score += state.count_pattern(p);
+	swap_colors(p);
+	score -= state.count_pattern(p);
+	swap_colors(p);
 
-	(*b)[19] = false;
-	(*b)[20] = true;
+	p.w_bits[19] = false;
+	p.w_bits[20] = true;
 	p.width = 2;
 	p.height = 2;
 	score += state.count_pattern(p);
+	swap_colors(p);
+	score -= state.count_pattern(p);
+	swap_colors(p);
 
-	(*b).reset();
-	(*b)[19] = true;
-	(*b)[1] = true;
+	p.w_bits.reset();
+	p.w_bits[19] = true;
+	p.w_bits[1] = true;
 	p.width = 2;
 	p.height = 2;
 	score += state.count_pattern(p);
+	swap_colors(p);
+	score -= state.count_pattern(p);
+	swap_colors(p);
 
 	return (score);
 }
 
-int	pair_eval(State &state, int player)
-{
-	if (player == WHITE)
-	{
-		return (count_pairs(state, WHITE) - count_pairs(state, BLACK));
-	}
-	else
-	{
-		return (count_pairs(state, BLACK) - count_pairs(state, WHITE));
-	}
-}

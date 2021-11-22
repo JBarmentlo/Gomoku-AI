@@ -26,6 +26,7 @@ class State
 		void				print(void);
 		int					get_square(int row, int col);
 		int					find_pattern(pattern pat);
+		int					find_pattern_around_last_move(pattern pat);
 		int					count_pattern(pattern pat);
 
 		bitboard&			get_player_board(void);

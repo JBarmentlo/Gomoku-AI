@@ -64,10 +64,12 @@ int main()
 		std::cout << "Move: " << move << std::endl;
 		s.set_piece(move / BOARD_WIDTH, move % BOARD_WIDTH);
 		std::cout << "Moved: " << std::endl;
+
 		if (s.compute_captures() != 0)
 			std::cout << "Captured" << std::endl;
+		
 		s.print();
-		std::cout << s.b_captures << std::endl;
+		std::cout << pair_eval(s) << std::endl;
 		s.player = (s.player + 1) % 2;
 	}
 
