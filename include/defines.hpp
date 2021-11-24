@@ -10,6 +10,7 @@
 #define WHITE			0
 #define BLACK			1
 #define EMPTY			2
+#define NEXT_PLAYER(p)	((p) & (BLACK) ? (WHITE) : (BLACK))
 
 #define PATTERN_MISSING	-1
 
@@ -25,6 +26,8 @@
 #define PAIR_VALUE		2
 #define CAPTURE_VALUE	2
 
+
+#define FLAT_COORD(r, c)	(r * BOARD_WIDTH + c)
 
 typedef std::bitset<BOARD_SIZE> bitboard;
 

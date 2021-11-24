@@ -29,7 +29,7 @@ class State
 		void				update_live_board(void);
 		// bool				DOUBLE_THREE				
 		int					compute_captures(void);
-		void				print(void);
+		void				print(bool print_empty = false);
 		int					get_square(int row, int col);
 		int					find_pattern(pattern pat);
 		int					find_pattern_around_last_move(pattern_generator gen, int player) const;

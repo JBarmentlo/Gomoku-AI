@@ -12,11 +12,11 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 	{
 		if (maximizer)
 		{
-			return (INT32_MIN);
+			return (INT32_MIN + 2);
 		}
 		else
 		{
-			return (INT32_MAX);
+			return (INT32_MAX - 2);
 		}
 	}
 

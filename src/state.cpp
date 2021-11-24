@@ -78,9 +78,10 @@ int				State::get_square(int row, int col)
 	return  (EMPTY);
 }
 
-void			State::print(void)
+void			State::print(bool print_empty)
 {
-	std::string symbols[3] = {"O", "X", " "};
+	std::string symbols[4] = {"O", "X", " ", "-"};
+	int sym;
 
 	for (int c = 0; c < BOARD_WIDTH; c++)
 	{
@@ -99,7 +100,13 @@ void			State::print(void)
 		{
 			for (int c = 0; c < BOARD_WIDTH; c++)
 			{
-				std::cout << "  " << symbols[this->get_square(r, c)] << " ";
+				sym = this->get_square(r, c);
+				if (print_empty and sym == EMPTY)
+				{
+					if (this->live_board.test(r * BOARD_WIDTH + c))
+						sym = sym + 1;
+				}
+				std::cout << "  " << symbols[sym] << " ";
 			}
 			std::cout << std::setw(4) << r << std::endl;			
 		}
@@ -205,18 +212,18 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		this->score += this->value_coord_fun(*this, last_coord + 1, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord + 1, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord + 1) = false;
-		this->score += this->value_coord_fun(*this, last_coord + 2, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord + 2, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord + 2) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// print_pattern(oldp);
-		this->score += this->value_coord_fun(*this, last_coord - 1, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord - 1, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - 1) = false;
-		this->score += this->value_coord_fun(*this, last_coord - 2, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord - 2, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - 2) = false;
 		score += 1;
 	}
@@ -224,17 +231,17 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH + 1, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH + 1, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord + BOARD_WIDTH + 1) = false;
-		this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH + 2, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH + 2, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
-		this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH - 1, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH - 1, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - BOARD_WIDTH - 1)= false;
-		this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH - 2, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH - 2, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH - 2) = false;
 		score += 1;
 	}
@@ -242,17 +249,17 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord + BOARD_WIDTH) = false;
-		this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH) = false;
 		score += 1;
 	}
 	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
 	{
-		this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - BOARD_WIDTH)= false;
-		this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH, (this->player + 1) % 2);
+		this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH) = false;
 		score += 1;
 	}
@@ -303,7 +310,7 @@ bool			State::contains(pattern& pat) const
 
 void			State::update_live_board(void)
 {
-	this->live_board = ((this->b_board << 1) | ((this->b_board << 1) << BOARD_WIDTH) | ((this->b_board << 1) >> BOARD_WIDTH) | (this->b_board >> 1) | ((this->b_board >> 1) << BOARD_WIDTH) | ((this->b_board >> 1) >> BOARD_WIDTH) | (this->w_board << 1) | ((this->w_board << 1) >> BOARD_WIDTH) | ((this->w_board << 1) << BOARD_WIDTH) | (this->w_board >> 1) | ((this->w_board >> 1) >> BOARD_WIDTH) | ((this->w_board >> 1) << BOARD_WIDTH)) & ~(this->w_board | this->b_board);
+	this->live_board = ((this->b_board << 1) | ((this->b_board << 1) << BOARD_WIDTH) | ((this->b_board << 1) >> BOARD_WIDTH) | (this->b_board >> 1) | ((this->b_board >> 1) << BOARD_WIDTH) | ((this->b_board >> 1) >> BOARD_WIDTH) | (this->b_board >> BOARD_WIDTH) | (this->b_board << BOARD_WIDTH) | (this->w_board << 1) | ((this->w_board << 1) >> BOARD_WIDTH) | ((this->w_board << 1) << BOARD_WIDTH) | (this->w_board >> 1) | ((this->w_board >> 1) >> BOARD_WIDTH) | ((this->w_board >> 1) << BOARD_WIDTH) | (this->w_board >> BOARD_WIDTH) | (this->w_board << BOARD_WIDTH)) & ~(this->w_board | this->b_board);
 }
 
 State			State::make_baby_from_coord(int coord)

@@ -53,7 +53,7 @@ void play_game(int depth, bool cpu1, bool cpu2)
 				move = get_move_keyboard();				
 			}
 		}
-		std::cout << "Move: " << move << std::endl;
+		std::cout << "Move: " << move /  BOARD_WIDTH << ", " << move % BOARD_WIDTH  << std::endl;
 		s = s.make_baby_from_coord(move);
 		std::cout << "Board made" << std::endl;
 		s.print();
@@ -64,13 +64,39 @@ void play_game(int depth, bool cpu1, bool cpu2)
 int main()
 {
 	State s;
+	std::bitset<10> b1("1111010000");
+	std::cout << NEXT_PLAYER(WHITE) << std::endl;
+	std::cout << NEXT_PLAYER(BLACK) << std::endl;
+	// std::cout << FLAT_COORD(1, 2) << std::endl;
+	// s = s.make_baby_from_coord(FLAT_COORD(9, 9));
+	// s = s.make_baby_from_coord(FLAT_COORD(10, 10));
+	// s = s.make_baby_from_coord(FLAT_COORD(11, 11));
+	// s = s.make_baby_from_coord(FLAT_COORD(12, 12));
+	// s = s.make_baby_from_coord(FLAT_COORD(13, 13));
+	// s = s.make_baby_from_coord(FLAT_COORD(14, 14));
+	// s = s.make_baby_from_coord(FLAT_COORD(15, 15));
+	// s = s.make_baby_from_coord(FLAT_COORD(16, 16));
+	// s = s.make_baby_from_coord(FLAT_COORD(17, 17));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 18));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 17));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 16));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 1));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 15));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 14));
+	// s = s.make_baby_from_coord(FLAT_COORD(18, 18));
+
+	s.print();
+
 
 	play_game(5, true, true);
 
-	for (int i = 0; i < 1500000; i++)
-	{
-		s.make_baby_from_coord(i % BOARD_SIZE);
-		if (i % BOARD_SIZE == 0)
-			s = State();
-	}
+	// for (int i = 0; i < 15000000; i++)
+	// {
+	// 	pattern c = create_capture_pattern(DOWN, i % 2);
+	// 	std::bitset<10> b1("1111010000");
+
+	// 	// s.make_baby_from_coord(i % BOARD_SIZE);
+	// 	// if (i % BOARD_SIZE == 0)
+	// 	// 	s = State();
+	// }
 }
