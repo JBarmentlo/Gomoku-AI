@@ -1,9 +1,9 @@
 #include "pattern.hpp"
 
-Pattern::Pattern(/* args */)
+pattern::pattern(/* args */)
 {
 }
 
-Pattern::~Pattern()
+pattern::~pattern()
 {
 }

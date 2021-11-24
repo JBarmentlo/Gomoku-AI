@@ -92,7 +92,7 @@ int main()
 
 	// for (int i = 0; i < 15000000; i++)
 	// {
-	// 	Pattern c = create_capture_pattern(DOWN, i % 2);
+	// 	pattern c = create_capture_pattern(DOWN, i % 2);
 	// 	std::bitset<10> b1("1111010000");
 
 	// 	// s.make_baby_from_coord(i % BOARD_SIZE);

@@ -114,7 +114,7 @@ void			State::print(bool print_empty)
 	std::cout << std::endl;
 }
 
-int				State::find_pattern(Pattern pat)
+int				State::find_pattern(pattern pat)
 {
 	int last_r = 0;
 	int last_c = 0;
@@ -134,7 +134,7 @@ int				State::find_pattern(Pattern pat)
 	return (PATTERN_MISSING);
 }
 
-int				State::count_pattern(Pattern pat)
+int				State::count_pattern(pattern pat)
 {
 	int last_r = 0;
 	int last_c = 0;
@@ -198,7 +198,7 @@ int				State::compute_captures(void)
 	Finds and removes the captured pieces
 	updates this -< captures
 	*/
-	Pattern p;
+	pattern p;
 	int score = 0;
 
 	int last_move_r = this->last_move / BOARD_WIDTH;
@@ -274,7 +274,7 @@ int				State::find_pattern_around_last_move(pattern_generator gen, int player) c
 {
 	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
 	int score = 0;
-	Pattern p;
+	pattern p;
 	int last_move_r = this->last_move / BOARD_WIDTH;
 	int last_move_c = this->last_move % BOARD_WIDTH;
 
@@ -293,7 +293,7 @@ int				State::find_pattern_around_last_move(pattern_generator gen, int player) c
 	return (score);
 }
 
-inline bool 	State::operator==(const Pattern& rhs) const
+inline bool 	State::operator==(const pattern& rhs) const
 {
 	return (((this->w_board & rhs.w_bits) == rhs.w_bits) and ((this->b_board & rhs.b_bits) == rhs.b_bits));
 }
@@ -303,7 +303,7 @@ inline bool 	State::operator<(const State& rhs) const
 	return (this->score < rhs.score);
 }
 
-bool			State::contains(Pattern& pat) const
+bool			State::contains(pattern& pat) const
 {
 	return (*this == pat);
 }

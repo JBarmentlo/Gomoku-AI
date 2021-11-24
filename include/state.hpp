@@ -33,17 +33,17 @@ class State
 		int					compute_captures(void);
 		void				print(bool print_empty = false);
 		int					get_square(int row, int col);
-		int					find_pattern(Pattern pat);
+		int					find_pattern(pattern pat);
 		int					find_pattern_around_last_move(pattern_generator gen, int player) const;
-		int					count_pattern(Pattern pat);
+		int					count_pattern(pattern pat);
 
 		bitboard&			get_player_board(void);
 		bitboard&			get_enemy_board(void);
 		int&				get_enemy_captures(void);
 		int&				get_player_captures(void);
 
-		bool				contains(Pattern& pat) const;
-		inline bool 		operator==(const Pattern& rhs) const;
+		bool				contains(pattern& pat) const;
+		inline bool 		operator==(const pattern& rhs) const;
 		inline bool 		operator<(const State& rhs) const;
 
 		State				make_baby_from_coord(int coord);
