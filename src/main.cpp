@@ -88,15 +88,15 @@ int main()
 	// s.print(true);
 
 
-	// play_game(5, true, true);
+	play_game(5, true, true);
 
-	for (int i = 0; i < 1500000; i++)
-	{
-		// Pattern c = create_capture_pattern(DOWN, i % 2);
-		// std::bitset<10> b1("1111010000");
+	// for (int i = 0; i < 15000000; i++)
+	// {
+	// 	Pattern c = create_capture_pattern(DOWN, i % 2);
+	// 	std::bitset<10> b1("1111010000");
 
-		s.make_baby_from_coord(i % BOARD_SIZE);
-		if (i % BOARD_SIZE == 0)
-			s = State();
-	}
+	// 	// s.make_baby_from_coord(i % BOARD_SIZE);
+	// 	// if (i % BOARD_SIZE == 0)
+	// 	// 	s = State();
+	// }
 }
