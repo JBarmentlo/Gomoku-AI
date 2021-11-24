@@ -5,7 +5,7 @@
 
 int 			pair_eval(State &state)
 {
-	pattern p;
+	Pattern p;
 	int score = 0;
 
 	p.w_bits[0] = true;
@@ -58,7 +58,7 @@ int				pairs_at_coord(State &state)
 {
 	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
 	int score = 0;
-	pattern p;
+	Pattern p;
 	int last_move_r = state.last_move / BOARD_WIDTH;
 	int last_move_c = state.last_move % BOARD_WIDTH;
 
@@ -81,7 +81,7 @@ int				pairs_at_coord_color(State &state, int coord, int player)
 {
 	constexpr int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
 	int score = 0;
-	pattern p;
+	Pattern p;
 	int last_move_r = coord / BOARD_WIDTH;
 	int last_move_c = coord % BOARD_WIDTH;
 

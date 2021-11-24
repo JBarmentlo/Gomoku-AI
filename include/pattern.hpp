@@ -4,7 +4,7 @@
 #include "defines.hpp"
 
 
-class pattern
+class Pattern
 {
 private:
 	/* data */
@@ -26,8 +26,8 @@ public:
 	int			end_r;
 	int			end_c;
 
-	pattern(/* args */);
-	~pattern();
+	Pattern(/* args */);
+	~Pattern();
 };
 
 
@@ -37,6 +37,6 @@ public:
 
 // }				pattern;
 
-typedef pattern (*pattern_generator)(int, int);
+typedef Pattern (*pattern_generator)(int, int);
 
 #endif // DEBUG

@@ -2,23 +2,23 @@
 #include "pattern.hpp"
 #include <iostream>
 
-void 		shift_pattern(pattern &pat, int row, int col)
+void 		shift_pattern(Pattern &pat, int row, int col)
 {
 	pat.b_bits = pat.b_bits << (row * BOARD_WIDTH + col);
 	pat.w_bits = pat.w_bits << (row * BOARD_WIDTH + col);
 }
 
 
-void 		shift_pattern_other_end(pattern &pat, int row, int col)
+void 		shift_pattern_other_end(Pattern &pat, int row, int col)
 {
 	shift_pattern(pat, row - pat.height + 1, col - pat.width + 1);
 }
 
 
-bool 		shift_pattern_to(pattern &pat, int row, int col)
+bool 		shift_pattern_to(Pattern &pat, int row, int col)
 {
 	/*
-	Shifts the pattern to the desired coordinates and updates pat.r_shift and pat.c_shift
+	Shifts the Pattern to the desired coordinates and updates pat.r_shift and pat.c_shift
 	*/
 	if (row + pat.end_r - pat.start_r < BOARD_HEIGHT and col + pat.end_c - pat.start_c < BOARD_WIDTH and col + pat.end_c - pat.start_c >= 0)
 	{
@@ -41,7 +41,7 @@ bool 		shift_pattern_to(pattern &pat, int row, int col)
 }
 
 
-void 		print_pattern(pattern &pat)
+void 		print_pattern(Pattern &pat)
 {
 	std::string symbols[3] = {"O", "X", " "};
 	for (int r = 0; r <= BOARD_HEIGHT; r++)
@@ -67,10 +67,10 @@ void 		print_pattern(pattern &pat)
 }
 
 
-bool 		shift_pattern_to_other_end(pattern &pat, int row, int col)
+bool 		shift_pattern_to_other_end(Pattern &pat, int row, int col)
 {
 	/*
-	Shifts the pattern so the BOTTOM RIGHT OF THE PATTERN IS AT the desired coordinates and updates pat.r_shift and pat.c_shift
+	Shifts the Pattern so the BOTTOM RIGHT OF THE Pattern IS AT the desired coordinates and updates pat.r_shift and pat.c_shift
 	*/
 	// std::cout << "/* shift other end*/" << std::endl;
 	// std::cout << "shift " <<  ((row - pat.r_shift - pat.height + 1) * BOARD_WIDTH + (col - pat.c_shift - pat.width + 1)) << std::endl;
@@ -102,7 +102,7 @@ inline int	flat_coord(int row, int col)
 }
 
 
-void 		swap_colors(pattern &pat)
+void 		swap_colors(Pattern &pat)
 {
 	bitboard tmp = pat.b_bits;
 	pat.b_bits = pat.w_bits;
@@ -113,9 +113,9 @@ void 		swap_colors(pattern &pat)
 
 
 
-pattern 	create_capture_pattern(int direction, int player)
+Pattern 	create_capture_pattern(int direction, int player)
 {
-	pattern p;
+	Pattern p;
 	if (direction == DOWN)
 	{
 		p.height = 4;
@@ -192,9 +192,9 @@ int			get_move_keyboard(void)
 }
 
 
-pattern 	create_pair_pattern(int direction, int player)
+Pattern 	create_pair_pattern(int direction, int player)
 {
-	pattern p;
+	Pattern p;
 	if (direction == DOWN)
 	{
 		p.height = 2;
@@ -249,9 +249,9 @@ pattern 	create_pair_pattern(int direction, int player)
 	return (p);	
 }
 
-pattern 	create_victory_pattern(int direction, int player)
+Pattern 	create_victory_pattern(int direction, int player)
 {
-	pattern p;
+	Pattern p;
 	if (direction == DOWN)
 	{
 		p.height = 5;
