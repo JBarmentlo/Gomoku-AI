@@ -85,7 +85,7 @@ int main()
 	// s = s.make_baby_from_coord(FLAT_COORD(18, 14));
 	// s = s.make_baby_from_coord(FLAT_COORD(18, 18));
 
-	// s.print(true);
+	s.print(true);
 
 
 	play_game(5, true, true);
