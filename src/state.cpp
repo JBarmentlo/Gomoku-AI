@@ -104,9 +104,9 @@ void			State::print(bool print_empty)
 				if (print_empty and sym == EMPTY)
 				{
 					if (this->live_board.test(r * BOARD_WIDTH + c))
-						sym = sym + 1;
+						sym = LIVE - 2;
 				}
-				std::cout << "  " << symbols[sym] << " ";
+				std::cout << "  " << symbols[sym / 2] << " ";
 			}
 			std::cout << std::setw(4) << r << std::endl;			
 		}

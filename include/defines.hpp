@@ -7,9 +7,11 @@
 #define BOARD_HEIGHT	19
 #define BOARD_SIZE		BOARD_WIDTH * BOARD_HEIGHT
 
-#define WHITE			0
-#define BLACK			1
-#define EMPTY			2
+#define WHITE			1
+#define BLACK			2
+#define EMPTY			4
+#define LIVE			8
+
 #define NEXT_PLAYER(p)	((p) & (BLACK) ? (WHITE) : (BLACK))
 
 #define PATTERN_MISSING	-1

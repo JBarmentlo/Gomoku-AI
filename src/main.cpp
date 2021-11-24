@@ -68,9 +68,9 @@ int main()
 	std::cout << NEXT_PLAYER(WHITE) << std::endl;
 	std::cout << NEXT_PLAYER(BLACK) << std::endl;
 	// std::cout << FLAT_COORD(1, 2) << std::endl;
-	// s = s.make_baby_from_coord(FLAT_COORD(9, 9));
-	// s = s.make_baby_from_coord(FLAT_COORD(10, 10));
-	// s = s.make_baby_from_coord(FLAT_COORD(11, 11));
+	s = s.make_baby_from_coord(FLAT_COORD(9, 9));
+	s = s.make_baby_from_coord(FLAT_COORD(10, 10));
+	s = s.make_baby_from_coord(FLAT_COORD(11, 11));
 	// s = s.make_baby_from_coord(FLAT_COORD(12, 12));
 	// s = s.make_baby_from_coord(FLAT_COORD(13, 13));
 	// s = s.make_baby_from_coord(FLAT_COORD(14, 14));
@@ -85,7 +85,7 @@ int main()
 	// s = s.make_baby_from_coord(FLAT_COORD(18, 14));
 	// s = s.make_baby_from_coord(FLAT_COORD(18, 18));
 
-	s.print();
+	s.print(true);
 
 
 	play_game(5, true, true);
