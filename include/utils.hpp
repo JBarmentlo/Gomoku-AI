@@ -15,6 +15,7 @@ pattern 	create_capture_pattern(int direction, int player);
 pattern 	create_pair_pattern(int direction, int player);
 pattern 	create_victory_pattern(int direction, int player);
 
+
 void 		swap_colors(pattern &pat);
 inline int 	flat_coord(int row, int col);
 int			get_move_keyboard(void);

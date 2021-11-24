@@ -79,7 +79,7 @@ int				pairs_at_coord(State &state)
 
 int				pairs_at_coord_color(State &state, int coord, int player)
 {
-	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
+	constexpr int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
 	int score = 0;
 	pattern p;
 	int last_move_r = coord / BOARD_WIDTH;

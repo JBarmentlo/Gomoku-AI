@@ -33,14 +33,14 @@ typedef std::bitset<BOARD_SIZE> bitboard;
 typedef struct	s_pattern{
 	bitboard 	b_bits;
 	bitboard 	w_bits;
-	int			height;
-	int			width;
+	int			height = 0;
+	int			width = 0;
 	int			r_shift = 0;
 	int			c_shift = 0;
-	int			start_r;
-	int			start_c;
-	int			end_r;
-	int			end_c;
+	int			start_r = 0;
+	int			start_c = 0;
+	int			end_r = 0;
+	int			end_c = 0;
 }				pattern;
 
 typedef pattern (*pattern_generator)(int, int);

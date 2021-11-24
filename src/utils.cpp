@@ -109,6 +109,9 @@ void 		swap_colors(pattern &pat)
 }
 
 
+
+
+
 pattern 	create_capture_pattern(int direction, int player)
 {
 	pattern p;
