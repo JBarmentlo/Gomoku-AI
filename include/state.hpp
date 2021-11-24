@@ -3,6 +3,8 @@
 #define STATE_H
 
 #include "defines.hpp"
+#include "pattern.hpp"
+
 #include <set>
 
 class State

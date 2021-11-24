@@ -16,6 +16,7 @@ set(SOURCES
     src/utils.cpp
     src/eval.cpp
     src/minimax.cpp
+    src/pattern.cpp
 
 
 )

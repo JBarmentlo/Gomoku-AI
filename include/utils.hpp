@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include "defines.hpp"
+#include "pattern.hpp"
 
 void 		shift_pattern(pattern &pat, int row, int col);
 bool 		shift_pattern_to(pattern &pat, int row, int col);

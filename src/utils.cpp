@@ -1,4 +1,5 @@
 #include "defines.hpp"
+#include "pattern.hpp"
 #include <iostream>
 
 void 		shift_pattern(pattern &pat, int row, int col)
