@@ -288,28 +288,28 @@ int				State::compute_captures(void)
 	return (score);
 }
 
-int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
-{
-	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
-	int score = 0;
-	pattern p;
-	int last_move_r = this->last_move / BOARD_WIDTH;
-	int last_move_c = this->last_move % BOARD_WIDTH;
+// int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
+// {
+// 	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
+// 	int score = 0;
+// 	pattern p;
+// 	int last_move_r = this->last_move / BOARD_WIDTH;
+// 	int last_move_c = this->last_move % BOARD_WIDTH;
 
-	for (int dir : directions)
-	{
-		p = gen(dir, player);
-		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
-		{
-			score += 1;
-		}
-		if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
-		{
-			score += 1;
-		}
-	}
-	return (score);
-}
+// 	for (int dir : directions)
+// 	{
+// 		p = gen(dir, player);
+// 		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
+// 		{
+// 			score += 1;
+// 		}
+// 		if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+// 		{
+// 			score += 1;
+// 		}
+// 	}
+// 	return (score);
+// }
 
 inline bool 	State::operator==(const pattern& rhs) const
 {
@@ -337,7 +337,7 @@ State			State::make_baby_from_coord(int coord)
 	// std::cout << "Set piece: " << coord << std::endl;
 	s.set_piece(coord);
 	// std::cout << "Captures" << std::endl;
-	s.compute_captures();
+	// s.compute_captures();
 	// std::cout << "Update eval" << std::endl;
 	// update_pair_eval(s);
 	// std::cout << "Player and live board" << std::endl;

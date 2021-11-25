@@ -111,10 +111,23 @@ int main()
 	// play_game(5, true, true);
 
 //  TODO TEST THE COLOR SWAP YOU MOROOONE
-	pattern c = create_capture_pattern(DOWN, WHITE);
+// 	TODO checck negative offset pattern
+
+	pattern p = create_pair_pattern(DOWN, WHITE, 1);
 	// swap_colors(c);
-	print_pattern(c);
-	std::cout << c.color << std::endl;
+	// print_pattern(c);
+	// std::cout << c.color << std::endl;
+
+	for (int r = 0; r < BOARD_HEIGHT; r++)
+	{
+		for (int c = 0; c < 19; c++)
+		{
+			std::cout << "r: " << r << ",c: " << c << std::endl;
+			if (shift_pattern_to(p, r, c))
+				print_pattern(p);
+			/* code */
+		}
+	}
 
 	// for (int i = 0; i < 15000000; i++)
 	// {

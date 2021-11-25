@@ -19,18 +19,17 @@ typedef struct	s_pattern{
 	int			size;
 }				pattern;
 
-typedef		pattern (*pattern_generator)(int, int);
+typedef		pattern (*pattern_generator)(int, int, int);
 
-// void 		shift_pattern(pattern &pat, int row, int col);
 bool 		shift_pattern_to(pattern &pat, int row, int col);
 
-// void 		shift_pattern_other_end(pattern &pat, int row, int col);
-bool 		shift_pattern_to_other_end(pattern &pat, int row, int col);
+// bool 		shift_pattern_to_other_end(pattern &pat, int row, int col);
 
 
 void 		print_pattern(pattern &pat);
-pattern 	create_capture_pattern(int direction, int player);
-pattern 	create_pair_pattern(int direction, int player);
+pattern 	create_capture_pattern(int direction, int player, int variant);
+pattern 	create_pair_pattern(int direction, int player, int variant = 0);
+pattern 	create_triplet_pattern(int direction, int player, int variant = 0);
 pattern 	create_victory_pattern(int direction, int player);
 
 

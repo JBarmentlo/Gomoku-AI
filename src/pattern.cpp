@@ -3,20 +3,6 @@
 #include "pattern.hpp"
 
 #include <iostream>
-
-// void 		shift_pattern(pattern &pat, int row, int col)
-// {
-// 	pat.b_bits = pat.b_bits << (row * BOARD_WIDTH + col);
-// 	pat.w_bits = pat.w_bits << (row * BOARD_WIDTH + col);
-// }
-
-
-// void 		shift_pattern_other_end(pattern &pat, int row, int col)
-// {
-// 	shift_pattern(pat, row - pat.height + 1, col - pat.width + 1);
-// }
-
-
 bool		is_shiftable_to(pattern &pat, int row, int col)
 {
 	return is_in_bounds(pat.start_r +  row, pat.start_c + col) and is_in_bounds(pat.end_r +  row, pat.end_c + col);
@@ -28,10 +14,10 @@ bool 		shift_pattern_to(pattern &pat, int row, int col)
 	/*
 	Shifts the pattern to the desired coordinates and updates pat.r_shift and pat.c_shift
 	*/
-	if (not is_in_bounds(pat.end_r - pat.start_r + row, pat.end_c - pat.start_c  + col))
+	if (not (is_in_bounds(pat.start_r + row, pat.start_c  + col) and is_in_bounds(pat.end_r  + row, pat.end_c + col)))
 		return (false);
 	
-	int shift = (row - pat.r_shift - pat.start_r) * BOARD_WIDTH + (col - pat.c_shift - pat.start_c);
+	int shift = (row - pat.r_shift) * BOARD_WIDTH + (col - pat.c_shift);
 	// std::cout << "shift: " << shift << std::endl;
 	if (shift > 0)
 	{
@@ -52,8 +38,8 @@ bool 		shift_pattern_to(pattern &pat, int row, int col)
 			pat.e_bits = pat.e_bits >> -shift;
 	}
 	// std::cout << "r_shift: " << pat.r_shift << "row:" std::endl;
-	pat.r_shift = row - pat.start_r;
-	pat.c_shift = col - pat.start_c;
+	pat.r_shift = row;
+	pat.c_shift = col;
 
 	return (true);
 }
@@ -94,32 +80,32 @@ void 		print_pattern(pattern &pat)
 }
 
 
-bool 		shift_pattern_to_other_end(pattern &pat, int row, int col)
-{
-	if (not is_in_bounds(pat.start_r - pat.end_r +  row, pat.start_c - pat.end_c + col))
-		return (false);
+// bool 		shift_pattern_to_other_end(pattern &pat, int row, int col)
+// {
+// 	if (not is_in_bounds(pat.start_r - pat.end_r +  row, pat.start_c - pat.end_c + col))
+// 		return (false);
 	
-	int shift = flat_coord(row - pat.r_shift -  pat.end_r,col - pat.c_shift - pat.end_c);
-	if (shift > 0)
-	{
-		if (pat.color & WHITE)
-			pat.w_bits = pat.w_bits << shift;
-		if (pat.color & BLACK)
-			pat.b_bits = pat.b_bits << shift;
-		if (pat.color & EMPTY)
-			pat.e_bits = pat.e_bits << shift;
-	}
-	else
-	{
-		if (pat.color & WHITE)
-			pat.w_bits = pat.w_bits >> -shift;
-		if (pat.color & BLACK)
-			pat.b_bits = pat.b_bits >> -shift;
-		if (pat.color & EMPTY)
-			pat.e_bits = pat.e_bits >> -shift;
-	}
-	return (true);
-}
+// 	int shift = flat_coord(row - pat.r_shift -  pat.end_r,col - pat.c_shift - pat.end_c);
+// 	if (shift > 0)
+// 	{
+// 		if (pat.color & WHITE)
+// 			pat.w_bits = pat.w_bits << shift;
+// 		if (pat.color & BLACK)
+// 			pat.b_bits = pat.b_bits << shift;
+// 		if (pat.color & EMPTY)
+// 			pat.e_bits = pat.e_bits << shift;
+// 	}
+// 	else
+// 	{
+// 		if (pat.color & WHITE)
+// 			pat.w_bits = pat.w_bits >> -shift;
+// 		if (pat.color & BLACK)
+// 			pat.b_bits = pat.b_bits >> -shift;
+// 		if (pat.color & EMPTY)
+// 			pat.e_bits = pat.e_bits >> -shift;
+// 	}
+// 	return (true);
+// }
 
 
 // bool 		shift_pattern_to_other_end(pattern &pat, int row, int col)
@@ -168,10 +154,10 @@ void 		swap_colors(pattern &pat)
 }
 
 
-
-pattern 	create_capture_pattern(int direction, int player)
+pattern 	create_capture_pattern(int direction, int player, int variant)
 {
 	pattern p;
+	p.direction = direction;
 	if (direction == DOWN)
 	{
 		p.w_bits[flat_coord(0, 0)] = true;
@@ -223,14 +209,20 @@ pattern 	create_capture_pattern(int direction, int player)
 	}
 	p.r_shift = 0;
 	p.c_shift = 0;
-
+	p.r_shift	= (variant * direction) / BOARD_WIDTH;
+	p.c_shift	= (variant * direction) % BOARD_WIDTH;
+	p.start_r  -= (variant * direction) / BOARD_WIDTH;
+	p.start_c  -= (variant * direction) % BOARD_WIDTH;
+	p.end_r    -= (variant * direction) / BOARD_WIDTH;
+	p.end_c    -= (variant * direction) % BOARD_WIDTH;
 	return (p);
 }
 
 
-pattern 	create_pair_pattern(int direction, int player)
+pattern 	create_pair_pattern(int direction, int player, int variant)
 {
 	pattern p;
+	p.direction = direction;
 	if (direction == DOWN)
 	{
 		p.w_bits[flat_coord(0, 0)] = true;
@@ -268,13 +260,78 @@ pattern 	create_pair_pattern(int direction, int player)
 		p.end_c = 0; 
 	}
 	p.color = WHITE;
+	p.size = 2;
 	if (player == BLACK)
 	{
 		swap_colors(p);
 	}
-	p.r_shift = 0;
-	p.c_shift = 0;
+	p.r_shift	= (variant * direction) / BOARD_WIDTH;
+	p.c_shift	= (variant * direction) % BOARD_WIDTH;
+	p.start_r  -= (variant * direction) / BOARD_WIDTH;
+	p.start_c  -= (variant * direction) % BOARD_WIDTH;
+	p.end_r    -= (variant * direction) / BOARD_WIDTH;
+	p.end_c    -= (variant * direction) % BOARD_WIDTH;
 
+	return (p);	
+}
+
+
+pattern 	create_triplet_pattern(int direction, int player, int variant)
+{
+	pattern p;
+	p.direction = direction;
+	if (direction == DOWN)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 0)] = true;
+		p.w_bits[flat_coord(2, 0)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 2;
+		p.end_c = 0;
+	}
+	if (direction == RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(0, 1)] = true; 
+		p.w_bits[flat_coord(0, 2)] = true; 
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 0;
+		p.end_c = 2;
+	}
+	if (direction == DOWN_RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 1)] = true;
+		p.w_bits[flat_coord(2, 2)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 2;
+		p.end_c = 2; 
+	}
+	if (direction == DOWN_LEFT)
+	{
+		p.w_bits[flat_coord(0, 2)] = true;
+		p.w_bits[flat_coord(1, 1)] = true; 
+		p.w_bits[flat_coord(2, 0)] = true; 
+		p.start_r = 0;
+		p.start_c = 2;
+		p.end_r = 2;
+		p.end_c = 0; 
+	}
+	p.color = WHITE;
+	p.size = 3;
+	if (player == BLACK)
+	{
+		swap_colors(p);
+	}
+	p.r_shift	= (variant * direction) / BOARD_WIDTH;
+	p.c_shift	= (variant * direction) % BOARD_WIDTH;
+	p.start_r  -= (variant * direction) / BOARD_WIDTH;
+	p.start_c  -= (variant * direction) % BOARD_WIDTH;
+	p.end_r    -= (variant * direction) / BOARD_WIDTH;
+	p.end_c    -= (variant * direction) % BOARD_WIDTH;
 	return (p);	
 }
 
