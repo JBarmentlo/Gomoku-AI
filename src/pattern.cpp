@@ -142,15 +142,25 @@ void 		swap_colors(pattern &pat)
 	bitboard tmp = pat.b_bits;
 	pat.b_bits = pat.w_bits;
 	pat.w_bits = tmp;
-	if ((pat.color & WHITE) and ~(pat.color & BLACK))
-	{
-		std::cout << "/* message */" << std::endl;
-		pat.color = pat.color & (~WHITE) | BLACK;
-	}
-	else if ((pat.color & BLACK) and ~(pat.color & WHITE))
-	{
-		pat.color = pat.color & (~BLACK) | WHITE;
-	}
+	int out = 0;
+	if (pat.color & WHITE)
+		out = out | BLACK;
+
+	if (pat.color & BLACK)
+		out = out | WHITE;
+
+	if (pat.color & EMPTY)
+		out = out | EMPTY;
+
+	pat.color = out;
+	// if ((pat.color & WHITE) and ~(pat.color & BLACK))
+	// {
+	// 	pat.color = pat.color & (~WHITE) | BLACK;
+	// }
+	// else if ((pat.color & BLACK) and ~(pat.color & WHITE))
+	// {
+	// 	pat.color = pat.color & (~BLACK) | WHITE;
+	// }
 }
 
 

@@ -66,14 +66,19 @@ void play_game(int depth, bool cpu1, bool cpu2)
 int main()
 {
 	State s;
-
-	// s = s.make_baby_from_coord(flat_coord(9, 9));
-	// s = s.make_baby_from_coord(flat_coord(8, 8));
-	// s = s.make_baby_from_coord(flat_coord(10, 10));
-	// s = s.make_baby_from_coord(flat_coord(11, 11));
+	// play_game(0, false, false);
+	// s = s.make_baby_from_coord(flat_coord(1, 1));
+	// s = s.make_baby_from_coord(flat_coord(0, 0));
+	// s = s.make_baby_from_coord(flat_coord(2, 2));
+	// s = s.make_baby_from_coord(flat_coord(3, 3));
+	// s.print();
 	// s.player = NEXT_PLAYER(s.player);
 	// s.compute_captures();
 
+	pattern p = create_capture_pattern(DOWN, WHITE);
+	print_pattern(p);
+	swap_colors(p);
+	print_pattern(p);
 
 	// s = s.make_baby_from_coord(flat_coord(9, 9));
 	// std::cout << "/* message */" << std::endl;
@@ -111,23 +116,23 @@ int main()
 	// play_game(5, true, true);
 
 //  TODO TEST THE COLOR SWAP YOU MOROOONE
-// 	TODO checck negative offset pattern
+	// TODO checck negative offset pattern
 
-	pattern p = create_pair_pattern(DOWN, WHITE, 1);
-	// swap_colors(c);
-	// print_pattern(c);
-	// std::cout << c.color << std::endl;
+	// pattern p = create_pair_pattern(DOWN, WHITE, 1);
+	// // swap_colors(c);
+	// // print_pattern(c);
+	// // std::cout << c.color << std::endl;
 
-	for (int r = 0; r < BOARD_HEIGHT; r++)
-	{
-		for (int c = 0; c < 19; c++)
-		{
-			std::cout << "r: " << r << ",c: " << c << std::endl;
-			if (shift_pattern_to(p, r, c))
-				print_pattern(p);
-			/* code */
-		}
-	}
+	// for (int r = 0; r < BOARD_HEIGHT; r++)
+	// {
+	// 	for (int c = 0; c < 19; c++)
+	// 	{
+	// 		std::cout << "r: " << r << ",c: " << c << std::endl;
+	// 		if (shift_pattern_to(p, r, c))
+	// 			print_pattern(p);
+	// 		/* code */
+	// 	}
+	// }
 
 	// for (int i = 0; i < 15000000; i++)
 	// {
