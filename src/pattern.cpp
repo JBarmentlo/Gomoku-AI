@@ -35,20 +35,21 @@ bool 		shift_pattern_to(pattern &pat, int row, int col)
 	// std::cout << "shift: " << shift << std::endl;
 	if (shift > 0)
 	{
-		// if (pat.color & WHITE)
-		pat.w_bits = pat.w_bits << shift;
-		// if (pat.color & BLACK)
-		pat.b_bits = pat.b_bits << shift;
-		// if (pat.color & EMPTY)
-		pat.e_bits = pat.e_bits << shift;
+		if (pat.color & WHITE)
+			pat.w_bits = pat.w_bits << shift;
+		if (pat.color & BLACK)
+			pat.b_bits = pat.b_bits << shift;
+		if (pat.color & EMPTY)
+			pat.e_bits = pat.e_bits << shift;
 	}
 	else
 	{
-		pat.w_bits = pat.w_bits >> -shift;
-		// if (pat.color & BLACK)
-		pat.b_bits = pat.b_bits >> -shift;
-		// if (pat.color & EMPTY)
-		pat.e_bits = pat.e_bits >> -shift;
+		if (pat.color & WHITE)
+			pat.w_bits = pat.w_bits >> -shift;
+		if (pat.color & BLACK)
+			pat.b_bits = pat.b_bits >> -shift;
+		if (pat.color & EMPTY)
+			pat.e_bits = pat.e_bits >> -shift;
 	}
 	// std::cout << "r_shift: " << pat.r_shift << "row:" std::endl;
 	pat.r_shift = row - pat.start_r;
@@ -62,7 +63,14 @@ void 		print_pattern(pattern &pat)
 {
 	std::string symbols[3] = {"O", "X", " "};
 	std::cout << "r_shift: " << pat.r_shift << ", c_shift: " <<  pat.c_shift << ", start_r: " << pat.start_r <<  ", start_c: " << pat.start_c << ", end_r: " << pat.end_r << ", end_c: " << pat.end_c << std::endl;
-
+	std::cout << "Colors: ";
+	if (pat.color & WHITE)
+		std::cout << "WHITE ";
+	if (pat.color & BLACK)
+		std::cout << "BLACK ";
+	if (pat.color & EMPTY)
+		std::cout << "EMPTY ";
+	std::cout << std::endl;
 	for (int r = 0; r <= BOARD_HEIGHT; r++)
 	{
 		for (int c = 0; c <= BOARD_WIDTH; c++)
@@ -94,20 +102,21 @@ bool 		shift_pattern_to_other_end(pattern &pat, int row, int col)
 	int shift = flat_coord(row - pat.r_shift -  pat.end_r,col - pat.c_shift - pat.end_c);
 	if (shift > 0)
 	{
-		// if (pat.color & WHITE)
-		pat.w_bits = pat.w_bits << shift;
-		// if (pat.color & BLACK)
-		pat.b_bits = pat.b_bits << shift;
-		// if (pat.color & EMPTY)
-		pat.e_bits = pat.e_bits << shift;
+		if (pat.color & WHITE)
+			pat.w_bits = pat.w_bits << shift;
+		if (pat.color & BLACK)
+			pat.b_bits = pat.b_bits << shift;
+		if (pat.color & EMPTY)
+			pat.e_bits = pat.e_bits << shift;
 	}
 	else
 	{
-		pat.w_bits = pat.w_bits >> -shift;
-		// if (pat.color & BLACK)
-		pat.b_bits = pat.b_bits >> -shift;
-		// if (pat.color & EMPTY)
-		pat.e_bits = pat.e_bits >> -shift;
+		if (pat.color & WHITE)
+			pat.w_bits = pat.w_bits >> -shift;
+		if (pat.color & BLACK)
+			pat.b_bits = pat.b_bits >> -shift;
+		if (pat.color & EMPTY)
+			pat.e_bits = pat.e_bits >> -shift;
 	}
 	return (true);
 }
@@ -147,9 +156,16 @@ void 		swap_colors(pattern &pat)
 	bitboard tmp = pat.b_bits;
 	pat.b_bits = pat.w_bits;
 	pat.w_bits = tmp;
+	if ((pat.color & WHITE) and ~(pat.color & BLACK))
+	{
+		std::cout << "/* message */" << std::endl;
+		pat.color = pat.color & (~WHITE) | BLACK;
+	}
+	else if ((pat.color & BLACK) and ~(pat.color & WHITE))
+	{
+		pat.color = pat.color & (~BLACK) | WHITE;
+	}
 }
-
-
 
 
 
@@ -200,6 +216,7 @@ pattern 	create_capture_pattern(int direction, int player)
 		p.end_r = 3;
 		p.end_c = 0;
 	}
+	p.color = BLACK | WHITE;
 	if (player == BLACK)
 	{
 		swap_colors(p);
@@ -211,62 +228,55 @@ pattern 	create_capture_pattern(int direction, int player)
 }
 
 
-// pattern 	create_pair_pattern(int direction, int player)
-// {
-// 	pattern p;
-// 	if (direction == DOWN)
-// 	{
-// 		p.height = 2;
-// 		p.width = 1;
-// 		p.w_bits[flat_coord(0, 0)] = true;
-// 		p.w_bits[flat_coord(1, 0)] = true; 
-// 		p.start_r = 0;
-// 		p.start_c = 0;
-// 		p.end_r = 1;
-// 		p.end_c = 0;
-// 	}
-// 	if (direction == RIGHT)
-// 	{
-// 		p.height = 2;
-// 		p.width = 1;
-// 		p.w_bits[flat_coord(0, 0)] = true;
-// 		p.w_bits[flat_coord(0, 1)] = true; 
-// 		p.start_r = 0;
-// 		p.start_c = 0;
-// 		p.end_r = 0;
-// 		p.end_c = 1;
-// 	}
-// 	if (direction == DOWN_RIGHT)
-// 	{
-// 		p.height = 2;
-// 		p.width = 2;
-// 		p.w_bits[flat_coord(0, 0)] = true;
-// 		p.w_bits[flat_coord(1, 1)] = true;
-// 		p.start_r = 0;
-// 		p.start_c = 0;
-// 		p.end_r = 1;
-// 		p.end_c = 1; 
-// 	}
-// 	if (direction == DOWN_LEFT)
-// 	{
-// 		p.height = 2;
-// 		p.width = 2;
-// 		p.w_bits[flat_coord(0, 1)] = true;
-// 		p.w_bits[flat_coord(1, 0)] = true; 
-// 		p.start_r = 0;
-// 		p.start_c = 1;
-// 		p.end_r = 1;
-// 		p.end_c = 0; 
-// 	}
-// 	if (player == BLACK)
-// 	{
-// 		swap_colors(p);
-// 	}
-// 	p.r_shift = 0;
-// 	p.c_shift = 0;
+pattern 	create_pair_pattern(int direction, int player)
+{
+	pattern p;
+	if (direction == DOWN)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 0)] = true; 
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 1;
+		p.end_c = 0;
+	}
+	if (direction == RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(0, 1)] = true; 
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 0;
+		p.end_c = 1;
+	}
+	if (direction == DOWN_RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 1)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 1;
+		p.end_c = 1; 
+	}
+	if (direction == DOWN_LEFT)
+	{
+		p.w_bits[flat_coord(0, 1)] = true;
+		p.w_bits[flat_coord(1, 0)] = true; 
+		p.start_r = 0;
+		p.start_c = 1;
+		p.end_r = 1;
+		p.end_c = 0; 
+	}
+	p.color = WHITE;
+	if (player == BLACK)
+	{
+		swap_colors(p);
+	}
+	p.r_shift = 0;
+	p.c_shift = 0;
 
-// 	return (p);	
-// }
+	return (p);	
+}
 
 // pattern 	create_victory_pattern(int direction, int player)
 // {
