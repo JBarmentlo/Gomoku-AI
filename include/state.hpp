@@ -3,6 +3,8 @@
 #define STATE_H
 
 #include "defines.hpp"
+#include "pattern.hpp"
+
 #include <set>
 
 class State
@@ -46,10 +48,6 @@ class State
 
 		State				make_baby_from_coord(int coord);
 		std::multiset<State> make_ordered_babies();
-
-		int					compute_black_captures(void);
-		int 				compute_white_captures(void);
-
 
 };
 

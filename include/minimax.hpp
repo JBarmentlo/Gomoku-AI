@@ -2,6 +2,7 @@
 #define MINIMAX_H
 
 #include "defines.hpp"
+#include "pattern.hpp"
 #include "state.hpp"
 #include "eval.hpp"
 

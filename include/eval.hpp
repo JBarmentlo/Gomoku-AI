@@ -2,6 +2,7 @@
 #define EVAL_H
 
 #include "defines.hpp"
+#include "pattern.hpp"
 #include "state.hpp"
 
 int		pair_eval(State &state);

@@ -8,17 +8,17 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 	if (i % 1000000 == 0)
 		std::cout << i << std::endl;
 
-	if (state.find_pattern_around_last_move(create_victory_pattern, (state.player + 1)% 2) != 0)
-	{
-		if (maximizer)
-		{
-			return (INT32_MIN + 2);
-		}
-		else
-		{
-			return (INT32_MAX - 2);
-		}
-	}
+	// if (state.find_pattern_around_last_move(create_victory_pattern, (state.player + 1)% 2) != 0)
+	// {
+	// 	if (maximizer)
+	// 	{
+	// 		return (INT32_MIN + 2);
+	// 	}
+	// 	else
+	// 	{
+	// 		return (INT32_MAX - 2);
+	// 	}
+	// }
 
 	if (depth == limit)
 	{
