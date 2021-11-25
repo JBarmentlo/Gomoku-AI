@@ -27,7 +27,7 @@ bool 		shift_pattern_to(pattern &pat, int row, int col);
 
 
 void 		print_pattern(pattern &pat);
-pattern 	create_capture_pattern(int direction, int player, int variant);
+pattern 	create_capture_pattern(int direction, int player, int variant = 0);
 pattern 	create_pair_pattern(int direction, int player, int variant = 0);
 pattern 	create_triplet_pattern(int direction, int player, int variant = 0);
 pattern 	create_victory_pattern(int direction, int player);

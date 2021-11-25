@@ -203,11 +203,11 @@ int				State::compute_captures(void)
 
 	int last_move_r = this->last_move / BOARD_WIDTH;
 	int last_move_c = this->last_move % BOARD_WIDTH;
-	int last_coord = this->last_move;
+	int last_coord  = this->last_move;
 
 	bitboard& player_board = this->get_player_board();
-	bitboard& enemy_board = this->get_enemy_board();
-	int& player_captures = this->get_player_captures();
+	bitboard& enemy_board  = this->get_enemy_board();
+	int& player_captures   = this->get_player_captures();
 
 	p = create_capture_pattern(RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
@@ -218,7 +218,8 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord + 2, false);
 		score += 1;
 	}
-	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	p = create_capture_pattern(RIGHT, this->player, 3);
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// print_pattern(oldp);
 		// this->score += this->value_coord_fun(*this, last_coord - 1, NEXT_PLAYER(this->player));
@@ -237,7 +238,8 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2, false);
 		score += 1;
 	}
-	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	p = create_capture_pattern(RIGHT, this->player, 3);
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH - 1, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - BOARD_WIDTH - 1)= false;
@@ -255,7 +257,8 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
-	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	p = create_capture_pattern(RIGHT, this->player, 3);
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - BOARD_WIDTH)= false;
@@ -273,7 +276,8 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
-	if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
+	p = create_capture_pattern(RIGHT, this->player, 3);
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - BOARD_WIDTH)= false;
