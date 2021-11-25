@@ -103,3 +103,28 @@
 // 	else
 // 		return (score * PAIR_VALUE);
 // }
+
+
+int		tuples_eval_at_coord(State &state, int coord)
+{
+	/*
+		Evaluates the number of points gained by the piece at coord (can be negative if black wins points) 
+	*/
+
+	int score_delta = 0;
+	int player = state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
+	score_delta += PAIR_VALUE * state.find_pattern_around_last_move(create_pair_pattern, player);
+	score_delta += TRIPLET_VALUE* state.find_pattern_around_last_move(create_triplet_pattern, player);
+	score_delta += QUATOR_VALUE * state.find_pattern_around_last_move(create_quator_pattern, player);
+	// score_delta += 5000000 * state.find_pattern_around_last_move(create_penta_pattern, player);
+
+
+	if (player == BLACK)
+	{
+		return (-score_delta);
+	}
+	else
+	{
+		return (score_delta);
+	}
+}

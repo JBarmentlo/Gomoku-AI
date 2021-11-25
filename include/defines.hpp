@@ -26,7 +26,11 @@
 #define DOWN_LEFT		(DOWN - RIGHT)
 
 #define PAIR_VALUE		2
-#define CAPTURE_VALUE	2
+#define TRIPLET_VALUE	4
+#define QUATOR_VALUE	8
+
+
+#define CAPTURE_VALUE	10
 
 
 

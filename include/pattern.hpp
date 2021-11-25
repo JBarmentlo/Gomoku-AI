@@ -30,6 +30,9 @@ void 		print_pattern(pattern &pat);
 pattern 	create_capture_pattern(int direction, int player, int variant = 0);
 pattern 	create_pair_pattern(int direction, int player, int variant = 0);
 pattern 	create_triplet_pattern(int direction, int player, int variant = 0);
+pattern 	create_quator_pattern(int direction, int player, int variant = 0);
+pattern 	create_penta_pattern(int direction, int player, int variant = 0);
+
 pattern 	create_victory_pattern(int direction, int player);
 
 

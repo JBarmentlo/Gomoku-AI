@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include "defines.hpp"
+#include <iostream>
 
 inline int	flat_coord(int row, int col)
 {
@@ -9,6 +10,14 @@ inline int	flat_coord(int row, int col)
 }
 
 int			get_move_keyboard(void);
+
+inline void		print_player(int player)
+{
+	if (player == BLACK)
+		std::cout << "BLACK";
+	if (player == WHITE)
+		std::cout << "WHITE";
+}
 
 inline bool	is_in_bounds(int row, int col)
 {

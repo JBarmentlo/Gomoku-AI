@@ -68,11 +68,11 @@ void			State::set_piece(int coord)
 
 int				State::get_square(int row, int col)
 {
-	if (this->b_board[row * BOARD_WIDTH + col])
+	if (this->b_board.test(row * BOARD_WIDTH + col))
 	{
 		return  (BLACK);
 	}
-	if (this->w_board[row * BOARD_WIDTH + col])
+	if (this->w_board.test(row * BOARD_WIDTH + col))
 	{
 		return  (WHITE);
 	}
@@ -83,6 +83,13 @@ void			State::print(bool print_empty)
 {
 	std::string symbols[4] = {"O", "X", " ", "-"};
 	int sym;
+
+	if (this->player == BLACK)
+		std::cout << "Next player: BLACK"  << std::endl;
+	else
+		std::cout << "Next player: WHITE"  << std::endl;
+
+	std::cout << "Score: " << this->score << std::endl;
 
 	for (int c = 0; c < BOARD_WIDTH; c++)
 	{
@@ -114,47 +121,6 @@ void			State::print(bool print_empty)
 	}
 	std::cout << std::endl;
 }
-
-// int				State::find_pattern(pattern pat)
-// {
-// 	int last_r = 0;
-// 	int last_c = 0;
-// 	for (int r = 0; r <= BOARD_HEIGHT - pat.height; r++)
-// 	{
-// 		for (int c = 0; c <= BOARD_WIDTH - pat.width; c++)
-// 		{
-// 			shift_pattern(pat, r -  last_r, c - last_c);
-// 			last_r = r;
-// 			last_c = c;
-// 			if (((pat.b_bits & this->b_board) == pat.b_bits) and ((pat.w_bits & this->w_board) == pat.w_bits))
-// 			{
-// 				return (r * BOARD_WIDTH + c);
-// 			}
-// 		}
-// 	}
-// 	return (PATTERN_MISSING);
-// }
-
-// int				State::count_pattern(pattern pat)
-// {
-// 	int last_r = 0;
-// 	int last_c = 0;
-// 	int out    = 0;
-// 	for (int r = 0; r <= BOARD_HEIGHT - pat.height; r++)
-// 	{
-// 		for (int c = 0; c <= BOARD_WIDTH - pat.width; c++)
-// 		{
-// 			shift_pattern(pat, r -  last_r, c - last_c);
-// 			last_r = r;
-// 			last_c = c;
-// 			if (((pat.b_bits & this->b_board) == pat.b_bits) and ((pat.w_bits & this->w_board) == pat.w_bits))
-// 			{
-// 				out = out + 1;
-// 			}
-// 		}
-// 	}
-// 	return (out);
-// }
 
 bitboard&		State::get_player_board(void)
 {
@@ -212,19 +178,18 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord + 1, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + 1);
 		enemy_board.set(last_coord + 1, false);
-		// this->score += this->value_coord_fun(*this, last_coord + 2, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + 2);
 		enemy_board.set(last_coord + 2, false);
 		score += 1;
 	}
 	p = create_capture_pattern(RIGHT, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// print_pattern(oldp);
-		// this->score += this->value_coord_fun(*this, last_coord - 1, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord - 1);
 		enemy_board.set(last_coord - 1, false);
-		// this->score += this->value_coord_fun(*this, last_coord - 2, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord - 2);
 		enemy_board.set(last_coord - 2, false);
 		score += 1;
 	}
@@ -232,18 +197,18 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH + 1, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + BOARD_WIDTH + 1);
 		enemy_board.set(last_coord + BOARD_WIDTH + 1, false);
-		// this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH + 2, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + 2 * BOARD_WIDTH + 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2, false);
 		score += 1;
 	}
 	p = create_capture_pattern(DOWN_RIGHT, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH - 1, NEXT_PLAYER(this->player));
-		enemy_board.set(last_coord - BOARD_WIDTH - 1)= false;
-		// this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH - 2, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord - BOARD_WIDTH - 1);
+		enemy_board.set(last_coord - BOARD_WIDTH - 1, false);
+		this->score += tuples_eval_at_coord(*this, last_coord - 2 * BOARD_WIDTH - 2);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH - 2, false);
 		score += 1;
 	}
@@ -251,18 +216,18 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + BOARD_WIDTH);
 		enemy_board.set(last_coord + BOARD_WIDTH, false);
-		// this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
 	p = create_capture_pattern(DOWN, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, NEXT_PLAYER(this->player));
-		enemy_board.set(last_coord - BOARD_WIDTH)= false;
-		// this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord - BOARD_WIDTH);
+		enemy_board.set(last_coord - BOARD_WIDTH, false);
+		this->score += tuples_eval_at_coord(*this, last_coord - 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
@@ -270,18 +235,18 @@ int				State::compute_captures(void)
 	p = create_capture_pattern(DOWN_LEFT, this->player);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord + BOARD_WIDTH, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + BOARD_WIDTH);
 		enemy_board.set(last_coord + BOARD_WIDTH, false);
-		// this->score += this->value_coord_fun(*this, last_coord + 2 * BOARD_WIDTH, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord + 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
 	p = create_capture_pattern(DOWN_LEFT, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
-		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH, NEXT_PLAYER(this->player));
-		enemy_board.set(last_coord - BOARD_WIDTH)= false;
-		// this->score += this->value_coord_fun(*this, last_coord - 2 * BOARD_WIDTH, NEXT_PLAYER(this->player));
+		this->score += tuples_eval_at_coord(*this, last_coord - BOARD_WIDTH);
+		enemy_board.set(last_coord - BOARD_WIDTH, false);
+		this->score += tuples_eval_at_coord(*this, last_coord - 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
@@ -292,28 +257,34 @@ int				State::compute_captures(void)
 	return (score);
 }
 
-// int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
-// {
-// 	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
-// 	int score = 0;
-// 	pattern p;
-// 	int last_move_r = this->last_move / BOARD_WIDTH;
-// 	int last_move_c = this->last_move % BOARD_WIDTH;
+int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
+{
+	// ! UNTESTED !!
+	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
+	int score = 0;
+	pattern p;
+	int last_move_r = this->last_move / BOARD_WIDTH;
+	int last_move_c = this->last_move % BOARD_WIDTH;
 
-// 	for (int dir : directions)
-// 	{
-// 		p = gen(dir, player);
-// 		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
-// 		{
-// 			score += 1;
-// 		}
-// 		if (shift_pattern_to_other_end(p, last_move_r, last_move_c) and (*this == p))
-// 		{
-// 			score += 1;
-// 		}
-// 	}
-// 	return (score);
-// }
+	for (int dir : directions)
+	{
+		p = gen(dir, player, 0);
+		// print_pattern(p);
+		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
+		{
+			score += 1;
+		}
+		for (int variant = 1; variant < p.size; variant++)
+		{
+			p = gen(dir, player, variant);
+			if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
+			{
+				score += 1;
+			}
+		}
+	}
+	return (score);
+}
 
 inline bool 	State::operator==(const pattern& rhs) const
 {
@@ -342,30 +313,35 @@ State			State::make_baby_from_coord(int coord)
 	State s = *this;
 	// std::cout << "Set piece: " << coord << std::endl;
 	s.set_piece(coord);
+
 	// std::cout << "Captures" << std::endl;
 	s.compute_captures();
+
 	// std::cout << "Update eval" << std::endl;
-	// update_pair_eval(s);
+	if (s.is_win())
+	{
+		s.game_win = true;
+	}
+	else
+	{
+		s.score += tuples_eval_at_coord(s, s.last_move);
+	}
 	// std::cout << "Player and live board" << std::endl;
-	s.player = (s.player + 1) % 2;
-	// std::cout << "player is: " << s.player << std::endl;
-	// s.update_live_board();
+	s.player = NEXT_PLAYER(this->player);
+	s.update_live_board();
+
 	// std::cout << "baby done" << std::endl;
 	// std::cout  << std::endl;
 	return (s);
 }
-#include <set>
 
-std::multiset<State> State::make_ordered_babies()
+bool				State::is_win(void)
 {
-	std::multiset<State> out;
+	if (this->b_captures == 5 or this->w_captures == 5)
+		return true;
+	if (this->find_pattern_around_last_move(create_penta_pattern, this->player) != 0)
+		return true;
 
-	for (int coord = 0; coord < BOARD_SIZE; coord++)
-	{
-		if (this->live_board[coord])
-		{
-			out.insert(this->make_baby_from_coord(coord));
-		}
-	}
-	return out;
+	return false;
 }
+

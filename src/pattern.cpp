@@ -153,14 +153,6 @@ void 		swap_colors(pattern &pat)
 		out = out | EMPTY;
 
 	pat.color = out;
-	// if ((pat.color & WHITE) and ~(pat.color & BLACK))
-	// {
-	// 	pat.color = pat.color & (~WHITE) | BLACK;
-	// }
-	// else if ((pat.color & BLACK) and ~(pat.color & WHITE))
-	// {
-	// 	pat.color = pat.color & (~BLACK) | WHITE;
-	// }
 }
 
 
@@ -332,6 +324,140 @@ pattern 	create_triplet_pattern(int direction, int player, int variant)
 	}
 	p.color = WHITE;
 	p.size = 3;
+	if (player == BLACK)
+	{
+		swap_colors(p);
+	}
+	p.r_shift	= (variant * direction) / BOARD_WIDTH;
+	p.c_shift	= (variant * direction) % BOARD_WIDTH;
+	p.start_r  -= (variant * direction) / BOARD_WIDTH;
+	p.start_c  -= (variant * direction) % BOARD_WIDTH;
+	p.end_r    -= (variant * direction) / BOARD_WIDTH;
+	p.end_c    -= (variant * direction) % BOARD_WIDTH;
+	return (p);	
+}
+
+
+pattern 	create_quator_pattern(int direction, int player, int variant)
+{
+	pattern p;
+	p.direction = direction;
+	if (direction == DOWN)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 0)] = true;
+		p.w_bits[flat_coord(2, 0)] = true;
+		p.w_bits[flat_coord(3, 0)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 3;
+		p.end_c = 0;
+	}
+	if (direction == RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(0, 1)] = true; 
+		p.w_bits[flat_coord(0, 2)] = true; 
+		p.w_bits[flat_coord(0, 3)] = true; 
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 0;
+		p.end_c = 3;
+	}
+	if (direction == DOWN_RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 1)] = true;
+		p.w_bits[flat_coord(2, 2)] = true;
+		p.w_bits[flat_coord(3, 3)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 3;
+		p.end_c = 3; 
+	}
+	if (direction == DOWN_LEFT)
+	{
+		p.w_bits[flat_coord(0, 3)] = true;
+		p.w_bits[flat_coord(1, 2)] = true; 
+		p.w_bits[flat_coord(2, 1)] = true; 
+		p.w_bits[flat_coord(3, 0)] = true; 
+
+		p.start_r = 0;
+		p.start_c = 3;
+		p.end_r = 3;
+		p.end_c = 0; 
+	}
+	p.color = WHITE;
+	p.size = 4;
+	if (player == BLACK)
+	{
+		swap_colors(p);
+	}
+	p.r_shift	= (variant * direction) / BOARD_WIDTH;
+	p.c_shift	= (variant * direction) % BOARD_WIDTH;
+	p.start_r  -= (variant * direction) / BOARD_WIDTH;
+	p.start_c  -= (variant * direction) % BOARD_WIDTH;
+	p.end_r    -= (variant * direction) / BOARD_WIDTH;
+	p.end_c    -= (variant * direction) % BOARD_WIDTH;
+	return (p);	
+}
+
+pattern 	create_penta_pattern(int direction, int player, int variant)
+{
+	pattern p;
+	p.direction = direction;
+	if (direction == DOWN)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 0)] = true;
+		p.w_bits[flat_coord(2, 0)] = true;
+		p.w_bits[flat_coord(3, 0)] = true;
+		p.w_bits[flat_coord(4, 0)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 4;
+		p.end_c = 0;
+	}
+	if (direction == RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(0, 1)] = true; 
+		p.w_bits[flat_coord(0, 2)] = true; 
+		p.w_bits[flat_coord(0, 3)] = true; 
+		p.w_bits[flat_coord(0, 4)] = true; 
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 0;
+		p.end_c = 4;
+	}
+	if (direction == DOWN_RIGHT)
+	{
+		p.w_bits[flat_coord(0, 0)] = true;
+		p.w_bits[flat_coord(1, 1)] = true;
+		p.w_bits[flat_coord(2, 2)] = true;
+		p.w_bits[flat_coord(3, 3)] = true;
+		p.w_bits[flat_coord(4, 4)] = true;
+		p.start_r = 0;
+		p.start_c = 0;
+		p.end_r = 4;
+		p.end_c = 4; 
+	}
+	if (direction == DOWN_LEFT)
+	{
+		p.w_bits[flat_coord(0, 4)] = true;
+		p.w_bits[flat_coord(1, 3)] = true; 
+		p.w_bits[flat_coord(2, 2)] = true; 
+		p.w_bits[flat_coord(3, 1)] = true; 
+		p.w_bits[flat_coord(4, 0)] = true; 
+
+
+		p.start_r = 0;
+		p.start_c = 4;
+		p.end_r = 4;
+		p.end_c = 0; 
+	}
+	p.color = WHITE;
+	p.size = 5;
 	if (player == BLACK)
 	{
 		swap_colors(p);

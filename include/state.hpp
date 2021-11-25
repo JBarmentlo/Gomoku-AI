@@ -15,27 +15,26 @@ class State
 		bitboard 	b_board;
 		bitboard 	w_board;
 		bitboard	live_board;
-		int			w_captures = 0;
 		int			last_move;
 
 		int			player = WHITE;
+		int			w_captures = 0;
 		int			b_captures = 0;
 		int			score = 0;
+		bool 		game_win = false;
 
-		int			(*value_coord_fun)(State&, int, int);
+		int 		(*coord_evaluation_function)(State&, int coord);
 		State(/* args */);
 		~State();
 
 		void				set_piece(int row, int col);
 		void				set_piece(int coord);
-		void				update_live_board(void);
-		// bool				DOUBLE_THREE				
-		int					compute_captures(void);
-		void				print(bool print_empty = false);
 		int					get_square(int row, int col);
-		int					find_pattern(pattern pat);
+		void				print(bool print_empty = false);
+
+		void				update_live_board(void);
+		int					compute_captures(void);
 		int					find_pattern_around_last_move(pattern_generator gen, int player) const;
-		int					count_pattern(pattern pat);
 
 		bitboard&			get_player_board(void);
 		bitboard&			get_enemy_board(void);
@@ -45,6 +44,7 @@ class State
 		bool				contains(pattern& pat) const;
 		inline bool 		operator==(const pattern& rhs) const;
 		inline bool 		operator<(const State& rhs) const;
+		bool				is_win(void);
 
 		State				make_baby_from_coord(int coord);
 		std::multiset<State> make_ordered_babies();

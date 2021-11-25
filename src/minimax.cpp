@@ -5,21 +5,19 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 {
 	static int i = 0;
 	i += 1;
-	if (i % 1000000 == 0)
+	if (i % int(1e5) == 0)
 		std::cout << i << std::endl;
 
-	// if (state.find_pattern_around_last_move(create_victory_pattern, (state.player + 1)% 2) != 0)
-	// {
-	// 	if (maximizer)
-	// 	{
-	// 		return (INT32_MIN + 2);
-	// 	}
-	// 	else
-	// 	{
-	// 		return (INT32_MAX - 2);
-	// 	}
-	// }
-
+	if (state.game_win)
+	{
+		if (maximizer)
+			return (INT32_MIN + 1);
+		else
+			return (INT32_MAX - 1);
+	}
+	// std::cout << std::endl;
+	// std::cout << "IN MINIMAX: " << depth << std::endl;
+	// state.print(true);
 	if (depth == limit)
 	{
 		return (state.score);
@@ -34,7 +32,9 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 		{
 			if (state.live_board.test(c))
 			{
+				// std::cout << "move: " << c << std::endl;
 				eval = minimax(state.make_baby_from_coord(c), !maximizer, limit, depth + 1, alpha, beta);
+				// std::cout << "done " << c << std::endl;
 				if (eval > maxEval)
 				{
 					best_move = c;
@@ -67,6 +67,7 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 				eval = minimax(state.make_baby_from_coord(c), !maximizer, limit, depth + 1, alpha, beta);
 				if (eval < minEval)
 				{
+					// std::cout << "mover: " << c << std::endl;
 					minEval = eval;
 					best_move = c;
 				}
