@@ -71,46 +71,48 @@ int main()
 	// s = s.make_baby_from_coord(flat_coord(0, 0));
 	// s = s.make_baby_from_coord(flat_coord(2, 2));
 	// s = s.make_baby_from_coord(flat_coord(3, 3));
-	// s.print();
+	// // s.print();
 	// s.player = NEXT_PLAYER(s.player);
 	// s.compute_captures();
-
-	pattern p = create_capture_pattern(DOWN, WHITE);
-	print_pattern(p);
-	swap_colors(p);
-	print_pattern(p);
-
-	// s = s.make_baby_from_coord(flat_coord(9, 9));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(10, 10));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(11, 11));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(12, 12));
-	// s = s.make_baby_from_coord(flat_coord(13, 13));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(14, 14));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(15, 15));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(16, 16));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(17, 17));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(18, 18));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(18, 17));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(18, 16));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(18, 1));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(18, 15));
-	// std::cout << "/* message */" << std::endl;
-	// s = s.make_baby_from_coord(flat_coord(18, 14));
-	// s = s.make_baby_from_coord(flat_coord(18, 18));
-
 	// s.print();
+
+
+	// pattern p = create_capture_pattern(DOWN, WHITE);
+	// print_pattern(p);
+	// swap_colors(p);
+	// print_pattern(p);
+
+	s = s.make_baby_from_coord(flat_coord(9, 9));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(10, 10));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(11, 11));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(12, 12));
+	s = s.make_baby_from_coord(flat_coord(13, 13));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(14, 14));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(15, 15));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(16, 16));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(17, 17));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(18, 18));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(18, 17));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(18, 16));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(18, 1));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(18, 15));
+	std::cout << "/* message */" << std::endl;
+	s = s.make_baby_from_coord(flat_coord(18, 14));
+	s = s.make_baby_from_coord(flat_coord(18, 18));
+
+	s.print();
 
 
 	// play_game(5, true, true);
@@ -134,14 +136,15 @@ int main()
 	// 	}
 	// }
 
-	// for (int i = 0; i < 15000000; i++)
-	// {
-	// 	pattern c = create_pair_pattern(DOWN, i % 2);
-	// 	shift_pattern_to(c, i / 19, i % 19);
-	// 	// std::bitset<10> b1("1111010000");
+	// * 1500000 iteration should take about 0.4 s 
+	for (int i = 0; i < 1500000; i++)
+	{
+		// pattern c = create_pair_pattern(DOWN, i % 2);
+		// shift_pattern_to(c, i / 19, i % 19);
+		// std::bitset<10> b1("1111010000");
 
-	// 	// s.make_baby_from_coord(i % BOARD_SIZE);
-	// 	// if (i % BOARD_SIZE == 0)
-	// 		// s = State();
-	// }
+		s.make_baby_from_coord(i % BOARD_SIZE);
+		if (i % BOARD_SIZE == 0)
+			s = State();
+	}
 }

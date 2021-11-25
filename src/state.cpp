@@ -239,9 +239,7 @@ int				State::compute_captures(void)
 		score += 1;
 	}
 	p = create_capture_pattern(DOWN_RIGHT, this->player, 3);
-	shift_pattern_to(p, last_move_r, last_move_c);
-	print_pattern(p);
-	if ((*this == p))
+	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
 	{
 		// this->score += this->value_coord_fun(*this, last_coord - BOARD_WIDTH - 1, NEXT_PLAYER(this->player));
 		enemy_board.set(last_coord - BOARD_WIDTH - 1)= false;
@@ -319,7 +317,9 @@ int				State::compute_captures(void)
 
 inline bool 	State::operator==(const pattern& rhs) const
 {
-	return (((this->w_board & rhs.w_bits) == rhs.w_bits) and ((this->b_board & rhs.b_bits) == rhs.b_bits));
+	return (((not rhs.color & WHITE) or ((this->w_board & rhs.w_bits) == rhs.w_bits)) 
+		and ((not rhs.color & BLACK) or ((this->b_board & rhs.b_bits) == rhs.b_bits))) 
+		and ((not rhs.color & EMPTY) or ((this->b_board | this->w_board) & rhs.e_bits).count() == 0);
 }
 
 inline bool 	State::operator<(const State& rhs) const
@@ -343,7 +343,7 @@ State			State::make_baby_from_coord(int coord)
 	// std::cout << "Set piece: " << coord << std::endl;
 	s.set_piece(coord);
 	// std::cout << "Captures" << std::endl;
-	// s.compute_captures();
+	s.compute_captures();
 	// std::cout << "Update eval" << std::endl;
 	// update_pair_eval(s);
 	// std::cout << "Player and live board" << std::endl;
