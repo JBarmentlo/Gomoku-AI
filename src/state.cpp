@@ -250,12 +250,10 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
-	std::cout << "pre: " << this->score << std::endl;
 	if (player == WHITE)
 		this->score += score * CAPTURE_VALUE * 2;
 	else
 		this->score -= score * CAPTURE_VALUE * 2;
-	std::cout << "post: " << this->score << std::endl;
 	return (score);
 }
 

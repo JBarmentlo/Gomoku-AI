@@ -132,10 +132,7 @@
 inline int	count_full_then_empty(State &state, int row, int col, int r_delta, int c_delta, int player)
 {
 	int square;
-	int score				= 0;
 	int	count				= 1;
-	int	count_empty_up		= 0;
-	int	count_empty_down	= 0;
 
 	for (int delta = 1; delta <= 5; delta++)
 	{
@@ -148,12 +145,9 @@ inline int	count_full_then_empty(State &state, int row, int col, int r_delta, in
 			break;
 		
 		if (square == EMPTY)
-			count_empty_up += 1;
+			break;
 
-		if (count_empty_up == 0)
-		{
-			count += 1;
-		}
+		count += 1;
 	}
 
 	for (int delta = 1; delta <= 5; delta++)
@@ -167,21 +161,13 @@ inline int	count_full_then_empty(State &state, int row, int col, int r_delta, in
 			break;
 		
 		if (square == EMPTY)
-			count_empty_down += 1;
+			break;
 
-		if (count_empty_down == 0)
-		{
-			count += 1;
-		}
+		count += 1;
 	}
-	if (count + count_empty_up >= 5)
-		score += 1;
-	if (count + count_empty_down >= 5)
-		score += 1;
-	if (count + count_empty_down + count_empty_up >= 5)
-		score += 2;
-	
-	return (score << (2 * count));
+	if (count = 1)
+		return (0);
+	return (1 << count);
 }
 
 int		tuples_eval_at_coord(State &state, int coord)
@@ -192,6 +178,8 @@ int		tuples_eval_at_coord(State &state, int coord)
 
 	// * does not take into account score lost because of empty squares being filled 
 	int player 		= state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
+	if (player == EMPTY)
+		return 0;
 	int score		= 0;
 	
 	int	row = state.last_move / BOARD_WIDTH;

@@ -30,7 +30,7 @@
 #define QUATOR_VALUE	8
 
 
-#define CAPTURE_VALUE	128
+#define CAPTURE_VALUE	20
 
 
 

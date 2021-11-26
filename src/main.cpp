@@ -9,6 +9,11 @@
 
 #include "minimax.hpp"
 
+#include <chrono>
+
+// typedef std::chrono::steady_clock::time_point timepoint;
+
+
 void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 {
 	State s;
@@ -32,7 +37,11 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 			std::cout << "White to play" << std::endl;
 			if (cpu1)
 			{
-				move = minimax(s, true, depth);
+				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+				move = minimax(s, depth);
+				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 10000 <<  "s" << std::endl;
+
 			}
 			else
 			{
@@ -49,7 +58,10 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 			std::cout << "Black to play" << std::endl;
 			if (cpu2)
 			{
-				move = minimax(s, false, depth);
+				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+				move = minimax(s, depth);
+				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 10000 <<  "s" << std::endl;
 			}
 			else
 			{
@@ -80,7 +92,7 @@ int main()
 {
 	State s;
 	// std::cout << (1 << 2) << std::endl;
-	play_game(7, false, false, 3);
+	play_game(5, true, true, 20);
 	// s.coord_evaluation_function = tuples_eval_at_coord;
 	// s = s.make_baby_from_coord(flat_coord(9, 9));
 	// s = s.make_baby_from_coord(flat_coord(8, 8));

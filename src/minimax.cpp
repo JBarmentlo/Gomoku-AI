@@ -12,13 +12,19 @@ bool compare_score(const State& s1, const State& s2)
 	return (s1.score > s2.score);
 }
 
-int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int beta)
+bool compare_score_reverse(const State& s1, const State& s2)
+{
+	return (s1.score < s2.score);
+}
+
+int	minimax(State state, int limit, int depth, int alpha, int beta)
 {
 	static int i = 0;
 	i += 1;
 	// if (i % int(1e5) == 0)
 		// std::cout << i;
 
+	bool  maximizer = (state.player == BLACK);
 	if (state.game_win)
 	{
 		if (maximizer)
@@ -26,18 +32,15 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 		else
 			return (INT32_MAX - 1);
 	}
-	// std::cout << std::endl;
-	// std::cout << "IN MINIMAX: " << depth << std::endl;
-	// state.print(true);
 	if (depth == limit)
-	{
 		return (state.score);
-	}
 
 	int eval;
 	int best_move = -12;
+
 	// std::vector<State> babies;
-	std::array<State, 150> babies;
+	// std::array<State, 150> babies;
+	State babies[100];
 	int counter = 0;
 
 	if (maximizer)
@@ -49,15 +52,17 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 			{
 				babies[counter] = state.make_baby_from_coord(c);
 				counter += 1;
+				if (counter == 100)
+					break;
 			}
-			std::sort(babies.begin(), babies.begin() + counter, compare_score); // ! FUMEUX AS FUCK UNTESTED
+			std::sort(babies, babies + counter, compare_score);
 		}
-		for(std::array<State, 100>::iterator it = babies.begin(); it != (babies.begin() + counter); ++it)
+		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(*it, !maximizer, limit, depth + 1, alpha, beta);
+			eval = minimax(babies[i], limit, depth + 1, alpha, beta);
 			if (eval > maxEval)
 			{
-				best_move = it->last_move;
+				best_move = babies[i].last_move;
 				maxEval = eval;
 			}
 			alpha = std::max(alpha, eval);
@@ -78,15 +83,18 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 			{
 				babies[counter] = state.make_baby_from_coord(c);
 				counter += 1;
+				if (counter == 100)
+					break;
 			}
-			std::sort(babies.begin(), babies.begin() + counter, compare_score); // ! FUMEUX AS FUCK UNTESTED
+			std::sort(babies, babies + counter, compare_score_reverse); 
+
 		}
-		for(std::array<State, 100>::iterator it = babies.begin(); it != babies.begin() + counter; ++it)
+		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(*it, !maximizer, limit, depth + 1, alpha, beta);
+			eval = minimax(babies[i], limit, depth + 1, alpha, beta);
 			if (eval < minEval)
 			{
-				best_move = it->last_move;
+				best_move = babies[i].last_move;
 				minEval = eval;
 			}
 			beta = std::min(beta, eval);
