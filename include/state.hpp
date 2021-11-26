@@ -29,12 +29,12 @@ class State
 
 		void				set_piece(int row, int col);
 		void				set_piece(int coord);
-		int					get_square(int row, int col);
+		int					get_square(int row, int col) const;
 		void				print(bool print_empty = false);
 
 		void				update_live_board(void);
 		int					compute_captures(void);
-		int					find_pattern_around_last_move(pattern_generator gen, int player) const;
+		// int					find_pattern_around_last_move(pattern_generator gen, int player) const;
 
 		bitboard&			get_player_board(void);
 		bitboard&			get_enemy_board(void);
@@ -45,6 +45,8 @@ class State
 		inline bool 		operator==(const pattern& rhs) const;
 		inline bool 		operator<(const State& rhs) const;
 		bool				is_win(void);
+		bool				count_to_5(int row, int col, int r_delta, int c_delta);
+
 
 		State				make_baby_from_coord(int coord);
 		std::multiset<State> make_ordered_babies();

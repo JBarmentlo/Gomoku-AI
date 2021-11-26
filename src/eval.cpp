@@ -105,26 +105,108 @@
 // }
 
 
+// int		tuples_eval_at_coord_old(State &state, int coord)
+// {
+// 	/*
+// 		Evaluates the number of points gained by the piece at coord (can be negative if black wins points) 
+// 	*/
+
+// 	int score_delta = 0;
+// 	int player = state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
+// 	score_delta += PAIR_VALUE * state.find_pattern_around_last_move(create_pair_pattern, player);
+// 	score_delta += TRIPLET_VALUE* state.find_pattern_around_last_move(create_triplet_pattern, player);
+// 	score_delta += QUATOR_VALUE * state.find_pattern_around_last_move(create_quator_pattern, player);
+// 	// score_delta += 5000000 * state.find_pattern_around_last_move(create_penta_pattern, player);
+
+
+// 	if (player == BLACK)
+// 	{
+// 		return (-score_delta);
+// 	}
+// 	else
+// 	{
+// 		return (score_delta);
+// 	}
+// }
+
+inline int	count_full_then_empty(State &state, int row, int col, int r_delta, int c_delta, int player)
+{
+	int square;
+	int score				= 0;
+	int	count				= 1;
+	int	count_empty_up		= 0;
+	int	count_empty_down	= 0;
+
+	for (int delta = 1; delta <= 5; delta++)
+	{
+		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
+			break;
+
+		square = state.get_square(row + delta * r_delta, col + delta * c_delta);
+
+		if (square == NEXT_PLAYER(player))
+			break;
+		
+		if (square == EMPTY)
+			count_empty_up += 1;
+
+		if (count_empty_up == 0)
+		{
+			count += 1;
+		}
+	}
+
+	for (int delta = 1; delta <= 5; delta++)
+	{
+		if (not is_in_bounds(row - delta * r_delta, col - delta * c_delta))
+			break;
+
+		square = state.get_square(row - delta * r_delta, col - delta * c_delta);
+
+		if (square == NEXT_PLAYER(player))
+			break;
+		
+		if (square == EMPTY)
+			count_empty_down += 1;
+
+		if (count_empty_down == 0)
+		{
+			count += 1;
+		}
+	}
+	if (count + count_empty_up >= 5)
+		score += 1;
+	if (count + count_empty_down >= 5)
+		score += 1;
+	if (count + count_empty_down + count_empty_up >= 5)
+		score += 2;
+	
+	return (score << (2 * count));
+}
+
 int		tuples_eval_at_coord(State &state, int coord)
 {
 	/*
 		Evaluates the number of points gained by the piece at coord (can be negative if black wins points) 
 	*/
 
-	int score_delta = 0;
-	int player = state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
-	score_delta += PAIR_VALUE * state.find_pattern_around_last_move(create_pair_pattern, player);
-	score_delta += TRIPLET_VALUE* state.find_pattern_around_last_move(create_triplet_pattern, player);
-	score_delta += QUATOR_VALUE * state.find_pattern_around_last_move(create_quator_pattern, player);
-	// score_delta += 5000000 * state.find_pattern_around_last_move(create_penta_pattern, player);
+	int player 		= state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
+	int score		= 0;
+	
+	int	row = state.last_move / BOARD_WIDTH;
+	int	col = state.last_move % BOARD_WIDTH;
 
+	score += count_full_then_empty(state, row, col, 0, 1, player);
+	score += count_full_then_empty(state, row, col, 1, 0, player);
+	score += count_full_then_empty(state, row, col, 1, 1, player);
+	score += count_full_then_empty(state, row, col, 1, -1, player);
 
 	if (player == BLACK)
 	{
-		return (-score_delta);
+		return (-score);
 	}
 	else
 	{
-		return (score_delta);
+		return (score);
 	}
 }

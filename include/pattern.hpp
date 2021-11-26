@@ -16,6 +16,8 @@ typedef struct	s_pattern{
 	int			end_r;
 	int			end_c;
 	int			direction;
+	int			c_delta;
+	int			r_delta;
 	int			size;
 }				pattern;
 

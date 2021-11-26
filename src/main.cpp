@@ -70,22 +70,32 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 int main()
 {
 	State s;
-	play_game(5, false, false, 10);
+	// std::cout << (1 << 2) << std::endl;
+	play_game(5, true, true, 15);
 	// s.coord_evaluation_function = tuples_eval_at_coord;
-	// s = s.make_baby_from_coord(flat_coord(2, 2));
-	// s = s.make_baby_from_coord(flat_coord(0, 0));
-	// s = s.make_baby_from_coord(flat_coord(3, 3));
-	// s = s.make_baby_from_coord(flat_coord(0, 1));
-	// s = s.make_baby_from_coord(flat_coord(1, 1));
+	// s = s.make_baby_from_coord(flat_coord(9, 9));
+	// s = s.make_baby_from_coord(flat_coord(8, 8));
+	// s = s.make_baby_from_coord(flat_coord(9, 8));
+	// s = s.make_baby_from_coord(flat_coord(8, 7));
+	// s = s.make_baby_from_coord(flat_coord(9, 7));
 
-	// s = s.make_baby_from_coord(flat_coord(1, 5));
-	// s = s.make_baby_from_coord(flat_coord(4, 4));
+	// s = s.make_baby_from_coord(flat_coord(9, 6));
+	// s = s.make_baby_from_coord(flat_coord(7, 8));
 
-	// s = s.make_baby_from_coord(flat_coord(1, 6));
-	// s = s.make_baby_from_coord(flat_coord(5, 5));
+	// s = s.make_baby_from_coord(flat_coord(8, 9));
+	// s = s.make_baby_from_coord(flat_coord(10, 5));
 
 
 	// s.print();
+	// pattern p = create_capture_pattern(DOWN_LEFT, WHITE, 1);
+
+	// print_pattern(p);
+	// if (p.color & BLACK != 0)
+		// std::cout << "color: " <<  (p.color & BLACK) << std::endl;
+	// std::cout << "shift: " << shift_pattern_to(p, 1, 2) << std::endl;
+	// p.w_bits = p.w_bits << 19;
+	// p.b_bits = p.b_bits << 19;
+	// print_pattern(p);
 	// s.player = NEXT_PLAYER(s.player);
 	// std::cout << s.is_win() << std::endl;
 	// s.player = NEXT_PLAYER(s.player);
@@ -137,6 +147,8 @@ int main()
 	// TODO checck negative offset pattern
 
 	// pattern p = create_pair_pattern(DOWN, WHITE, 1);
+	// pattern p = create_capture_pattern(DOWN_LEFT, WHITE, 0);
+
 	// // swap_colors(c);
 	// // print_pattern(c);
 	// // std::cout << c.color << std::endl;
@@ -145,6 +157,7 @@ int main()
 	// {
 	// 	for (int c = 0; c < 19; c++)
 	// 	{
+	// 		pattern p = create_capture_pattern(DOWN_LEFT, WHITE, 3);
 	// 		std::cout << "r: " << r << ",c: " << c << std::endl;
 	// 		if (shift_pattern_to(p, r, c))
 	// 			print_pattern(p);

@@ -5,8 +5,8 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 {
 	static int i = 0;
 	i += 1;
-	if (i % int(1e5) == 0)
-		std::cout << i << std::endl;
+	// if (i % int(1e5) == 0)
+		// std::cout << i;
 
 	if (state.game_win)
 	{

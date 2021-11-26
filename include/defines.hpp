@@ -23,14 +23,14 @@
 // #define UP_RIGHT		(UP | RIGHT)
 // #define UP_LEFT			(UP | LEFT)
 #define DOWN_RIGHT		(DOWN + RIGHT)
-#define DOWN_LEFT		(DOWN - RIGHT)
+#define DOWN_LEFT		(-(DOWN - RIGHT))
 
 #define PAIR_VALUE		2
 #define TRIPLET_VALUE	4
 #define QUATOR_VALUE	8
 
 
-#define CAPTURE_VALUE	10
+#define CAPTURE_VALUE	20
 
 
 

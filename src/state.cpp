@@ -66,7 +66,7 @@ void			State::set_piece(int coord)
 	this->last_move = coord;
 }
 
-int				State::get_square(int row, int col)
+int				State::get_square(int row, int col) const
 {
 	if (this->b_board.test(row * BOARD_WIDTH + col))
 	{
@@ -257,34 +257,34 @@ int				State::compute_captures(void)
 	return (score);
 }
 
-int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
-{
-	// ! UNTESTED !!
-	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
-	int score = 0;
-	pattern p;
-	int last_move_r = this->last_move / BOARD_WIDTH;
-	int last_move_c = this->last_move % BOARD_WIDTH;
+// int				State::find_pattern_around_last_move(pattern_generator gen, int player) const
+// {
+// 	// ! UNTESTED !!
+// 	int directions[4] = {DOWN, RIGHT, DOWN_RIGHT, DOWN_LEFT};
+// 	int score = 0;
+// 	pattern p;
+// 	int last_move_r = this->last_move / BOARD_WIDTH;
+// 	int last_move_c = this->last_move % BOARD_WIDTH;
 
-	for (int dir : directions)
-	{
-		p = gen(dir, player, 0);
-		// print_pattern(p);
-		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
-		{
-			score += 1;
-		}
-		for (int variant = 1; variant < p.size; variant++)
-		{
-			p = gen(dir, player, variant);
-			if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
-			{
-				score += 1;
-			}
-		}
-	}
-	return (score);
-}
+// 	for (int dir : directions)
+// 	{
+// 		p = gen(dir, player, 0);
+// 		// print_pattern(p);
+// 		if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
+// 		{
+// 			score += 1;
+// 		}
+// 		for (int variant = 1; variant < p.size; variant++)
+// 		{
+// 			p = gen(dir, player, variant);
+// 			if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
+// 			{
+// 				score += 1;
+// 			}
+// 		}
+// 	}
+// 	return (score);
+// }
 
 inline bool 	State::operator==(const pattern& rhs) const
 {
@@ -335,11 +335,50 @@ State			State::make_baby_from_coord(int coord)
 	return (s);
 }
 
-bool				State::is_win(void)
+bool	State::count_to_5(int row, int col, int r_delta, int c_delta)
+{
+	int square;
+	int score				= 0;
+	int	count				= 1;
+
+	for (int delta = 1; delta <= 5; delta++)
+	{
+		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
+			break;
+
+		square = this->get_square(row + delta * r_delta, col + delta * c_delta);
+
+		if (square == NEXT_PLAYER(this->player) or square == EMPTY)
+			break;
+
+		count += 1;
+	}
+
+	for (int delta = 1; delta <= 5; delta++)
+	{
+		if (not is_in_bounds(row - delta * r_delta, col - delta * c_delta))
+			break;
+
+		square = this->get_square(row - delta * r_delta, col - delta * c_delta);
+
+		if (square == NEXT_PLAYER(this->player) or square == EMPTY)
+			break;
+			
+		count += 1;
+	}	
+	return (count >= 5);
+}
+
+
+
+bool			State::is_win(void)
 {
 	if (this->b_captures == 5 or this->w_captures == 5)
 		return true;
-	if (this->find_pattern_around_last_move(create_penta_pattern, this->player) != 0)
+	const int row = this->last_move / BOARD_WIDTH;
+	const int col = this->last_move % BOARD_WIDTH;
+
+	if (count_to_5(row, col, 0, 1) or count_to_5(row, col, 1, 0) or count_to_5(row, col, 1, 1) or count_to_5(row, col, 1, -1))
 		return true;
 
 	return false;
