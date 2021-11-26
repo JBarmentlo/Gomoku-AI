@@ -1,6 +1,17 @@
 #include "minimax.hpp"
 #include "utils.hpp"
 #include <iostream>
+
+#include <vector>
+#include <array>
+
+#include <algorithm>
+
+bool compare_score(const State& s1, const State& s2)
+{
+	return (s1.score > s2.score);
+}
+
 int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int beta)
 {
 	static int i = 0;
@@ -25,6 +36,10 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 
 	int eval;
 	int best_move = -12;
+	// std::vector<State> babies;
+	std::array<State, 150> babies;
+	int counter = 0;
+
 	if (maximizer)
 	{
 		int maxEval = -INT32_MAX;
@@ -32,60 +47,56 @@ int	minimax(State state, bool maximizer, int limit, int depth, int alpha, int be
 		{
 			if (state.live_board.test(c))
 			{
-				// std::cout << "move: " << c << std::endl;
-				eval = minimax(state.make_baby_from_coord(c), !maximizer, limit, depth + 1, alpha, beta);
-				// std::cout << "done " << c << std::endl;
-				if (eval > maxEval)
-				{
-					best_move = c;
-					maxEval = eval;
-				}
-				alpha = std::max(alpha, eval);
-				if (beta <= alpha)
-				{
-					break;
-				}
+				babies[counter] = state.make_baby_from_coord(c);
+				counter += 1;
 			}
+			std::sort(babies.begin(), babies.begin() + counter, compare_score); // ! FUMEUX AS FUCK UNTESTED
+		}
+		for(std::array<State, 100>::iterator it = babies.begin(); it != (babies.begin() + counter); ++it)
+		{
+			eval = minimax(*it, !maximizer, limit, depth + 1, alpha, beta);
+			if (eval > maxEval)
+			{
+				best_move = it->last_move;
+				maxEval = eval;
+			}
+			alpha = std::max(alpha, eval);
+			if (beta <= alpha)
+				break;
 		}
 		if (depth == 0)
-		{
 			return best_move;
-		}
 		else
-		{
 			return (maxEval);
-		}
 	}
 	else
 	{
 		int minEval = INT32_MAX;
-
 		for (int c = 0; c < BOARD_SIZE; c++)
 		{
-			if (state.live_board[c])
+			if (state.live_board.test(c))
 			{
-				eval = minimax(state.make_baby_from_coord(c), !maximizer, limit, depth + 1, alpha, beta);
-				if (eval < minEval)
-				{
-					// std::cout << "mover: " << c << std::endl;
-					minEval = eval;
-					best_move = c;
-				}
-				beta = std::min(beta, eval);
-				if (beta <= alpha)
-				{
-					break;
-				}
+				babies[counter] = state.make_baby_from_coord(c);
+				counter += 1;
 			}
+			std::sort(babies.begin(), babies.begin() + counter, compare_score); // ! FUMEUX AS FUCK UNTESTED
+		}
+		for(std::array<State, 100>::iterator it = babies.begin(); it != babies.begin() + counter; ++it)
+		{
+			eval = minimax(*it, !maximizer, limit, depth + 1, alpha, beta);
+			if (eval < minEval)
+			{
+				best_move = it->last_move;
+				minEval = eval;
+			}
+			beta = std::min(beta, eval);
+			if (beta <= alpha)
+				break;
 		}
 		if (depth == 0)
-		{
 			return best_move;
-		}
 		else
-		{
 			return (minEval);
-		}
 	}
 }
 

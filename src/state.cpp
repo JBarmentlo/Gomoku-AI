@@ -250,10 +250,12 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH, false);
 		score += 1;
 	}
+	std::cout << "pre: " << this->score << std::endl;
 	if (player == WHITE)
 		this->score += score * CAPTURE_VALUE * 2;
 	else
 		this->score -= score * CAPTURE_VALUE * 2;
+	std::cout << "post: " << this->score << std::endl;
 	return (score);
 }
 
@@ -265,7 +267,6 @@ int				State::compute_captures(void)
 // 	pattern p;
 // 	int last_move_r = this->last_move / BOARD_WIDTH;
 // 	int last_move_c = this->last_move % BOARD_WIDTH;
-
 // 	for (int dir : directions)
 // 	{
 // 		p = gen(dir, player, 0);
@@ -293,10 +294,17 @@ inline bool 	State::operator==(const pattern& rhs) const
 		and ((not rhs.color & EMPTY) or ((this->b_board | this->w_board) & rhs.e_bits).count() == 0);
 }
 
-inline bool 	State::operator<(const State& rhs) const
+bool 			State::operator<(const State& rhs) const
 {
 	return (this->score < rhs.score);
 }
+
+
+bool 			State::operator>(const State& rhs) const
+{
+	return (this->score > rhs.score);
+}
+
 
 // bool			State::contains(pattern& pat) const
 // {

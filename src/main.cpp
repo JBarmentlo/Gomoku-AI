@@ -66,12 +66,21 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 	}
 }
 
+#include <array>
+#include <algorithm>
+
+bool compare_scores(const State& s1, const State& s2)
+{
+	return (s1.score > s2.score);
+}
+
+
 // TODO add empyt to patterns
 int main()
 {
 	State s;
 	// std::cout << (1 << 2) << std::endl;
-	play_game(5, true, true, 15);
+	play_game(7, false, false, 3);
 	// s.coord_evaluation_function = tuples_eval_at_coord;
 	// s = s.make_baby_from_coord(flat_coord(9, 9));
 	// s = s.make_baby_from_coord(flat_coord(8, 8));

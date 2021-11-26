@@ -43,7 +43,9 @@ class State
 
 		bool				contains(pattern& pat) const;
 		inline bool 		operator==(const pattern& rhs) const;
-		inline bool 		operator<(const State& rhs) const;
+		bool 				operator<(const State& rhs) const;
+		bool 				operator>(const State& rhs) const;
+
 		bool				is_win(void);
 		bool				count_to_5(int row, int col, int r_delta, int c_delta);
 

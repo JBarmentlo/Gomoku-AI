@@ -190,6 +190,7 @@ int		tuples_eval_at_coord(State &state, int coord)
 		Evaluates the number of points gained by the piece at coord (can be negative if black wins points) 
 	*/
 
+	// * does not take into account score lost because of empty squares being filled 
 	int player 		= state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
 	int score		= 0;
 	
