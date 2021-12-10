@@ -1,5 +1,7 @@
 #include "minimax.hpp"
 #include "utils.hpp"
+#include "eval.hpp"
+
 #include <iostream>
 
 #include <vector>
@@ -7,14 +9,24 @@
 
 #include <algorithm>
 
-bool compare_score(const State& s1, const State& s2)
+// bool compare_score(const State& s1, const State& s2)
+// {
+// 	return (s1.score > s2.score);
+// }
+
+// bool compare_score_reverse(const State& s1, const State& s2)
+// {
+// 	return (s1.score < s2.score);
+// }
+
+bool compare_score(const std::pair<int, int>& s1, const std::pair<int, int>& s2)
 {
-	return (s1.score > s2.score);
+	return (s1.first > s2.first);
 }
 
-bool compare_score_reverse(const State& s1, const State& s2)
+bool compare_score_reverse(const std::pair<int, int>& s1, const std::pair<int, int>& s2)
 {
-	return (s1.score < s2.score);
+	return (s1.first < s2.first);
 }
 
 int	minimax(State state, int limit, int depth, int alpha, int beta)
@@ -24,7 +36,11 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 	// if (i % int(1e5) == 0)
 		// std::cout << i;
 
-	bool  maximizer = (state.player == BLACK);
+	// std::cout << "depth: " << depth << std::endl;
+	// state.print();
+	// std::cout << std::endl;
+	bool  maximizer = (state.player == WHITE);
+
 	if (state.game_win)
 	{
 		if (maximizer)
@@ -40,29 +56,31 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 
 	// std::vector<State> babies;
 	// std::array<State, 150> babies;
-	State babies[100];
+	std::pair<int, int>  babies[200]; // <Score, move>
 	int counter = 0;
 
 	if (maximizer)
 	{
-		int maxEval = -INT32_MAX;
+		int maxEval = INT32_MIN;
 		for (int c = 0; c < BOARD_SIZE; c++)
 		{
 			if (state.live_board.test(c))
 			{
-				babies[counter] = state.make_baby_from_coord(c);
+				babies[counter] = std::pair<int, int>(tuples_eval_at_coord_potential(state, c, state.player), c);
 				counter += 1;
-				if (counter == 100)
+				if (counter == 200)
 					break;
 			}
 			std::sort(babies, babies + counter, compare_score);
 		}
+		// std::max(10.0, (1.0 - float(depth) / float(limit)) * counter)
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(babies[i], limit, depth + 1, alpha, beta);
+			eval = minimax(state.make_baby_from_coord_precalc(babies[i].second, babies[i].first), limit, depth + 1, alpha, beta);
 			if (eval > maxEval)
 			{
-				best_move = babies[i].last_move;
+				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
+				best_move = babies[i].second;
 				maxEval = eval;
 			}
 			alpha = std::max(alpha, eval);
@@ -81,7 +99,7 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 		{
 			if (state.live_board.test(c))
 			{
-				babies[counter] = state.make_baby_from_coord(c);
+				babies[counter] = std::pair<int, int>(tuples_eval_at_coord_potential(state, c, state.player), c);
 				counter += 1;
 				if (counter == 100)
 					break;
@@ -91,10 +109,11 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 		}
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(babies[i], limit, depth + 1, alpha, beta);
+			eval = minimax(state.make_baby_from_coord_precalc(babies[i].second, babies[i].first), limit, depth + 1, alpha, beta);
 			if (eval < minEval)
 			{
-				best_move = babies[i].last_move;
+				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
+				best_move = babies[i].second;
 				minEval = eval;
 			}
 			beta = std::min(beta, eval);

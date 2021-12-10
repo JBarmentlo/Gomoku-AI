@@ -22,6 +22,7 @@ class State
 		int			b_captures = 0;
 		int			score = 0;
 		bool 		game_win = false;
+		int			score_board[BOARD_SIZE] = {};
 
 		int 		(*coord_evaluation_function)(State&, int coord);
 		State(/* args */);
@@ -31,6 +32,8 @@ class State
 		void				set_piece(int coord);
 		int					get_square(int row, int col) const;
 		void				print(bool print_empty = false);
+		void				print_score_board();
+
 
 		void				update_live_board(void);
 		int					compute_captures(void);
@@ -51,7 +54,7 @@ class State
 
 
 		State				make_baby_from_coord(int coord);
-		std::multiset<State> make_ordered_babies();
+		State				make_baby_from_coord_precalc(int coord, int score_delta);
 
 };
 
