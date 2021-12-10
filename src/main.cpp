@@ -79,7 +79,8 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 		std::cout << "Move: " << move /  BOARD_WIDTH << ", " << move % BOARD_WIDTH  << std::endl;
 		s = s.make_baby_from_coord(move);
 		std::cout << "Board made" << std::endl;
-		// s.print_score_board();
+
+		// // s.print_score_board();
 		s.print();
 
 		folds += 1;
@@ -128,7 +129,7 @@ int main()
 	// s = s.make_baby_from_coord(flat_coord(9, 9));
 	// s.print_score_board();
 	// s.print();
-	play_game(7, true, true, 20);
+	play_game(10, false, true, 20);
 
 	
 }

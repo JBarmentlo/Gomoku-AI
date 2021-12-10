@@ -44,16 +44,22 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 	// std::cout << std::endl;
 
 
-	bool	maximizer 	= (state.player == WHITE);
+	bool	maximizer = (state.player == WHITE);
 
-	if (depth > TACTICS_LEN)
-		std::cout << "KJHASDLK:JHASDLKJHASDLij" << std::endl;
 
 	past_scores.push_front(state.score);
 
-	int	start_score = past_scores.back();
+	int	start_score;
+	if (maximizer)
+		start_score = INT32_MIN;
+	else
+		start_score = INT32_MAX;
+
 	if (past_scores.size() > TACTICS_LEN)
+	{
+	 	start_score = past_scores.back();
 		past_scores.pop_back();
+	}
 
 
 	if (state.game_win)
