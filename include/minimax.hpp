@@ -6,6 +6,8 @@
 #include "state.hpp"
 #include "eval.hpp"
 
-int	minimax(State state, int limit, int depth = 0, int alpha = INT32_MIN, int beta =  INT32_MAX);
+#include <deque>
+
+int	minimax(State state, int limit, std::deque<int> past_scores = std::deque<int>(),  int depth = 0, int alpha = INT32_MIN, int beta =  INT32_MAX);
 
 #endif // !MINIMAX_H

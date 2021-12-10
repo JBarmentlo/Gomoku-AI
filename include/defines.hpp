@@ -32,6 +32,8 @@
 
 #define CAPTURE_VALUE	250
 
+#define TACTICS_LEN		4
+
 
 
 typedef std::bitset<BOARD_SIZE> bitboard;

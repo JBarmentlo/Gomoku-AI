@@ -8,6 +8,7 @@
 #include <array>
 
 #include <algorithm>
+#include <deque>
 
 // bool compare_score(const State& s1, const State& s2)
 // {
@@ -29,17 +30,31 @@ bool compare_score_reverse(const std::pair<int, int>& s1, const std::pair<int, i
 	return (s1.first < s2.first);
 }
 
-int	minimax(State state, int limit, int depth, int alpha, int beta)
+int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
 {
 	static int i = 0;
 	i += 1;
+	if (depth == 0)
+		i = 0;
 	// if (i % int(1e5) == 0)
 		// std::cout << i;
 
 	// std::cout << "depth: " << depth << std::endl;
 	// state.print();
 	// std::cout << std::endl;
-	bool  maximizer = (state.player == WHITE);
+
+
+	bool	maximizer 	= (state.player == WHITE);
+
+	if (depth > TACTICS_LEN)
+		std::cout << "KJHASDLK:JHASDLKJHASDLij" << std::endl;
+
+	past_scores.push_front(state.score);
+
+	int	start_score = past_scores.back();
+	if (past_scores.size() > TACTICS_LEN)
+		past_scores.pop_back();
+
 
 	if (state.game_win)
 	{
@@ -62,6 +77,10 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 
 	if (maximizer)
 	{
+		if (past_scores.size() == TACTICS_LEN and start_score > state.score)
+		{
+			return state.score;
+		}
 		int maxEval = INT32_MIN;
 		for (int c = 0; c < BOARD_SIZE; c++)
 		{
@@ -77,7 +96,7 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 		// std::max(10.0, (1.0 - float(depth) / float(limit)) * counter)
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(state.make_baby_from_coord(babies[i].second), limit, depth + 1, alpha, beta);
+			eval = minimax(state.make_baby_from_coord(babies[i].second), limit, past_scores, depth + 1, alpha, beta);
 			if (eval > maxEval)
 			{
 				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
@@ -89,12 +108,19 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 				break;
 		}
 		if (depth == 0)
+		{
+			std::cout << "NODES NUMBER: " << i << std::endl;
 			return best_move;
+		}
 		else
 			return (maxEval);
 	}
 	else
 	{
+		if (past_scores.size() == TACTICS_LEN and start_score < state.score)
+		{
+			return state.score;
+		}
 		int minEval = INT32_MAX;
 		for (int c = 0; c < BOARD_SIZE; c++)
 		{
@@ -110,7 +136,7 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 		}
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(state.make_baby_from_coord(babies[i].second), limit, depth + 1, alpha, beta);
+			eval = minimax(state.make_baby_from_coord(babies[i].second), limit, past_scores, depth + 1, alpha, beta);
 			if (eval < minEval)
 			{
 				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
@@ -122,7 +148,10 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 				break;
 		}
 		if (depth == 0)
+		{
+			std::cout << "NODES NUMBER: " << i << std::endl;
 			return best_move;
+		}
 		else
 			return (minEval);
 	}
