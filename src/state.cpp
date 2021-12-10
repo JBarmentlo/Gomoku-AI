@@ -423,7 +423,7 @@ State			State::make_baby_from_coord_precalc(int coord, int score_delta)
 }
 
 
-bool	State::count_to_5(int row, int col, int r_delta, int c_delta)
+bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
 {
 	int square;
 	int score				= 0;

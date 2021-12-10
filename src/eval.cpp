@@ -217,7 +217,7 @@ inline int	count_full_and_empty(const State &state, int row, int col, int r_delt
 		return 0;
 
 	// return (count); // ! DEBUGGIN PURPOSES
-	return (1 << count);
+	return (1 << (count - 1));
 }
 
 int			tuples_eval_at_coord(const State &state, int coord)
@@ -272,7 +272,7 @@ int			tuples_eval_at_coord_potential(State &state, int coord, int player)
 	}
 }
 
-int		new_eval(State &state, int row, int col)
+int			new_eval(State &state, int row, int col)
 {
 	int score		= 0;
 	int player		= state.get_square(row, col);
@@ -296,7 +296,7 @@ int		new_eval(State &state, int row, int col)
 	}
 }
 
-int		new_eval_dir(State &state, int row, int col, int r_d, int c_d, int player)
+int			new_eval_dir(State &state, int row, int col, int r_d, int c_d, int player)
 {
 	int score		= 0;
 
@@ -312,7 +312,6 @@ int		new_eval_dir(State &state, int row, int col, int r_d, int c_d, int player)
 	}
 }
 
-
 int			eval_surround_square(State &state, int coord)
 {
 	int	row			= coord / BOARD_WIDTH;
@@ -322,6 +321,59 @@ int			eval_surround_square(State &state, int coord)
 	int	r_d;
 	int	c_d;
 
+	tmp_score = new_eval(state, row, col);
+	score_diff += tmp_score - state.score_board[flat_coord(row, col)];
+	state.score_board[flat_coord(row, col)] = tmp_score;
+
+	for (int delta = -2; delta <= 2; delta++) // * CAN BE OPTIMIZED TO AVOID vicinity of EDGES + - 2 WHERE SCORE IS 0
+	{
+		if (delta == 0)
+			continue;
+
+		if (is_in_bounds(row, col + 1 * delta))
+		{
+			tmp_score = new_eval(state, row, col + 1 * delta);
+			// tmp_score = new_eval_dir(state, row, col + 1 * delta, 0, 1);
+			score_diff += tmp_score - state.score_board[flat_coord(row, col + 1 * delta)];
+			state.score_board[flat_coord(row, col + 1 * delta)] = tmp_score;
+		}
+
+		if (is_in_bounds(row + 1 * delta, col))
+		{
+			tmp_score = new_eval(state, row + 1 * delta, col);
+			// tmp_score = new_eval_dir(state, row + 1 * delta, col, 1, 0);
+			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col)];
+			state.score_board[flat_coord(row + 1 * delta, col)] = tmp_score;
+		}
+
+		if (is_in_bounds(row + 1 * delta, col + 1 * delta))
+		{
+			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta);
+			// tmp_score = new_eval_dir(state, row + 1 * delta, col + 1 * delta, 1, 1);
+			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)];
+			state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)] = tmp_score;
+		}
+
+		if (is_in_bounds(row + 1 * delta, col - 1 * delta))
+		{
+			// tmp_score = new_eval_dir(state, row + 1 * delta, col - 1 * delta, 1, -1);
+			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta);
+			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)];
+			state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)] = tmp_score;
+		}
+	}
+	return (score_diff);
+}
+
+int			eval_surround_square_potential(State &state, int coord)
+{
+	int	row			= coord / BOARD_WIDTH;
+	int	col			= coord % BOARD_WIDTH;
+	int score_diff	= 0;
+	int tmp_score;
+	int	r_d;
+	int	c_d;
+	state.set_piece(coord);
 	tmp_score = new_eval(state, row, col);
 	score_diff += tmp_score - state.score_board[flat_coord(row, col)];
 	state.score_board[flat_coord(row, col)] = tmp_score;

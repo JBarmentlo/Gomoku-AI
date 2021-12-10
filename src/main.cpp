@@ -22,7 +22,7 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 	// s.value_coord_fun = s.find_pattern_around_last_move();
 	
 	// s.set_piece(9,9);
-	s.player = BLACK;
+	// s.player = BLACK;
 	int folds = 0;
 	int move;
 	if (cpu1)
@@ -121,8 +121,11 @@ int main()
 	// eval_surround_square(s, flat_coord(9, 10));
 	// s.print_score_board();
 
-	s.coord_evaluation_function = eval_surround_square;
-	play_game(7, true, true, 20);
+	// s.coord_evaluation_function = eval_surround_square;
+	// s = s.make_baby_from_coord(flat_coord(9, 9));
+	// s.print_score_board();
+	// s.print();
+	play_game(7, true, true, 5);
 
 	
 }

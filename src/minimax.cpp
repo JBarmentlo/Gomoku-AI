@@ -43,6 +43,7 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 
 	if (state.game_win)
 	{
+		// state.print();
 		if (maximizer)
 			return (INT32_MIN + 1);
 		else
@@ -76,7 +77,7 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 		// std::max(10.0, (1.0 - float(depth) / float(limit)) * counter)
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(state.make_baby_from_coord_precalc(babies[i].second, babies[i].first), limit, depth + 1, alpha, beta);
+			eval = minimax(state.make_baby_from_coord(babies[i].second), limit, depth + 1, alpha, beta);
 			if (eval > maxEval)
 			{
 				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
@@ -109,7 +110,7 @@ int	minimax(State state, int limit, int depth, int alpha, int beta)
 		}
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(state.make_baby_from_coord_precalc(babies[i].second, babies[i].first), limit, depth + 1, alpha, beta);
+			eval = minimax(state.make_baby_from_coord(babies[i].second), limit, depth + 1, alpha, beta);
 			if (eval < minEval)
 			{
 				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
