@@ -34,17 +34,18 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 {
 	static int node_count = 0;
 	static int tactics_pruned = 0;
+	static int a_b_pruned = 0;
 
 	if (depth == 0)
 	{
 		tactics_pruned = 0;
 		node_count = 0;
+		a_b_pruned = 0;
 	}
 	node_count += 1;
 	
 
 	bool	maximizer = (state.player == WHITE);
-
 
 	past_scores.push_front(state.score);
 
@@ -77,7 +78,9 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 
 	// std::vector<State> babies;
 	// std::array<State, 150> babies;
-	std::pair<int, int>  babies[200]; // <Score, move>
+	std::pair<int, int>	babies[200]; // <Score, state_index>
+	State				babie_states[200];
+
 	int counter = 0;
 
 	if (maximizer)
@@ -111,13 +114,16 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 			}
 			alpha = std::max(alpha, eval);
 			if (beta <= alpha)
+			{
+				a_b_pruned += 1;
 				break;
+			}
 		}
 		if (depth == 0)
 		{
-			std::cout << "NODES EXPLORED: " << node_count << std::endl;
-			std::cout << "TACTICS PRUNED: " << tactics_pruned << std::endl;
-
+			std::cout << "NODES EXPLORED:   " << node_count << std::endl;
+			std::cout << "TACTICS PRUNED:   " << tactics_pruned << std::endl;
+			std::cout << "A_B PRUNED:       " << a_b_pruned << std::endl;
 			return best_move;
 		}
 		else
@@ -154,12 +160,17 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 			}
 			beta = std::min(beta, eval);
 			if (beta <= alpha)
+			{
+				a_b_pruned += 1;
 				break;
+			}
 		}
 		if (depth == 0)
 		{
-			std::cout << "NODES EXPLORED: " << node_count << std::endl;
-			std::cout << "TACTICS PRUNED: " << tactics_pruned << std::endl;
+			std::cout << "NODES EXPLORED:   " << node_count << std::endl;
+			std::cout << "TACTICS PRUNED:   " << tactics_pruned << std::endl;
+			std::cout << "A_B PRUNED:       " << a_b_pruned << std::endl;
+
 			return best_move;
 		}
 		else
