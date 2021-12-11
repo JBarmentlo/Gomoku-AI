@@ -85,7 +85,8 @@ int				State::get_square(int row, int col) const
 
 void			State::print(bool print_empty)
 {
-	std::string symbols[4] = {"O", "X", " ", "-"};
+	// std::string symbols[4] = {"O", "X", " ", "-"};
+	std::string symbols[4] = {"\x1b[31mO\x1b[0m", "\x1b[34mX\x1b[0m", " ", "-"};
 	std::setfill(' ');
 	int sym;
 
@@ -119,6 +120,7 @@ void			State::print(bool print_empty)
 					if (this->live_board.test(r * BOARD_WIDTH + c))
 						sym = LIVE - 2;
 				}
+
 				std::cout << "  " << symbols[sym / 2] << " ";
 			}
 			std::cout << std::setw(4) << r << std::endl;			
@@ -126,6 +128,7 @@ void			State::print(bool print_empty)
 	}
 	std::cout << std::endl;
 }
+
 
 void			State::print_score_board()
 {

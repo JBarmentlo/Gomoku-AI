@@ -10,27 +10,18 @@
 #include <algorithm>
 #include <deque>
 
-// bool compare_score(const State& s1, const State& s2)
-// {
-// 	return (s1.score > s2.score);
-// }
 
-// bool compare_score_reverse(const State& s1, const State& s2)
-// {
-// 	return (s1.score < s2.score);
-// }
-
-bool compare_score(const std::pair<int, int>& s1, const std::pair<int, int>& s2)
+bool	compare_score(const std::pair<int, int>& s1, const std::pair<int, int>& s2)
 {
 	return (s1.first > s2.first);
 }
 
-bool compare_score_reverse(const std::pair<int, int>& s1, const std::pair<int, int>& s2)
+bool	compare_score_reverse(const std::pair<int, int>& s1, const std::pair<int, int>& s2)
 {
 	return (s1.first < s2.first);
 }
 
-int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
 {
 	static int node_count = 0;
 	static int tactics_pruned = 0;
@@ -180,41 +171,86 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 	}
 }
 
-// int	minimax(State state, bool maximizer, int depth, int alpha, int beta)
-// {
-// 	if (depth == 0)
-// 	{
-// 		return (state.score);
-// 	}
-// 	std::multiset<State> bebes = state.make_ordered_babies();
 
-// 	int eval;
-// 	if (maximizer)
-// 	{
-// 		int maxEval = -INT32_MAX;
+#define N_THREADS	8
+#include <thread>
+#include <future>
 
-// 		for (std::multiset<State>::iterator it=bebes.begin(); it!=bebes.end(); ++it)
-// 		{
-// 			eval = minimax(*it, !maximizer, alpha, beta, depth - 1);
-// 			maxEval = std::max(maxEval, eval);
-// 			alpha = std::max(alpha, eval);
-// 			if (beta <= alpha)
-// 				break;
-// 			return (maxEval);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		int minEval = INT32_MAX;
+int		minimax_multifred(State state, int limit)
+{
 
-// 		for (std::multiset<State>::iterator it=bebes.begin(); it!=bebes.end(); ++it)
-// 		{
-// 			eval = minimax(*it, !maximizer, alpha, beta, depth - 1);
-// 			minEval = std::min(minEval, eval);
-// 			beta = std::min(beta, eval);
-// 			if (beta <= alpha)
-// 				break;
-// 			return (minEval);
-// 		}
-// 	}
-// }
+
+	std::deque<int> 	past_scores;
+	int					start_score;
+	int 				eval;
+	std::future<int>	futures[N_THREADS];
+	int					moves[N_THREADS];
+
+
+	bool				maximizer		= (state.player == WHITE);
+	int 				best_move 		= -12; 						// init at -12 for debugging , its an arbitrary invalid move number
+	int					alpha 			= INT32_MIN;
+	int					beta 			= INT32_MAX;
+	int 				minEval			= INT32_MAX;
+	int 				maxEval			= INT32_MIN;
+	int					active_threads	= 0;
+
+
+	past_scores.push_front(state.score);
+
+	if (maximizer)
+	{
+		for (int c = 0; c < BOARD_SIZE; c++)
+		{
+			if (state.live_board.test(c))
+			{
+				futures[active_threads] = std::async(minimax, state.make_baby_from_coord(c), limit, past_scores, 1, alpha, beta);
+				moves[active_threads] = c;
+				active_threads += 1;
+			}
+			if (active_threads == N_THREADS or c == BOARD_SIZE - 1)
+			{
+				for (int i = 0; i < active_threads; i++)
+				{
+					eval = futures[i].get();
+					if (eval > maxEval)
+					{
+						best_move = moves[i];
+						maxEval = eval;
+					}
+					alpha = std::max(alpha, eval);
+				}
+				active_threads = 0;
+			}
+		}
+		return (best_move);
+	}
+	else
+	{
+		for (int c = 0; c < BOARD_SIZE; c++)
+		{
+			if (state.live_board.test(c))
+			{
+				futures[active_threads] = std::async(minimax, state.make_baby_from_coord(c), limit, past_scores, 1, alpha, beta);
+				moves[active_threads] = c;
+				active_threads += 1;
+			}
+			if (active_threads == N_THREADS or c == BOARD_SIZE - 1)
+			{
+
+				for (int i = 0; i < active_threads; i++)
+				{
+					eval = futures[i].get();
+					if (eval < minEval)
+					{
+						best_move = moves[i];
+						minEval = eval;
+					}
+					beta = std::min(beta, eval);
+					active_threads = 0;
+				}
+			}
+		}
+		return (best_move);
+	}
+}
