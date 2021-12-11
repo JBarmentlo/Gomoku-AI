@@ -129,7 +129,7 @@ int main()
 	// s = s.make_baby_from_coord(flat_coord(9, 9));
 	// s.print_score_board();
 	// s.print();
-	play_game(10, true, true, 11);
+	play_game(10, true, true, 20);
 
 	
 }
