@@ -32,17 +32,16 @@ bool compare_score_reverse(const std::pair<int, int>& s1, const std::pair<int, i
 
 int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
 {
-	static int i = 0;
-	i += 1;
+	static int node_count = 0;
+	static int tactics_pruned = 0;
+
 	if (depth == 0)
-		i = 0;
-	// if (i % int(1e5) == 0)
-		// std::cout << i;
-
-	// std::cout << "depth: " << depth << std::endl;
-	// state.print();
-	// std::cout << std::endl;
-
+	{
+		tactics_pruned = 0;
+		node_count = 0;
+	}
+	node_count += 1;
+	
 
 	bool	maximizer = (state.player == WHITE);
 
@@ -85,6 +84,7 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 	{
 		if (past_scores.size() == TACTICS_LEN and start_score > state.score)
 		{
+			tactics_pruned += 1;
 			return state.score;
 		}
 		int maxEval = INT32_MIN;
@@ -115,7 +115,9 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 		}
 		if (depth == 0)
 		{
-			std::cout << "NODES NUMBER: " << i << std::endl;
+			std::cout << "NODES EXPLORED: " << node_count << std::endl;
+			std::cout << "TACTICS PRUNED: " << tactics_pruned << std::endl;
+
 			return best_move;
 		}
 		else
@@ -125,6 +127,7 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 	{
 		if (past_scores.size() == TACTICS_LEN and start_score < state.score)
 		{
+			tactics_pruned += 1;
 			return state.score;
 		}
 		int minEval = INT32_MAX;
@@ -155,7 +158,8 @@ int	minimax(State state, int limit, std::deque<int> past_scores, int depth, int 
 		}
 		if (depth == 0)
 		{
-			std::cout << "NODES NUMBER: " << i << std::endl;
+			std::cout << "NODES EXPLORED: " << node_count << std::endl;
+			std::cout << "TACTICS PRUNED: " << tactics_pruned << std::endl;
 			return best_move;
 		}
 		else

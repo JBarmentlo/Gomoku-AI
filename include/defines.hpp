@@ -30,11 +30,11 @@
 #define QUATOR_VALUE	8
 
 
-#define CAPTURE_VALUE	250
+#define CAPTURE_VALUE	512
 
-#define TACTICS_LEN		4
+#define TACTICS_LEN		4		// * tactics need to induce a positive score TACTICS_LEN folds further or they will be pruned
 
-
+#define	SURROUND_SIZE	2		// * SIZE OF THE SQUARE CONSIDERED IN THE EVAL FUNCTION (IN EITHER DIRECTION)
 
 typedef std::bitset<BOARD_SIZE> bitboard;
 
