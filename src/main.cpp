@@ -62,6 +62,7 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 			{
 				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 				move = minimax(s, depth);
+
 				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
 				
@@ -84,7 +85,10 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 
 		// s.print_score_board();
 		std::cout << "free threes: " << s.free_threes << std::endl;
+		std::cout << "fold: " << folds << std::endl;
 		s.print();
+		// if (folds == 12)
+		// 	return s;
 
 		folds += 1;
 		if (folds >= limit and cpu1 and cpu2)
@@ -137,13 +141,17 @@ int main()
 	// // s = s.make_baby_from_coord(move);
 	
 	// // eval_surround_square(s, s.last_move);
-	// // s.print();
+	// s.print();
 	// // s.print_score_board();
 	// // // std::cout << "frees: " << s.free_threes << std::endl;
-	// s = play_game(10, true , true, 20);
+	s = play_game(10, true , true, 50);
 	s.print();
-	s = s.make_baby_from_coord(flat_coord(7, 13));
+	// s = play_game(7, true , false, 20, s);
 
-	s.print();
-	std::cout << s.game_win << std::endl;
+	// s = s.make_baby_from_coord(flat_coord(7, 13));
+
+	// s.print();
+	// std::cout << s.game_win << std::endl;
+	// std::cout << (1 << 18) << std::endl;
+	std::cout << "BWIN" << BLACK_WIN << std::endl;
 }

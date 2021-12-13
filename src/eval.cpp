@@ -71,7 +71,7 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 	bool started	= false;
 	int	delta;
 
-	int enemy 		= NEXT_PLAYER(player);
+	int enemy 		= next_player(player);
 
 	for (delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++)
 	{
@@ -105,6 +105,8 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 
 	if (count + empties < 5)
 		return 0;
+	// if (count == 5)
+	// 	return WHITE_WIN;
 	return (1 << (2 * count));
 }
 

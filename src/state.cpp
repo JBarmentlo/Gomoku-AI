@@ -382,7 +382,7 @@ State			State::make_baby_from_coord(int coord)
 	if (s.is_win())
 	{
 		s.game_win = true;
-		if (player = BLACK)
+		if (player == WHITE)
 		{
 			s.score = WHITE_WIN;
 		}
@@ -397,7 +397,7 @@ State			State::make_baby_from_coord(int coord)
 	}
 	
 	// std::cout << "Player and live board" << std::endl;
-	s.player = NEXT_PLAYER(this->player);
+	s.player = next_player(this->player);
 	s.update_live_board();
 	s.free_threes = count_free_threes(s, s.last_move);
 
@@ -426,7 +426,7 @@ State			State::make_baby_from_coord_precalc(int coord, int score_delta)
 		s.score += score_delta;
 	}
 	// std::cout << "Player and live board" << std::endl;
-	s.player = NEXT_PLAYER(this->player);
+	s.player = next_player(this->player);
 	s.update_live_board();
 
 	// std::cout << "baby done" << std::endl;
@@ -448,7 +448,7 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
 
 		square = this->get_square(row + delta * r_delta, col + delta * c_delta);
 
-		if (square == NEXT_PLAYER(this->player) or square == EMPTY)
+		if (square == next_player(this->player) or square == EMPTY)
 			break;
 
 		count += 1;
@@ -461,7 +461,7 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
 
 		square = this->get_square(row - delta * r_delta, col - delta * c_delta);
 
-		if (square == NEXT_PLAYER(this->player) or square == EMPTY)
+		if (square == next_player(this->player) or square == EMPTY)
 			break;
 			
 		count += 1;

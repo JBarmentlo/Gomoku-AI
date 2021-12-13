@@ -12,8 +12,6 @@
 #define EMPTY			4
 #define LIVE			8
 
-#define NEXT_PLAYER(p)	((p) & (BLACK) ? (WHITE) : (BLACK))
-
 #define PATTERN_MISSING	-1
 
 // #define UP				8
@@ -30,7 +28,7 @@
 #define QUATOR_VALUE	8
 
 
-#define CAPTURE_VALUE	512
+#define CAPTURE_VALUE	128
 
 #define TACTICS_LEN		4		// * tactics need to induce a positive score TACTICS_LEN folds further or they will be pruned
 
