@@ -38,6 +38,10 @@
 
 #define ILLEGAL			-1
 
+#define BLACK_WIN		(INT32_MIN + 1)
+#define WHITE_WIN		(INT32_MAX - 1)
+
+
 typedef std::bitset<BOARD_SIZE> bitboard;
 
 

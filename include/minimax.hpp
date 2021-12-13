@@ -8,7 +8,7 @@
 
 #include <deque>
 
-int		minimax(State state, int limit, std::deque<int> past_scores = std::deque<int>(),  int depth = 0, int alpha = INT32_MIN, int beta =  INT32_MAX);
+int		minimax(State state, int limit, std::deque<int> past_scores = std::deque<int>(),  int depth = 0, int alpha = BLACK_WIN, int beta =  WHITE_WIN);
 int		minimax_multifred(State state, int limit);
 
 #endif // !MINIMAX_H

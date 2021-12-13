@@ -9,6 +9,14 @@ inline int	flat_coord(int row, int col)
 	return (BOARD_WIDTH * row + col);
 }
 
+inline int	next_player(int player)
+{
+	if (player == BLACK)
+		return (WHITE);
+	return BLACK;
+}
+
+
 int			get_move_keyboard(void);
 
 inline void		print_player(int player)

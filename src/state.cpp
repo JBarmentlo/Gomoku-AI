@@ -373,10 +373,8 @@ State			State::make_baby_from_coord(int coord)
 {
 	State s = *this;
 	s.coord_evaluation_function = this->coord_evaluation_function;
-	s.free_threes = 0;
 	// std::cout << "Set piece: " << coord << std::endl;
 	s.set_piece(coord);
-
 	// std::cout << "Captures" << std::endl;
 	s.compute_captures();
 
@@ -384,14 +382,24 @@ State			State::make_baby_from_coord(int coord)
 	if (s.is_win())
 	{
 		s.game_win = true;
+		if (player = BLACK)
+		{
+			s.score = WHITE_WIN;
+		}
+		else
+		{
+			s.score = BLACK_WIN;
+		}
 	}
 	else
 	{
 		s.score += s.coord_evaluation_function(s, s.last_move);
 	}
+	
 	// std::cout << "Player and live board" << std::endl;
 	s.player = NEXT_PLAYER(this->player);
 	s.update_live_board();
+	s.free_threes = count_free_threes(s, s.last_move);
 
 	// std::cout << "baby done" << std::endl;
 	// std::cout  << std::endl;

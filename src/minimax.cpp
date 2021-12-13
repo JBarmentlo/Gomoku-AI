@@ -34,23 +34,16 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 		a_b_pruned = 0;
 	}
 	node_count += 1;
-	// std::cout << "move: " << state.last_move << std::endl;
+	// std::cout << "\n\nmove: " << state.last_move / BOARD_WIDTH << ", " << state.last_move % BOARD_WIDTH << std::endl;
 	// std::cout << "depth: " << depth << std::endl;
 	// state.print();
+
 	bool	maximizer = (state.player == WHITE);
 
-	// if (state.free_threes == 6)
-	// {
-	// 	std::cout << "ILLEGERR" << std::endl;
-	// 	std::cout << "ILLEGERR" << std::endl;
-	// 	std::cout << "ILLEGERR" << std::endl;
-	// 	std::cout << "ILLEGERR" << std::endl;
-	// 	std::cout << "ILLEGERR" << std::endl;
-	// 	state.print();
-	// 	std::cout << "END ILLEGERR" << std::endl;
-	// 	return ILLEGAL;
-
-	// }
+	if (state.free_threes == 2)
+	{
+		return ILLEGAL;
+	}
 
 
 	past_scores.push_front(state.score);
@@ -71,10 +64,7 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 	if (state.game_win)
 	{
 		// state.print();
-		if (maximizer)
-			return (INT32_MIN + 1);
-		else
-			return (INT32_MAX - 1);
+		return state.score;
 	}
 	if (depth == limit)
 		return (state.score);
@@ -113,11 +103,13 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
+				// std::cout << "eval: " << eval << " maxeval: " << maxEval << std::endl;
 				if (eval > maxEval)
 				{
 					// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
 					best_move = babie_states[babies[i].second].last_move;
 					maxEval = eval;
+					// std::cout << "best_move: " << best_move << std::endl;
 				}
 				alpha = std::max(alpha, eval);
 				if (beta <= alpha)

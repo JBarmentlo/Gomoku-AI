@@ -4,7 +4,63 @@
 #include "pattern.hpp"
 
 
-inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int c_delta, int player, bool check_free)
+int			count_free_threes(State &state, int coord)
+{
+	int	r_d_arr[4] = {0, 1, 1,  1};
+	int c_d_arr[4] = {1, 0, 1, -1};
+	int r_d;
+	int c_d;
+	int	row = coord / BOARD_WIDTH;
+	int	col = coord % BOARD_WIDTH;
+	int player = state.get_square(row, col);
+	int	start_r;
+	int	start_c;
+	int	count;
+	int	gap;
+
+	int	free_threes = 0;
+
+	for (int dir = 0; dir < 4; dir++)
+	{
+		r_d = r_d_arr[dir];
+		c_d = c_d_arr[dir];
+
+		for (int start_delta = -5; start_delta <= 0; start_delta++)
+		{
+			count	= 0;
+			gap		= 0;
+			start_r = row + (start_delta * r_d);
+			start_c = col + (start_delta * c_d);
+
+			if (not is_in_bounds(start_r, start_c) or not is_in_bounds(start_r + 5 * r_d, start_c + 5 * c_d) or state.get_square(start_r, start_c) != EMPTY or state.get_square(start_r + 5 * r_d, start_c + 5 * c_d) != EMPTY)
+				continue;
+
+			for (int delta = 1; delta < 5; delta++)
+			{
+				if (state.get_square(start_r + delta * r_d, start_c + delta * c_d) == EMPTY)
+				{
+					gap += 1;
+				}
+				else if (state.get_square(start_r + delta * r_d, start_c + delta * c_d) == player)
+				{
+					count += 1;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (count == 3 and gap == 1)
+			{
+				free_threes += 1;
+				start_delta += 5;
+			}
+		}
+	}
+	return (free_threes);
+}
+
+inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int c_delta, int player)
 {
 	int square;
 	int	count		= 0;
@@ -17,7 +73,6 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 
 	int enemy 		= NEXT_PLAYER(player);
 
-	std::cout << "EVAL at: " << row << ", " << col << std::endl;
 	for (delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++)
 	{
 		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
@@ -44,70 +99,41 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 			gap += top_space;
 			top_space = 0;
 		}
-		std::cout << "r: " << row + delta * r_delta << " ,c: " << col + delta * c_delta << std::endl;
-		std::cout << "count_: " << count << " empties: " << empties << " b_s: " << bot_space << " t_s: " << top_space << " gap: " << gap << std::endl;
+		// std::cout << "r: " << row + delta * r_delta << " ,c: " << col + delta * c_delta << std::endl;
+		// std::cout << "count_: " << count << " empties: " << empties << " b_s: " << bot_space << " t_s: " << top_space << " gap: " << gap << std::endl;
 	}
 
-
-	if (check_free and count ==  3 and gap <= 1 and state.get_square(row , col) != EMPTY) // ! The last condition != EMPTY is useless now because we do not run eval on empty squares, it is there for resilience in case that behaviour is changed later
-	{
-		delta = 0;
-		if (empties == 2)
-		{		
-			if (bot_space == 0)
-				delta = -SURROUND_SIZE - 1;
-			if (top_space == 0)
-				delta = SURROUND_SIZE + 1;
-		}
-		else if (empties == 1 and gap == 0)
-		{
-			if (bot_space == 1)
-				delta = SURROUND_SIZE + 1;
-			if (top_space == 1)
-				delta = -SURROUND_SIZE - 1;
-		}
-		if (delta != 0 and is_in_bounds(row + delta * r_delta, col + delta * c_delta))
-			if (state.get_square(row + delta * r_delta, col + delta * c_delta) == EMPTY)
-			{
-				std::cout << "free: " << row << ", " << col << std::endl;
-				std::cout << "empties: " << empties << " gap: " << gap << " t_s:" << top_space << " b_s: " << bot_space << std::endl;
-				std::cout << "r_d: " << r_delta << " c_d: " << c_delta << std::endl;
-				state.free_threes += 1;
-			}
-	}
-		
-	std::cout << "\n" << std::endl;
 	if (count + empties < 5)
 		return 0;
 	return (1 << (2 * count));
 }
 
-int			new_eval(State &state, int row, int col, int r_d_free, int r_c_free)
-{
-	int score		= 0;
-	int player		= state.get_square(row, col);
+// int			new_eval(State &state, int row, int col, int r_d_free, int r_c_free)
+// {
+// 	int score		= 0;
+// 	int player		= state.get_square(row, col);
 
-	if (player == EMPTY) // ! MAYBE DONT DO THIS
-	{
-		return (0);
-	}
-	else
-	{
-		score += count_full_and_empty(state, row, col, 0, 1, player, ((0 == r_d_free) and (1 == r_c_free)));
-		score += count_full_and_empty(state, row, col, 1, 0, player, ((1 == r_d_free) and (0 == r_c_free)));
-		score += count_full_and_empty(state, row, col, 1, 1, player, ((1 == r_d_free) and (1 == r_c_free)));
-		score += count_full_and_empty(state, row, col, 1, -1, player, ((1 == r_d_free) and (-1 == r_c_free)));
-	}
+// 	if (player == EMPTY) // ! MAYBE DONT DO THIS
+// 	{
+// 		return (0);
+// 	}
+// 	else
+// 	{
+// 		score += count_full_and_empty(state, row, col, 0, 1, player, ((0 == r_d_free) and (1 == r_c_free)));
+// 		score += count_full_and_empty(state, row, col, 1, 0, player, ((1 == r_d_free) and (0 == r_c_free)));
+// 		score += count_full_and_empty(state, row, col, 1, 1, player, ((1 == r_d_free) and (1 == r_c_free)));
+// 		score += count_full_and_empty(state, row, col, 1, -1, player, ((1 == r_d_free) and (-1 == r_c_free)));
+// 	}
 
-	if (player == BLACK)
-	{
-		return (-score);
-	}
-	else
-	{
-		return (score);
-	}
-}
+// 	if (player == BLACK)
+// 	{
+// 		return (-score);
+// 	}
+// 	else
+// 	{
+// 		return (score);
+// 	}
+// }
 
 int			new_eval(State &state, int row, int col)
 {
@@ -120,10 +146,10 @@ int			new_eval(State &state, int row, int col)
 	}
 	else
 	{
-		score += count_full_and_empty(state, row, col, 0, 1, player, true);
-		score += count_full_and_empty(state, row, col, 1, 0, player, true);
-		score += count_full_and_empty(state, row, col, 1, 1, player, true);
-		score += count_full_and_empty(state, row, col, 1, -1, player, true);
+		score += count_full_and_empty(state, row, col, 0, 1, player);
+		score += count_full_and_empty(state, row, col, 1, 0, player);
+		score += count_full_and_empty(state, row, col, 1, 1, player);
+		score += count_full_and_empty(state, row, col, 1, -1, player);
 	}
 
 	if (player == BLACK)
@@ -148,7 +174,6 @@ int			eval_surround_square(State &state, int coord)
 	tmp_score = new_eval(state, row, col);
 	score_diff += tmp_score - state.score_board[flat_coord(row, col)];
 	state.score_board[flat_coord(row, col)] = tmp_score;
-
 	for (int delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++) // * CAN BE OPTIMIZED TO AVOID vicinity of EDGES + - SURROUND_SIZE WHERE SCORE IS 0
 	{
 		if (delta == 0)
@@ -156,7 +181,7 @@ int			eval_surround_square(State &state, int coord)
 
 		if (is_in_bounds(row, col + 1 * delta))
 		{
-			tmp_score = new_eval(state, row, col + 1 * delta, 0, 1);
+			tmp_score = new_eval(state, row, col + 1 * delta);
 			// tmp_score = new_eval_dir(state, row, col + 1 * delta, 0, 1);
 			score_diff += tmp_score - state.score_board[flat_coord(row, col + 1 * delta)];
 			state.score_board[flat_coord(row, col + 1 * delta)] = tmp_score;
@@ -164,7 +189,7 @@ int			eval_surround_square(State &state, int coord)
 
 		if (is_in_bounds(row + 1 * delta, col))
 		{
-			tmp_score = new_eval(state, row + 1 * delta, col, 1, 0);
+			tmp_score = new_eval(state, row + 1 * delta, col);
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col, 1, 0);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col)];
 			state.score_board[flat_coord(row + 1 * delta, col)] = tmp_score;
@@ -172,7 +197,7 @@ int			eval_surround_square(State &state, int coord)
 
 		if (is_in_bounds(row + 1 * delta, col + 1 * delta))
 		{
-			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta, 1, 1);
+			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta);
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col + 1 * delta, 1, 1);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)];
 			state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)] = tmp_score;
@@ -181,7 +206,7 @@ int			eval_surround_square(State &state, int coord)
 		if (is_in_bounds(row + 1 * delta, col - 1 * delta))
 		{
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col - 1 * delta, 1, -1);
-			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta, 1, -1);
+			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)];
 			state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)] = tmp_score;
 		}
