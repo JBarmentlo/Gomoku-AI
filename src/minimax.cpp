@@ -37,8 +37,21 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 	// std::cout << "move: " << state.last_move << std::endl;
 	// std::cout << "depth: " << depth << std::endl;
 	// state.print();
-
 	bool	maximizer = (state.player == WHITE);
+
+	// if (state.free_threes == 6)
+	// {
+	// 	std::cout << "ILLEGERR" << std::endl;
+	// 	std::cout << "ILLEGERR" << std::endl;
+	// 	std::cout << "ILLEGERR" << std::endl;
+	// 	std::cout << "ILLEGERR" << std::endl;
+	// 	std::cout << "ILLEGERR" << std::endl;
+	// 	state.print();
+	// 	std::cout << "END ILLEGERR" << std::endl;
+	// 	return ILLEGAL;
+
+	// }
+
 
 	past_scores.push_front(state.score);
 
@@ -98,17 +111,20 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 		for(int i = 0; i < counter; i++)
 		{
 			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-			if (eval > maxEval)
+			if (eval != ILLEGAL)
 			{
-				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
-				best_move = babie_states[babies[i].second].last_move;
-				maxEval = eval;
-			}
-			alpha = std::max(alpha, eval);
-			if (beta <= alpha)
-			{
-				a_b_pruned += 1;
-				break;
+				if (eval > maxEval)
+				{
+					// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
+					best_move = babie_states[babies[i].second].last_move;
+					maxEval = eval;
+				}
+				alpha = std::max(alpha, eval);
+				if (beta <= alpha)
+				{
+					a_b_pruned += 1;
+					break;
+				}
 			}
 		}
 		if (depth == 0)
@@ -145,17 +161,20 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 		for(int i = 0; i < counter; i++)
 		{
 			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-			if (eval < minEval)
+			if (eval != ILLEGAL)
 			{
-				// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
-				best_move = babie_states[babies[i].second].last_move;
-				minEval = eval;
-			}
-			beta = std::min(beta, eval);
-			if (beta <= alpha)
-			{
-				a_b_pruned += 1;
-				break;
+				if (eval < minEval)
+				{
+					// std::cout << "FOUND BETTER MOVE: " << babies[i].second << " eval: " << eval << std::endl;
+					best_move = babie_states[babies[i].second].last_move;
+					minEval = eval;
+				}
+				beta = std::min(beta, eval);
+				if (beta <= alpha)
+				{
+					a_b_pruned += 1;
+					break;
+				}
 			}
 		}
 		if (depth == 0)

@@ -4,51 +4,7 @@
 #include "pattern.hpp"
 
 
-
-inline int	count_full_then_empty(const State &state, int row, int col, int r_delta, int c_delta, int player)
-{
-	int square;
-	int	count				= 1;
-
-	for (int delta = 1; delta <= 5; delta++)
-	{
-		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
-			break;
-
-		square = state.get_square(row + delta * r_delta, col + delta * c_delta);
-
-		if (square == NEXT_PLAYER(player))
-			break;
-		
-		if (square == EMPTY)
-			break;
-
-		count += 1;
-	}
-
-	for (int delta = 1; delta <= 5; delta++)
-	{
-		if (not is_in_bounds(row - delta * r_delta, col - delta * c_delta))
-			break;
-
-		square = state.get_square(row - delta * r_delta, col - delta * c_delta);
-
-		if (square == NEXT_PLAYER(player))
-			break;
-		
-		if (square == EMPTY)
-			break;
-
-		count += 1;
-	}
-	if (count == 1)
-		return (0);
-	if (count == 5)
-		return (123456789);
-	return (1 << (2 * count));
-}
-
-inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int c_delta, int player)
+inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int c_delta, int player, bool check_free)
 {
 	int square;
 	int	count		= 0;
@@ -61,6 +17,7 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 
 	int enemy 		= NEXT_PLAYER(player);
 
+	std::cout << "EVAL at: " << row << ", " << col << std::endl;
 	for (delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++)
 	{
 		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
@@ -68,7 +25,7 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 
 		square = state.get_square(row + delta * r_delta, col + delta * c_delta);
 
-		if (square == enemy) // ! BOLD ASSUMPTION HERE BASED ON SURROUND SIZE == 2
+		if (square == enemy and started)
 			break;
 		
 		if (square == EMPTY)
@@ -87,71 +44,60 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 			gap += top_space;
 			top_space = 0;
 		}
+		std::cout << "r: " << row + delta * r_delta << " ,c: " << col + delta * c_delta << std::endl;
+		std::cout << "count_: " << count << " empties: " << empties << " b_s: " << bot_space << " t_s: " << top_space << " gap: " << gap << std::endl;
 	}
 
-	
-	if (count + empties < 5)
-		return 0;
 
-	if (count ==  3 and empties == 2)
+	if (check_free and count ==  3 and gap <= 1 and state.get_square(row , col) != EMPTY) // ! The last condition != EMPTY is useless now because we do not run eval on empty squares, it is there for resilience in case that behaviour is changed later
 	{
-		if (bot_space == 0)
-			delta = -SURROUND_SIZE - 1;
-		if (top_space == 0)
-			delta = SURROUND_SIZE + 1;
-
-		if (is_in_bounds(row + delta * r_delta, col + delta * c_delta))
+		delta = 0;
+		if (empties == 2)
+		{		
+			if (bot_space == 0)
+				delta = -SURROUND_SIZE - 1;
+			if (top_space == 0)
+				delta = SURROUND_SIZE + 1;
+		}
+		else if (empties == 1 and gap == 0)
+		{
+			if (bot_space == 1)
+				delta = SURROUND_SIZE + 1;
+			if (top_space == 1)
+				delta = -SURROUND_SIZE - 1;
+		}
+		if (delta != 0 and is_in_bounds(row + delta * r_delta, col + delta * c_delta))
 			if (state.get_square(row + delta * r_delta, col + delta * c_delta) == EMPTY)
 			{
+				std::cout << "free: " << row << ", " << col << std::endl;
+				std::cout << "empties: " << empties << " gap: " << gap << " t_s:" << top_space << " b_s: " << bot_space << std::endl;
+				std::cout << "r_d: " << r_delta << " c_d: " << c_delta << std::endl;
 				state.free_threes += 1;
 			}
-		
 	}
-	// return (count); // ! DEBUGGIN PURPOSES
+		
+	std::cout << "\n" << std::endl;
+	if (count + empties < 5)
+		return 0;
 	return (1 << (2 * count));
 }
 
-int			tuples_eval_at_coord(const State &state, int coord)
+int			new_eval(State &state, int row, int col, int r_d_free, int r_c_free)
 {
-	/*
-		Evaluates the number of points gained by the piece at coord (can be negative if black wins points) 
-	*/
-
-	// * does not take into account score lost because of empty squares being filled 
-	int player 		= state.get_square(coord / BOARD_WIDTH, coord % BOARD_HEIGHT);
-	if (player == EMPTY)
-		return 0;
 	int score		= 0;
-	
-	int	row = coord / BOARD_WIDTH;
-	int	col = coord % BOARD_WIDTH;
+	int player		= state.get_square(row, col);
 
-	score += count_full_then_empty(state, row, col, 0, 1, player);
-	score += count_full_then_empty(state, row, col, 1, 0, player);
-	score += count_full_then_empty(state, row, col, 1, 1, player);
-	score += count_full_then_empty(state, row, col, 1, -1, player);
-
-	if (player == BLACK)
+	if (player == EMPTY) // ! MAYBE DONT DO THIS
 	{
-		return (-score);
+		return (0);
 	}
 	else
 	{
-		return (score);
+		score += count_full_and_empty(state, row, col, 0, 1, player, ((0 == r_d_free) and (1 == r_c_free)));
+		score += count_full_and_empty(state, row, col, 1, 0, player, ((1 == r_d_free) and (0 == r_c_free)));
+		score += count_full_and_empty(state, row, col, 1, 1, player, ((1 == r_d_free) and (1 == r_c_free)));
+		score += count_full_and_empty(state, row, col, 1, -1, player, ((1 == r_d_free) and (-1 == r_c_free)));
 	}
-}
-
-int			tuples_eval_at_coord_potential(State &state, int coord, int player)
-{
-	int score		= 0;
-	
-	int	row = coord / BOARD_WIDTH;
-	int	col = coord % BOARD_WIDTH;
-
-	score += count_full_then_empty(state, row, col, 0, 1, player);
-	score += count_full_then_empty(state, row, col, 1, 0, player);
-	score += count_full_then_empty(state, row, col, 1, 1, player);
-	score += count_full_then_empty(state, row, col, 1, -1, player);
 
 	if (player == BLACK)
 	{
@@ -170,39 +116,16 @@ int			new_eval(State &state, int row, int col)
 
 	if (player == EMPTY) // ! MAYBE DONT DO THIS
 	{
-		score += count_full_and_empty(state, row, col, 0, 1, BLACK);
-		score += count_full_and_empty(state, row, col, 1, 0, BLACK);
-		score += count_full_and_empty(state, row, col, 1, 1, BLACK);
-		score += count_full_and_empty(state, row, col, 1, -1, BLACK);
-		score += count_full_and_empty(state, row, col, 0, 1, WHITE);
-		score += count_full_and_empty(state, row, col, 1, 0, WHITE);
-		score += count_full_and_empty(state, row, col, 1, 1, WHITE);
-		score += count_full_and_empty(state, row, col, 1, -1, WHITE);
+		return (0);
 	}
 	else
 	{
-		score += count_full_and_empty(state, row, col, 0, 1, player);
-		score += count_full_and_empty(state, row, col, 1, 0, player);
-		score += count_full_and_empty(state, row, col, 1, 1, player);
-		score += count_full_and_empty(state, row, col, 1, -1, player);	
+		score += count_full_and_empty(state, row, col, 0, 1, player, true);
+		score += count_full_and_empty(state, row, col, 1, 0, player, true);
+		score += count_full_and_empty(state, row, col, 1, 1, player, true);
+		score += count_full_and_empty(state, row, col, 1, -1, player, true);
 	}
 
-	if (player == BLACK)
-	{
-		return (-score);
-	}
-	else
-	{
-		return (score);
-	}
-}
-
-int			new_eval_dir(State &state, int row, int col, int r_d, int c_d, int player)
-{
-	int score		= 0;
-
-	score += count_full_and_empty(state, row, col, r_d, c_d, player);
-	std::cout << "s: " << score << " r_c: " << r_d << " c_d: " << c_d << std::endl;
 	if (player == BLACK)
 	{
 		return (-score);
@@ -233,7 +156,7 @@ int			eval_surround_square(State &state, int coord)
 
 		if (is_in_bounds(row, col + 1 * delta))
 		{
-			tmp_score = new_eval(state, row, col + 1 * delta);
+			tmp_score = new_eval(state, row, col + 1 * delta, 0, 1);
 			// tmp_score = new_eval_dir(state, row, col + 1 * delta, 0, 1);
 			score_diff += tmp_score - state.score_board[flat_coord(row, col + 1 * delta)];
 			state.score_board[flat_coord(row, col + 1 * delta)] = tmp_score;
@@ -241,7 +164,7 @@ int			eval_surround_square(State &state, int coord)
 
 		if (is_in_bounds(row + 1 * delta, col))
 		{
-			tmp_score = new_eval(state, row + 1 * delta, col);
+			tmp_score = new_eval(state, row + 1 * delta, col, 1, 0);
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col, 1, 0);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col)];
 			state.score_board[flat_coord(row + 1 * delta, col)] = tmp_score;
@@ -249,7 +172,7 @@ int			eval_surround_square(State &state, int coord)
 
 		if (is_in_bounds(row + 1 * delta, col + 1 * delta))
 		{
-			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta);
+			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta, 1, 1);
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col + 1 * delta, 1, 1);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)];
 			state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)] = tmp_score;
@@ -258,60 +181,7 @@ int			eval_surround_square(State &state, int coord)
 		if (is_in_bounds(row + 1 * delta, col - 1 * delta))
 		{
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col - 1 * delta, 1, -1);
-			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta);
-			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)];
-			state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)] = tmp_score;
-		}
-	}
-	return (score_diff);
-}
-
-int			eval_surround_square_potential(State &state, int coord)
-{
-	int	row			= coord / BOARD_WIDTH;
-	int	col			= coord % BOARD_WIDTH;
-	int score_diff	= 0;
-	int tmp_score;
-	int	r_d;
-	int	c_d;
-	state.set_piece(coord);
-	tmp_score = new_eval(state, row, col);
-	score_diff += tmp_score - state.score_board[flat_coord(row, col)];
-	state.score_board[flat_coord(row, col)] = tmp_score;
-
-	for (int delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++) // * CAN BE OPTIMIZED TO AVOID vicinity of EDGES + - SURROUND_SIZE WHERE SCORE IS 0
-	{
-		if (delta == 0)
-			continue;
-
-		if (is_in_bounds(row, col + 1 * delta))
-		{
-			tmp_score = new_eval(state, row, col + 1 * delta);
-			// tmp_score = new_eval_dir(state, row, col + 1 * delta, 0, 1);
-			score_diff += tmp_score - state.score_board[flat_coord(row, col + 1 * delta)];
-			state.score_board[flat_coord(row, col + 1 * delta)] = tmp_score;
-		}
-
-		if (is_in_bounds(row + 1 * delta, col))
-		{
-			tmp_score = new_eval(state, row + 1 * delta, col);
-			// tmp_score = new_eval_dir(state, row + 1 * delta, col, 1, 0);
-			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col)];
-			state.score_board[flat_coord(row + 1 * delta, col)] = tmp_score;
-		}
-
-		if (is_in_bounds(row + 1 * delta, col + 1 * delta))
-		{
-			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta);
-			// tmp_score = new_eval_dir(state, row + 1 * delta, col + 1 * delta, 1, 1);
-			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)];
-			state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)] = tmp_score;
-		}
-
-		if (is_in_bounds(row + 1 * delta, col - 1 * delta))
-		{
-			// tmp_score = new_eval_dir(state, row + 1 * delta, col - 1 * delta, 1, -1);
-			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta);
+			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta, 1, -1);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)];
 			state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)] = tmp_score;
 		}

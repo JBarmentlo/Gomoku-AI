@@ -36,6 +36,8 @@
 
 #define	SURROUND_SIZE	2		// * SIZE OF THE SQUARE CONSIDERED IN THE EVAL FUNCTION (IN EITHER DIRECTION) eval cpp assumes this is set to 2 in certain lline be carefull
 
+#define ILLEGAL			-1
+
 typedef std::bitset<BOARD_SIZE> bitboard;
 
 

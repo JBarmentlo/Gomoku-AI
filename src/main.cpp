@@ -16,9 +16,8 @@
 // typedef std::chrono::steady_clock::time_point timepoint;
 
 
-void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
+void play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State())
 {
-	State s;
 	s.coord_evaluation_function = eval_surround_square;
 	// s.value_coord_fun = s.find_pattern_around_last_move();
 	
@@ -75,6 +74,11 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 			}
 		}
 		std::cout << "Move: " << move /  BOARD_WIDTH << ", " << move % BOARD_WIDTH  << std::endl;
+		if (move == -12)
+		{
+			std::cout << "NO MORE MOVES" << std::endl;
+			return;
+		}
 		s = s.make_baby_from_coord(move);
 		std::cout << std::endl;
 
@@ -104,30 +108,11 @@ bool compare_scores(const State& s1, const State& s2)
 int main()
 {
 	State s;
-	// std::cout << (1 << 2) << std::endl;
-	// pattern	p = create_capture_pattern(DOWN_LEFT, WHITE);
-	// print_pattern(p);
-	// shift_pattern_to(p, 6, 10);
-	// print_pattern(p);
-	// int a = 0;
-	// std::cout << sizeof(a) << std::endl;
-	// play_game(7, true, true, 20);
-	// s.print_score_board();
-	// s.set_piece(9, 9);
-	// eval_surround_square(s, flat_coord(9, 9));
-	// s.print_score_board();
-	// s.set_piece(flat_coord(9, 11));
-	// eval_surround_square(s, flat_coord(9, 11));
-	// s.print_score_board();
-	// s.player = BLACK;
-	// s.set_piece(flat_coord(9, 10));
-	// eval_surround_square(s, flat_coord(9, 10));
-	// s.print_score_board();
-
-	// s.coord_evaluation_function = eval_surround_square;
-	// s = s.make_baby_from_coord(flat_coord(9, 9));
-	// s.print_score_board();
-	// s.print();
-	play_game(10, true , true, 20);
-	std::cout << "TROLROLROL" << std::endl;
+	s.set_piece(flat_coord(0, 0));
+	s.set_piece(flat_coord(0, 1));
+	s.set_piece(flat_coord(0, 2));
+	eval_surround_square(s, s.last_move);
+	s.print();
+	std::cout << "frees: " << s.free_threes << std::endl;
+	// play_game(10, false , false, 20);
 }
