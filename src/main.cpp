@@ -79,6 +79,7 @@ void play_game(int depth, bool cpu1, bool cpu2, int limit = 10)
 		std::cout << std::endl;
 
 		// // s.print_score_board();
+		std::cout << "free threes: " << s.free_threes << std::endl;
 		s.print();
 
 		folds += 1;
@@ -127,5 +128,6 @@ int main()
 	// s = s.make_baby_from_coord(flat_coord(9, 9));
 	// s.print_score_board();
 	// s.print();
-	play_game(10, false, true, 20);
+	play_game(10, true , true, 20);
+	std::cout << "TROLROLROL" << std::endl;
 }

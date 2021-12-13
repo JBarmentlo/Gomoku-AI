@@ -48,50 +48,65 @@ inline int	count_full_then_empty(const State &state, int row, int col, int r_del
 	return (1 << (2 * count));
 }
 
-inline int	count_full_and_empty(const State &state, int row, int col, int r_delta, int c_delta, int player)
+inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int c_delta, int player)
 {
 	int square;
 	int	count		= 0;
 	int empties 	= 0;
+	int	top_space	= 0;
+	int	bot_space	= 0;
+	int	gap			= 0;
+	bool started	= false;
+	int	delta;
+
 	int enemy 		= NEXT_PLAYER(player);
 
-	for (int delta = 0; delta <= SURROUND_SIZE; delta++)
+	for (delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++)
 	{
 		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
-			break;
+			continue;
 
 		square = state.get_square(row + delta * r_delta, col + delta * c_delta);
 
-		if (square == enemy)
+		if (square == enemy) // ! BOLD ASSUMPTION HERE BASED ON SURROUND SIZE == 2
 			break;
-
+		
 		if (square == EMPTY)
+		{
 			empties += 1;
+			if (not started)
+				bot_space += 1;
+			else
+				top_space += 1;
+		}
 
 		if (square == player)
+		{
 			count += 1;
+			started = true;
+			gap += top_space;
+			top_space = 0;
+		}
 	}
 
-	for (int delta = 1; delta <= SURROUND_SIZE; delta++)
-	{
-		if (not is_in_bounds(row - delta * r_delta, col - delta * c_delta))
-			break;
-
-		square = state.get_square(row - delta * r_delta, col - delta * c_delta);
-
-		if (square == enemy)
-			break;
-
-		if (square == EMPTY)
-			empties += 1;
-
-		if (square == player)
-			count += 1;
-	}
 	
 	if (count + empties < 5)
 		return 0;
 
+	if (count ==  3 and empties == 2)
+	{
+		if (bot_space == 0)
+			delta = -SURROUND_SIZE - 1;
+		if (top_space == 0)
+			delta = SURROUND_SIZE + 1;
+
+		if (is_in_bounds(row + delta * r_delta, col + delta * c_delta))
+			if (state.get_square(row + delta * r_delta, col + delta * c_delta) == EMPTY)
+			{
+				state.free_threes += 1;
+			}
+		
+	}
 	// return (count); // ! DEBUGGIN PURPOSES
 	return (1 << (2 * count));
 }
@@ -155,12 +170,22 @@ int			new_eval(State &state, int row, int col)
 
 	if (player == EMPTY) // ! MAYBE DONT DO THIS
 	{
-		return (0);
+		score += count_full_and_empty(state, row, col, 0, 1, BLACK);
+		score += count_full_and_empty(state, row, col, 1, 0, BLACK);
+		score += count_full_and_empty(state, row, col, 1, 1, BLACK);
+		score += count_full_and_empty(state, row, col, 1, -1, BLACK);
+		score += count_full_and_empty(state, row, col, 0, 1, WHITE);
+		score += count_full_and_empty(state, row, col, 1, 0, WHITE);
+		score += count_full_and_empty(state, row, col, 1, 1, WHITE);
+		score += count_full_and_empty(state, row, col, 1, -1, WHITE);
 	}
-	score += count_full_and_empty(state, row, col, 0, 1, player);
-	score += count_full_and_empty(state, row, col, 1, 0, player);
-	score += count_full_and_empty(state, row, col, 1, 1, player);
-	score += count_full_and_empty(state, row, col, 1, -1, player);
+	else
+	{
+		score += count_full_and_empty(state, row, col, 0, 1, player);
+		score += count_full_and_empty(state, row, col, 1, 0, player);
+		score += count_full_and_empty(state, row, col, 1, 1, player);
+		score += count_full_and_empty(state, row, col, 1, -1, player);	
+	}
 
 	if (player == BLACK)
 	{

@@ -17,12 +17,13 @@ class State
 		bitboard	live_board;
 		int			last_move;
 
-		int			player = WHITE;
-		int			w_captures = 0;
-		int			b_captures = 0;
-		int			score = 0;
-		bool 		game_win = false;
-		int			score_board[BOARD_SIZE] = {};
+		int			player					= WHITE;
+		int			w_captures				= 0;
+		int			b_captures				= 0;
+		int			free_threes				= 0;
+		int			score					= 0;
+		bool 		game_win				= false;
+		int			score_board[BOARD_SIZE]	= {};
 
 		int 		(*coord_evaluation_function)(State&, int coord);
 		State(/* args */);

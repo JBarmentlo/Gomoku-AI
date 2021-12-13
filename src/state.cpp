@@ -373,6 +373,7 @@ State			State::make_baby_from_coord(int coord)
 {
 	State s = *this;
 	s.coord_evaluation_function = this->coord_evaluation_function;
+	s.free_threes = 0;
 	// std::cout << "Set piece: " << coord << std::endl;
 	s.set_piece(coord);
 

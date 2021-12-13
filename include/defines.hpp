@@ -34,7 +34,7 @@
 
 #define TACTICS_LEN		4		// * tactics need to induce a positive score TACTICS_LEN folds further or they will be pruned
 
-#define	SURROUND_SIZE	2		// * SIZE OF THE SQUARE CONSIDERED IN THE EVAL FUNCTION (IN EITHER DIRECTION)
+#define	SURROUND_SIZE	2		// * SIZE OF THE SQUARE CONSIDERED IN THE EVAL FUNCTION (IN EITHER DIRECTION) eval cpp assumes this is set to 2 in certain lline be carefull
 
 typedef std::bitset<BOARD_SIZE> bitboard;
 
