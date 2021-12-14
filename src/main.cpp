@@ -9,6 +9,7 @@
 #include "pattern.hpp"
 
 #include "minimax.hpp"
+#include "server.hpp"
 
 #include <chrono>
 #include <deque>
@@ -112,46 +113,16 @@ bool compare_scores(const State& s1, const State& s2)
 // TODO add empyt to patterns
 int main()
 {
+
 	State s;
 	s.coord_evaluation_function = eval_surround_square;
-	s = s.make_baby_from_coord(flat_coord(7, 9));
-	s = s.make_baby_from_coord(flat_coord(5, 7));
-
-	s = s.make_baby_from_coord(flat_coord(7, 10));
-	s = s.make_baby_from_coord(flat_coord(6, 9));
-
-	s = s.make_baby_from_coord(flat_coord(7, 11));
-	s = s.make_baby_from_coord(flat_coord(6, 11));
-
-	s = s.make_baby_from_coord(flat_coord(7, 12));
-	s = s.make_baby_from_coord(flat_coord(7, 8));
-
-	s = s.make_baby_from_coord(flat_coord(9, 7));
-	s = s.make_baby_from_coord(flat_coord(8, 10));
-
-	s = s.make_baby_from_coord(flat_coord(9, 8));
-	s = s.make_baby_from_coord(flat_coord(9, 10));
-
-	s = s.make_baby_from_coord(flat_coord(9, 9));
-	s = s.make_baby_from_coord(flat_coord(9,6));
-
-	// // s.print(true);
-	// // int move = minimax(s, 10);
-	// // std::cout << move / BOARD_WIDTH << ", " << move % BOARD_WIDTH << std::endl;
-	// // s = s.make_baby_from_coord(move);
-	
-	// // eval_surround_square(s, s.last_move);
-	// s.print();
-	// // s.print_score_board();
-	// // // std::cout << "frees: " << s.free_threes << std::endl;
-	s = play_game(10, true , true, 50);
-	s.print();
 	// s = play_game(7, true , false, 20, s);
 
-	// s = s.make_baby_from_coord(flat_coord(7, 13));
-
-	// s.print();
-	// std::cout << s.game_win << std::endl;
-	// std::cout << (1 << 18) << std::endl;
-	std::cout << "BWIN" << BLACK_WIN << std::endl;
+	while (not s.game_win)
+	{
+		s = run_server_once(1234, s);
+		s.print();
+	}
+	
+	// run_server(1234);
 }
