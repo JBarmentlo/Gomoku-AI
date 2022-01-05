@@ -233,6 +233,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2);
 		enemy_board.set(last_coord + 2, false);
 		score += 1;
+		player_captures += 1;
 	}
 	p = create_capture_pattern(RIGHT, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
@@ -242,6 +243,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2);
 		enemy_board.set(last_coord - 2, false);
 		score += 1;
+		player_captures += 1;
 	}
 	
 	p = create_capture_pattern(DOWN_RIGHT, this->player);
@@ -252,6 +254,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2 * BOARD_WIDTH + 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2, false);
 		score += 1;
+		player_captures += 1;
 	}
 	p = create_capture_pattern(DOWN_RIGHT, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
@@ -261,6 +264,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2 * BOARD_WIDTH - 2);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH - 2, false);
 		score += 1;
+		player_captures += 1;
 	}
 
 	p = create_capture_pattern(DOWN, this->player);
@@ -271,6 +275,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH, false);
 		score += 1;
+		player_captures += 1;
 	}
 	p = create_capture_pattern(DOWN, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
@@ -280,6 +285,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH, false);
 		score += 1;
+		player_captures += 1;
 	}
 
 	p = create_capture_pattern(DOWN_LEFT, this->player);
@@ -290,6 +296,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2 * BOARD_WIDTH - 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH - 2, false);
 		score += 1;
+		player_captures += 1;
 	}
 	p = create_capture_pattern(DOWN_LEFT, this->player, 3);
 	if (shift_pattern_to(p, last_move_r, last_move_c) and (*this == p))
@@ -299,6 +306,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH + 2, false);
 		score += 1;
+		player_captures += 1;
 	}
 	if (player == WHITE)
 		this->score += score * CAPTURE_VALUE * 2;

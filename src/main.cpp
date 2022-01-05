@@ -110,19 +110,22 @@ bool compare_scores(const State& s1, const State& s2)
 }
 
 
-// TODO add empyt to patterns
+
 int main()
 {
 
 	State s;
 	s.coord_evaluation_function = eval_surround_square;
-	// s = play_game(7, true , false, 20, s);
 
-	while (not s.game_win)
+	while (true)
 	{
-		s = run_server_once(1234, s);
-		s.print();
+		s = State();
+		s.coord_evaluation_function = eval_surround_square;
+		while (not s.game_win)
+		{
+			s = run_server_once(1234, s);
+			s.print();
+		}
 	}
-	
 	// run_server(1234);
 }

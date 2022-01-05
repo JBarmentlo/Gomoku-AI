@@ -197,22 +197,48 @@ State run_server_once(int portno, State s)
 		std::cout << "Recieved Move: " << j2["move"] << std::endl;
 		if (j2["move"] != 1234)
 		{
-			s = s.make_baby_from_coord(j2["move"]);
-			if (s.free_threes == 2)
+			if (not j2["move_predictor"])
 			{
-				response["illegal"] = true;
-				s = tmp;
-			}
-			else if (s.game_win)
-			{
-				response["win"] = "white";
+				s = s.make_baby_from_coord(j2["move"]);
+				if (s.free_threes == 2)
+				{
+					response["illegal"] = true;
+					s = tmp;
+				}
+				else if (s.game_win)
+				{
+					response["win"] = "white";
+				}
+				else
+				{
+					next_move = minimax(s, 7);
+					s = s.make_baby_from_coord(next_move);
+				}
+				if (s.game_win)
+				{
+					response["win"] = "black";
+				}
+				response["move"] = next_move;
 			}
 			else
 			{
-				next_move = minimax(s, 7);
-				s = s.make_baby_from_coord(next_move);
+				s = s.make_baby_from_coord(j2["move"]);
+				if (s.free_threes == 2)
+				{
+					response["illegal"] = true;
+					s = tmp;
+				}
+				else if (s.game_win)
+				{
+					response["win"] = "white";
+				}
+				else
+				{
+					next_move = minimax(s, 7);
+				}
+				response["move"] = next_move;
 			}
-			response["move"] = next_move;
+
 		}
 		else
 		{
@@ -220,7 +246,8 @@ State run_server_once(int portno, State s)
 			s.coord_evaluation_function = eval_surround_square;
 		}
 		add_board_to_json(response, s);
-
+		response["w_captures"] = s.w_captures;
+		response["b_captures"] = s.b_captures;
 		std::cout << "Sending" << response.dump() << std::endl;
 		send(newsockfd, response.dump().c_str(), response.dump().length(), 0);
 	}
