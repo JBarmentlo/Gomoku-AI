@@ -491,3 +491,7 @@ bool			State::is_win(void)
 	return false;
 }
 
+bool		is_illegal(State &s)
+{
+	return (s.free_threes == 2);
+}

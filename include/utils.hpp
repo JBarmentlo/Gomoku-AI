@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include "defines.hpp"
+
 #include <iostream>
 
 inline int	flat_coord(int row, int col)
@@ -31,5 +32,7 @@ inline bool	is_in_bounds(int row, int col)
 {
 	return (col < BOARD_WIDTH and row < BOARD_HEIGHT and col >= 0 and row >= 0);
 }
+
+
 
 #endif // !UTILS_H

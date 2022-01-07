@@ -59,5 +59,5 @@ class State
 
 };
 
-
+bool		is_illegal(State &s);
 #endif

@@ -39,6 +39,10 @@
 #define BLACK_WIN		(INT32_MIN + 1)
 #define WHITE_WIN		(INT32_MAX - 1)
 
+#define PORTNO			1234
+#define RESET_MOVE		1234
+#define	DEPTH			7
+
 
 typedef std::bitset<BOARD_SIZE> bitboard;
 

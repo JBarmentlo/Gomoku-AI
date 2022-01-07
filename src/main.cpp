@@ -110,22 +110,20 @@ bool compare_scores(const State& s1, const State& s2)
 }
 
 
-
+#include "new_server.hpp"
 int main()
 {
+	play_server server = play_server(get_new_connection_fd());
+	server.await_message();
+	// State s;
+	// s.coord_evaluation_function = eval_surround_square;
+	// run_server_perma(s);
 
-	State s;
-	s.coord_evaluation_function = eval_surround_square;
-
-	while (true)
-	{
-		s = State();
-		s.coord_evaluation_function = eval_surround_square;
-		while (not s.game_win)
-		{
-			s = run_server_once(1234, s);
-			s.print();
-		}
-	}
+	// while (true)
+	// {
+		// play_vs_cpu();
+		// play_hotseat();
+		// return (0);
+	// }
 	// run_server(1234);
 }
