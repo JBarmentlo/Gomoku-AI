@@ -27,7 +27,7 @@ The server will respond with
 ```json
 {
 	"type"	: "game_start",
-	"cpu"	: "true / false" 	
+	"cpu"	: "true / false",
 	"depth"	: 7 				
 }
 ```
@@ -38,6 +38,7 @@ After this **"move"** type messages can be sent.
 The server awaits a message of the following shape:
 ```json
 {
+	"type"	: "move",
 	"move"	:  123
 }
 ```

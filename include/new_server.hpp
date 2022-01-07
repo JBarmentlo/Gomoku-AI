@@ -147,6 +147,7 @@ public:
 play_server::play_server(int sockfd)
 {
 	this->sockfd = sockfd;
+	bzero(this->buffer,256);
 	// this->s = State();
 	// this->s.coord_evaluation_function = eval_surround_square;
 }
@@ -167,6 +168,10 @@ void	play_server::handle_message_start(void)
 	json response;
 	response["type"]	= "game_start";
 	response["cpu"]		= this->cpu;
+	response["depth"]		= this->depth;
+
+	std::cout << "Sending" << response.dump() << std::endl;
+	send(this->sockfd, response.dump().c_str(), response.dump().length(), 0);
 }
 
 
@@ -196,7 +201,7 @@ void	play_server::handle_message_move(void)
 		}
 		else
 		{
-			response["suggested_move"] = minimax(s, 7, this->depth);
+			response["suggested_move"] = minimax(s, this->depth);
 		}
 	}
 
@@ -211,7 +216,9 @@ void	play_server::handle_message_move(void)
 
 void	play_server::handle_message(void)
 {
+	std::cout << "Received: " << this->buffer << std::endl;
 	this->msg = json::parse(this->buffer);
+	std::cout << this->msg << std::endl;
 	bzero(this->buffer,256);
 	if (this->msg["type"] == "start")
 	{
@@ -227,14 +234,16 @@ void	play_server::handle_message(void)
 void	play_server::await_message(void)
 {
 	int	n;
+	std::cout << "Awaiting message" << std::endl;
 	while(true)
-	{
-		n = read(this->sockfd, this->buffer, 255);
+	{	
+		n = recv(this->sockfd, this->buffer, 255, 0);
 		// recv();
 		if (n > 0)
-			return (this->handle_message()); // * ?
-
-		if (n < 0)
+		{
+			this->handle_message();
+		}
+		if (n == 0)
 		{
 			std::cout << "N < 0 IUUHAHGSDKJHGASDKJHGAWSDKJHG" << std::endl;
 			break;
