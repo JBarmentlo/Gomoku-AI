@@ -113,9 +113,13 @@ bool compare_scores(const State& s1, const State& s2)
 #include "new_server.hpp"
 int main()
 {
-	play_server server = play_server(get_new_connection_fd());
 
-	server.await_message();
+
+	while (true)
+	{
+		play_server server = play_server(get_new_connection_fd());
+		server.await_message();
+	}
 	// State s;
 	// s.coord_evaluation_function = eval_surround_square;
 	// run_server_perma(s);
