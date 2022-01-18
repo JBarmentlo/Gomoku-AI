@@ -18,6 +18,7 @@
 
 using json = nlohmann::json;
 
+#define MSGLEN 2048
 
 void		err(const char *msg)
 {
@@ -84,8 +85,8 @@ int			get_new_connection_fd()
 
 	int sockfd, newsockfd;
 	socklen_t clilen;
-	char buffer[256];
-	bzero(buffer,256);
+	char buffer[MSGLEN];
+	bzero(buffer,MSGLEN);
 	struct sockaddr_in serv_addr, cli_addr;
 	int n;
 
@@ -111,9 +112,11 @@ int			get_new_connection_fd()
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd < 0)
 		err("ERROR on accept");
-		
+	// n = recv(newsockfd, buffer, MSGLEN, 0);
+	n = read(newsockfd, buffer, MSGLEN);
 	printf("server: got connection from %s port %d\n",
 	inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
+	std::cout << "with the message:\n -------- \n" << buffer << "\n -------- \n" << std::endl;
 	close(sockfd);
 	return(newsockfd);
 }
@@ -124,7 +127,7 @@ class play_server
 private:
 	int 	sockfd;
 	State	s;
-	char	buffer[255];
+	char	buffer[MSGLEN];
 	json 	msg;
 	bool 	cpu;
 	bool	game_over = false;
@@ -147,7 +150,7 @@ public:
 play_server::play_server(int sockfd)
 {
 	this->sockfd = sockfd;
-	bzero(this->buffer,256);
+	bzero(this->buffer,MSGLEN);
 	// this->s = State();
 	// this->s.coord_evaluation_function = eval_surround_square;
 }
@@ -216,10 +219,11 @@ void	play_server::handle_message_move(void)
 
 void	play_server::handle_message(void)
 {
-	std::cout << "Received: " << this->buffer << std::endl;
+
+	std::cout << "with the message:\n -------- \n" << this->buffer << "\n -------- \n" << std::endl;
 	this->msg = json::parse(this->buffer);
 	std::cout << this->msg << std::endl;
-	bzero(this->buffer,256);
+	bzero(this->buffer,MSGLEN);
 	if (this->msg["type"] == "start")
 	{
 		this->handle_message_start();
@@ -235,12 +239,14 @@ void	play_server::await_message(void)
 {
 	int	n;
 	std::cout << "Awaiting message" << std::endl;
+	bzero(this->buffer,MSGLEN);
 	while(true)
 	{	
-		n = recv(this->sockfd, this->buffer, 255, 0);
+		n = recv(this->sockfd, this->buffer, MSGLEN, 0);
 		// recv();
 		if (n > 0)
 		{
+			std::cout << "Recieved msg of len: " << n << std::endl;
 			this->handle_message();
 		}
 		if (n == 0)
