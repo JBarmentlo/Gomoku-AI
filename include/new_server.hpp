@@ -117,6 +117,10 @@ int			get_new_connection_fd()
 	printf("server: got connection from %s port %d\n",
 	inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
 	std::cout << "with the message:\n -------- \n" << buffer << "\n -------- \n" << std::endl;
+	bzero(buffer, MSGLEN);
+	n = read(sockfd, buffer, MSGLEN);
+	std::cout << "message on listening socket:\n -------- \n" << buffer << "\n -------- \n" << std::endl;
+	bzero(buffer, MSGLEN);
 	close(sockfd);
 	return(newsockfd);
 }
