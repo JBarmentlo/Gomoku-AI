@@ -6,6 +6,6 @@ State	run_server_once(State s);
 void	play_vs_cpu();
 void	play_hotseat();
 void	run_server_perma(State s);
-int 	run_websocket_server(std::string adress, int port);
+void 	run_websocket_server(std::string adress, int port);
 
 #endif

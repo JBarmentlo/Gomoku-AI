@@ -21,6 +21,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <chrono>
 
 #include "state.hpp"
 #include "minimax.hpp"
@@ -149,6 +150,7 @@ std::string	game_handler::handle_message_move(json json_msg)
 	json response;
 	response["type"]	= "game_state";
 	response["illegal"] = false;
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	State tmp;
 	tmp = this->s;
@@ -179,6 +181,8 @@ std::string	game_handler::handle_message_move(json json_msg)
 
 	add_game_state_to_json(response, this->s);
 	response["cpu"] = this->cpu;
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    response["thinking_time"] = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
 
 	// std::cout << "Sending" << response.dump() << std::endl;
 	// send(this->sockfd, response.dump().c_str(), response.dump().length(), 0);
@@ -216,9 +220,7 @@ do_session(tcp::socket socket)
         ws.set_option(websocket::stream_base::decorator(
             [](websocket::response_type& res)
             {
-                res.set(http::field::server,
-                    std::string(BOOST_BEAST_VERSION_STRING) +
-                        " websocket-server-sync");
+                res.set(http::field::server," websocket-server-gomoku");
             }));
 
         // Accept the websocket handshake
@@ -263,7 +265,7 @@ do_session(tcp::socket socket)
 
 //------------------------------------------------------------------------------
 
-int run_websocket_server(std::string adress, int porto)
+void run_websocket_server(std::string adress, int porto)
 {
     try
     {
@@ -304,6 +306,6 @@ int run_websocket_server(std::string adress, int porto)
     catch (const std::exception& e)
     {
         std::cerr << "Error: " << e.what() << std::endl;
-        return EXIT_FAILURE;
+        return;
     }
 }

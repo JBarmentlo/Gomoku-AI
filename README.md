@@ -58,6 +58,7 @@ The server will respond with:
 												# by the server
 	"white_board"	: str						# explained below
 	"black_board"	: str						# explained below
+	"thinking_time"	: int						# Time spent to handle response by server (micro-seconds)
 }
 ```
 
