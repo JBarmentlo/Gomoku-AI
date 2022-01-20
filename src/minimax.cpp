@@ -170,10 +170,9 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 		}
 		if (depth == 0)
 		{
-			std::cout << "NODES EXPLORED:   " << node_count << std::endl;
-			std::cout << "TACTICS PRUNED:   " << tactics_pruned << std::endl;
-			std::cout << "A_B PRUNED:       " << a_b_pruned << std::endl;
-
+			// std::cout << "NODES EXPLORED:   " << node_count << std::endl;
+			// std::cout << "TACTICS PRUNED:   " << tactics_pruned << std::endl;
+			// std::cout << "A_B PRUNED:       " << a_b_pruned << std::endl;
 			return best_move;
 		}
 		else

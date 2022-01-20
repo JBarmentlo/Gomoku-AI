@@ -110,7 +110,6 @@ bool compare_scores(const State& s1, const State& s2)
 }
 
 
-#include "new_server.hpp"
 int main()
 {
 
