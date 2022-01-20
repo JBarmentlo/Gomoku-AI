@@ -17,7 +17,7 @@ An example start message.
 ```json
 {
 	"type"	: "start",
-	"cpu"	: "true",
+	"cpu"	: true,
 	"depth"	: 7 				# depth of minmax tree
 }
 ```
@@ -48,12 +48,12 @@ The server will respond with:
 ```json
 {
 	"type"			: "move",
-	"illegal"		: "true" / "false",			# If true the move sent was illegal and was ignored
+	"illegal"		: true / false,				# If true the move sent was illegal and was ignored
 	"w_captures"	: int						# Number of white captures [1-5]
 	"b_captures"	: int						# Number of black captures [1-5]
 	"winner"		: "black" / "white" / "no"	# Winner, "no" if no winner
 	"player:		: "black" / "white"			# Player who's turn it is
-	"cpu"			: "true" / "false"			# true if cpu game, false if hotseat game
+	"cpu"			: true / false				# true if cpu game, false if hotseat game
 	"suggested_move": int						# Only if hotseat game, the move suggested
 												# by the server
 	"white_board"	: str						# explained below
