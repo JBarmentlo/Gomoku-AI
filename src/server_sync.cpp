@@ -75,10 +75,16 @@ static void	add_board_to_json(json &response, State s)
 	ss << s.b_board << std::endl;
 	std::string out = ss.str();
 	response["black_board"] = out;
+
 	std::stringstream sss;
 	sss << s.w_board << std::endl;
 	std::string out2 = sss.str();
 	response["white_board"] = out2;
+
+	std::stringstream illegal_sstr;
+	illegal_sstr << s.make_illegal_move_board() << std::endl;
+	std::string illegal_str = illegal_sstr.str();
+	response["illegal_board"] = illegal_str;
 }
 
 

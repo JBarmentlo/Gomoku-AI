@@ -491,7 +491,23 @@ bool			State::is_win(void)
 	return false;
 }
 
+
 bool		is_illegal(State &s)
 {
 	return (s.free_threes == 2);
+}
+
+bitboard		State::make_illegal_move_board(void)
+{
+	bitboard illegals;
+
+	for (int i = 0; i < BOARD_SIZE; i++)
+	{
+		if (not (this->w_board.test(i) or this->b_board.test(i)))
+		{
+			if (this->make_baby_from_coord(i).free_threes == 2)
+				illegals.set(i, true);
+		}
+	}
+	return illegals;
 }

@@ -52,7 +52,7 @@ class State
 
 		bool				is_win(void);
 		bool				count_to_5(int row, int col, int r_delta, int c_delta);
-
+		bitboard			make_illegal_move_board(void);
 
 		State				make_baby_from_coord(int coord);
 		State				make_baby_from_coord_precalc(int coord, int score_delta);
