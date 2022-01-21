@@ -112,10 +112,14 @@ private:
 public:
 	game_handler();
 	~game_handler();
+	bool	waiting_on_AI = false;
+
 
 	std::string	handle_message(std::string msg);
 	std::string	handle_message_start(json json_msg);
 	std::string	handle_message_move(json json_msg);
+	std::string	play_received_move(json json_msg);
+	std::string	AI_move_or_predict(void);
 };
 
 
@@ -131,7 +135,7 @@ game_handler::~game_handler()
 }
 
 
-std::string game_handler::handle_message_start(json json_msg)
+std::string 	game_handler::handle_message_start(json json_msg)
 {
 	this->s = State();
 	this->s.coord_evaluation_function = eval_surround_square;
@@ -145,25 +149,21 @@ std::string game_handler::handle_message_start(json json_msg)
 	response["cpu"]		= this->cpu;
 	response["depth"]	= this->depth;
 
-	// std::cout << "Sending" << response.dump() << std::endl;
-	// send(this->sockfd, response.dump().c_str(), response.dump().length(), 0);
     return (response.dump().c_str());
 }
 
 
-std::string	game_handler::handle_message_move(json json_msg)
+std::string		game_handler::play_received_move(json json_msg)
 {
 	json response;
 	response["type"]	= "game_state";
+	response["type2"]	= "player_move";
 	response["illegal"] = false;
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	response["cpu"]		= this->cpu;
 
 	State tmp;
 	tmp = this->s;
 
-	std::cout << "Recieved Move: " << json_msg["move"] << std::endl;
-	if (PRINT_STATE_ON_MOVE)
-        this->s.print();
 	this->s = this->s.make_baby_from_coord(json_msg["move"]);
 	if (is_illegal(this->s))
 	{
@@ -171,32 +171,53 @@ std::string	game_handler::handle_message_move(json json_msg)
 		this->s = tmp;
 		std::cout << "Illegal move, reverting" << std::endl;
 	}
-	else
-	{
-		if (this->cpu)
-		{
-			this->s = this->s.make_baby_from_coord(minimax(s, this->depth));
-            if (PRINT_STATE_ON_MOVE)
-                this->s.print();
-		}
-		else
-		{
-			response["suggested_move"] = minimax(s, this->depth);
-		}
-	}
-
 	add_game_state_to_json(response, this->s);
-	response["cpu"] = this->cpu;
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    response["thinking_time"] = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
 
-	// std::cout << "Sending" << response.dump() << std::endl;
-	// send(this->sockfd, response.dump().c_str(), response.dump().length(), 0);
+
+	this->waiting_on_AI = true;
     return (response.dump().c_str());
 }
 
 
-std::string	game_handler::handle_message(std::string msg)
+std::string		game_handler::AI_move_or_predict(void)
+{
+	json response;
+	response["type"]	= "game_state";
+	response["illegal"] = false;
+	response["cpu"]		= this->cpu;
+
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+	if (this->cpu)
+	{
+		this->s = this->s.make_baby_from_coord(minimax(s, this->depth));
+		response["type2"] = "AI_move";
+
+		if (PRINT_STATE_ON_MOVE)
+			this->s.print();
+	}
+	else
+	{
+		response["suggested_move"]	= minimax(s, this->depth);
+		response["type2"]			= "AI_move_suggestion";
+
+	}
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    response["thinking_time"] = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+
+	add_game_state_to_json(response, this->s);
+	this->waiting_on_AI = false;
+    return (response.dump().c_str());
+}
+
+
+std::string		game_handler::handle_message_move(json json_msg)
+{
+    return (this->play_received_move(json_msg));
+}
+
+
+std::string		game_handler::handle_message(std::string msg)
 {
 	json json_msg = json::parse(msg);
 
@@ -213,9 +234,7 @@ std::string	game_handler::handle_message(std::string msg)
 
 //------------------------------------------------------------------------------
 
-// Echoes back all received WebSocket messages
-void
-do_session(tcp::socket socket)
+void	do_session(tcp::socket socket)
 {
     try
     {
@@ -238,9 +257,9 @@ do_session(tcp::socket socket)
             // This buffer will hold the incoming message
             beast::flat_buffer buffer;
             beast::flat_buffer reply_buffer;
+            beast::flat_buffer reply_buffer2;
 
             std::string msg;
-            std::string response;
 
             // Read a message
             ws.read(buffer);
@@ -250,9 +269,16 @@ do_session(tcp::socket socket)
 
             msg = beast::buffers_to_string(buffer.data());
             std::cout << "Recieved message:\n ------------\n" << msg << "\n------------" << std::endl;
-            response = game.handle_message(msg);
-            ostream(reply_buffer) << response;
+
+            ostream(reply_buffer) << game.handle_message(msg);
             ws.write(reply_buffer.data());
+
+			if (game.waiting_on_AI)
+			{
+				ostream(reply_buffer2) << game.AI_move_or_predict();
+				ws.write(reply_buffer2.data());
+			}
+
             // ws.write(response);
         }
     }
