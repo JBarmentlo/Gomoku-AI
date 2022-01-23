@@ -44,11 +44,11 @@ static void	set_winner(json &response, State s)
 	// Sets response["winner"] to "black", "white" or "no"
 	if (s.game_win)
 	{
-		if (s.player == BLACK)
-			response["winner"] = "white";
-		
-		if (s.player == WHITE)
+		if (s.winner == BLACK)
 			response["winner"] = "black";
+		
+		if (s.winner == WHITE)
+			response["winner"] = "white";
 	}
 	else
 	{

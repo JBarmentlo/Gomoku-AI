@@ -83,6 +83,20 @@ int				State::get_square(int row, int col) const
 }
 
 
+int				State::get_square(int coord) const
+{
+	if (this->b_board.test(coord))
+	{
+		return  (BLACK);
+	}
+	if (this->w_board.test(coord))
+	{
+		return  (WHITE);
+	}
+	return  (EMPTY);
+}
+
+
 void			State::print(bool print_empty)
 {
 	// std::string symbols[4] = {"O", "X", " ", "-"};
@@ -387,10 +401,10 @@ State			State::make_baby_from_coord(int coord)
 	s.compute_captures();
 
 	// std::cout << "Update eval" << std::endl;
-	if (s.is_win())
+	s.is_win();
+	if (s.game_win)
 	{
-		s.game_win = true;
-		if (player == WHITE)
+		if (s.winner == WHITE)
 		{
 			s.score = WHITE_WIN;
 		}
@@ -443,7 +457,7 @@ State			State::make_baby_from_coord_precalc(int coord, int score_delta)
 }
 
 
-bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
+bool			State::count_to_5(int row, int col, int r_delta, int c_delta, int player)
 {
 	int square;
 	int score				= 0;
@@ -456,7 +470,7 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
 
 		square = this->get_square(row + delta * r_delta, col + delta * c_delta);
 
-		if (square == next_player(this->player) or square == EMPTY)
+		if (square == next_player(player) or square == EMPTY)
 			break;
 
 		count += 1;
@@ -469,7 +483,7 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
 
 		square = this->get_square(row - delta * r_delta, col - delta * c_delta);
 
-		if (square == next_player(this->player) or square == EMPTY)
+		if (square == next_player(player) or square == EMPTY)
 			break;
 			
 		count += 1;
@@ -478,15 +492,77 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta)
 }
 
 
+bool			State::count_to_5(int row, int col, int player)
+{
+	return (count_to_5(row, col, 0, 1, player) or count_to_5(row, col, 1, 0, player) or	count_to_5(row, col, 1, 1, player) or count_to_5(row, col, 1, -1, player));
+}
+
+
+bool			State::can_capture_to_avoid_defeat(void)
+{
+	int		last_move	= this->last_move;
+	int		last_row	= last_move / BOARD_WIDTH;
+	int		last_col	= last_move % BOARD_WIDTH;
+
+	State	bb;
+
+	for(int c = 0; c < BOARD_SIZE; c++)
+	{
+		if (this->get_square(c) == EMPTY)
+		{
+			bb = this->make_baby_from_coord(c);
+			if (is_illegal(bb))
+				continue;
+			if (bb.get_enemy_captures() == 5)
+			{
+				return true;
+			}
+			if (not count_to_5(last_row, last_col, bb.player))
+			{
+				return true;
+			}
+
+		}
+	}
+	return false;
+}
+
 bool			State::is_win(void)
 {
-	if (this->b_captures == 5 or this->w_captures == 5)
-		return true;
 	const int row = this->last_move / BOARD_WIDTH;
 	const int col = this->last_move % BOARD_WIDTH;
 
-	if (count_to_5(row, col, 0, 1) or count_to_5(row, col, 1, 0) or count_to_5(row, col, 1, 1) or count_to_5(row, col, 1, -1))
+	if (this->b_captures == 5 or this->w_captures == 5)
+	{
+		this->game_win	= true;
+		this->winner	= next_player(this->player);
 		return true;
+	}
+
+	if (this->last_chance)
+	{
+		if (count_to_5(last_chance_move / BOARD_WIDTH, last_chance_move % BOARD_WIDTH, next_player(this->player)))
+		{
+			this->game_win	= true;
+			this->winner	= next_player(this->player);
+			return true;
+		}
+		else
+		{
+			this->last_chance = false;
+		}
+	}
+
+	if (count_to_5(row, col, 0, 1, this->player))
+	{
+		this->last_chance		= true;
+		this->last_chance_move	= this->last_move;
+		this->game_win			= not this->can_capture_to_avoid_defeat();
+		
+		if (this->game_win)
+			this->winner		= this->player;
+		return this->game_win;
+	}
 
 	return false;
 }
