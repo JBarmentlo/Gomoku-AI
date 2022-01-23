@@ -139,16 +139,25 @@ std::string 	game_handler::handle_message_start(json json_msg)
 {
 	this->s = State();
 	this->s.coord_evaluation_function = eval_surround_square;
-
-
 	this->cpu           = json_msg["cpu"];
 	this->depth         = json_msg["depth"];
 
+
 	json response;
+
+	if (json_msg["first_player"] == "black")
+	{
+		this->s.player = BLACK;
+		response["player"] = "black";
+	}
+	else
+	{
+		response["player"] = "white";
+	}
 	response["type"]	= "game_start";
 	response["cpu"]		= this->cpu;
 	response["depth"]	= this->depth;
-
+	
     return (response.dump().c_str());
 }
 
