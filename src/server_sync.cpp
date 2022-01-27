@@ -142,6 +142,11 @@ bool			game_handler::is_game_over(void)
 }
 
 
+// void	prep(State &s)
+// {
+// 	s = s.make_baby_from_coord();
+// }
+
 std::string 	game_handler::handle_message_start(json json_msg)
 {
 	this->s = State();

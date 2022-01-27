@@ -114,6 +114,32 @@ int main()
 {
 
 	run_websocket_server("0.0.0.0", 8080);
+	// State s = State();
+	// s.coord_evaluation_function = eval_surround_square;
+	// s = s.make_baby_from_coord(80);
+	// s = s.make_baby_from_coord(99);
+	// s = s.make_baby_from_coord(81);
+	// s = s.make_baby_from_coord(100);
+	// s = s.make_baby_from_coord(82);
+	// s = s.make_baby_from_coord(101);
+
+	// s = s.make_baby_from_coord(83);
+	// // s.print();
+	// // std::cout << "win: " << s.game_win << " last: " << s.last_chance << std::endl;
+
+	// s = s.make_baby_from_coord(102);
+	// // s.print();
+	// // std::cout << "win: " << s.game_win << " last: " << s.last_chance << std::endl;
+
+	// s = s.make_baby_from_coord(3 * 19 + 4);
+	// // s.print();
+	// // std::cout << "win: " << s.game_win << " last: " << s.last_chance << std::endl;
+	// s = s.make_baby_from_coord(3 * 19 + 5);
+	// s.print();
+	// s = s.make_baby_from_coord(84);
+	// s.print();
+	// std::cout << "win: " << s.game_win << " last: " << s.last_chance << std::endl;
+
 	// while (true)
 	// {
 	// 	play_server server = play_server(get_new_connection_fd());

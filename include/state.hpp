@@ -62,6 +62,7 @@ class State
 		bitboard			make_illegal_move_board(void);
 
 		State				make_baby_from_coord(int coord);
+		State				make_baby_from_coord_no_eval(int coord);
 		State				make_baby_from_coord_precalc(int coord, int score_delta);
 
 };

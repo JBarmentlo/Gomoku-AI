@@ -390,6 +390,26 @@ void			State::update_live_board(void)
 }
 
 
+State			State::make_baby_from_coord_no_eval(int coord)
+{
+	State s = *this;
+	s.coord_evaluation_function = this->coord_evaluation_function;
+	// std::cout << "Set piece: " << coord << std::endl;
+	s.set_piece(coord);
+	// std::cout << "Captures" << std::endl;
+	s.compute_captures();
+
+	
+	// std::cout << "Player and live board" << std::endl;
+	s.player = next_player(this->player);
+	s.update_live_board();
+	s.free_threes = count_free_threes(s, s.last_move);
+
+	// std::cout << "baby done" << std::endl;
+	// std::cout  << std::endl;
+	return (s);
+}
+
 State			State::make_baby_from_coord(int coord)
 {
 	State s = *this;
@@ -400,6 +420,9 @@ State			State::make_baby_from_coord(int coord)
 	s.compute_captures();
 
 	// std::cout << "Update eval" << std::endl;
+	s.player = next_player(this->player);
+	s.update_live_board();
+	s.free_threes = count_free_threes(s, s.last_move);
 	s.is_win();
 	if (s.game_win)
 	{
@@ -418,9 +441,7 @@ State			State::make_baby_from_coord(int coord)
 	}
 	
 	// std::cout << "Player and live board" << std::endl;
-	s.player = next_player(this->player);
-	s.update_live_board();
-	s.free_threes = count_free_threes(s, s.last_move);
+
 
 	// std::cout << "baby done" << std::endl;
 	// std::cout  << std::endl;
@@ -462,6 +483,10 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta, int player)
 	int score				= 0;
 	int	count				= 1;
 
+	if (this->get_square(row, col) != player)
+		return false;
+
+
 	for (int delta = 1; delta <= 5; delta++)
 	{
 		if (not is_in_bounds(row + delta * r_delta, col + delta * c_delta))
@@ -493,7 +518,16 @@ bool			State::count_to_5(int row, int col, int r_delta, int c_delta, int player)
 
 bool			State::count_to_5(int row, int col, int player)
 {
-	return (count_to_5(row, col, 0, 1, player) or count_to_5(row, col, 1, 0, player) or	count_to_5(row, col, 1, 1, player) or count_to_5(row, col, 1, -1, player));
+	if (count_to_5(row, col, 0, 1, player) or count_to_5(row, col, 1, 0, player) or	count_to_5(row, col, 1, 1, player) or count_to_5(row, col, 1, -1, player))
+	{
+		// std::cout << "---------------------" << std::endl;
+		// std::cout << "Count 5 at: " << row << ", " << col << " for player: " << player << std::endl;
+		// this->print();
+		// std::cout << "---------------------" << std::endl;
+
+		return true;
+	}
+	return false;
 }
 
 
@@ -509,15 +543,20 @@ bool			State::can_capture_to_avoid_defeat(void)
 	{
 		if (this->get_square(c) == EMPTY)
 		{
-			bb = this->make_baby_from_coord(c);
+			bb = this->make_baby_from_coord_no_eval(c);
 			if (is_illegal(bb))
 				continue;
 			if (bb.get_enemy_captures() == 5)
 			{
+				// std::cout << "yes for captures" << std::endl;
 				return true;
 			}
-			if (not count_to_5(last_row, last_col, bb.player))
+			if (not bb.count_to_5(last_row, last_col, bb.player))
 			{
+			// 	std::cout << "----------" << std::endl;
+			// 	std::cout << "yes for interupt: " << c / BOARD_WIDTH << ", " << c % BOARD_WIDTH << std::endl;
+			// 	bb.print();
+			// 	std::cout << "----------" << std::endl;
 				return true;
 			}
 
@@ -525,6 +564,7 @@ bool			State::can_capture_to_avoid_defeat(void)
 	}
 	return false;
 }
+
 
 bool			State::is_win(void)
 {
@@ -552,14 +592,16 @@ bool			State::is_win(void)
 		}
 	}
 
-	if (count_to_5(row, col, 0, 1, this->player))
+	if (count_to_5(row, col, next_player(this->player)))
 	{
 		this->last_chance		= true;
 		this->last_chance_move	= this->last_move;
 		this->game_win			= not this->can_capture_to_avoid_defeat();
-		
+
+		// std::cout << "can capture: " << not this->game_win << std::endl;
+
 		if (this->game_win)
-			this->winner		= this->player;
+			this->winner		= next_player(this->player);
 		return this->game_win;
 	}
 
@@ -567,10 +609,11 @@ bool			State::is_win(void)
 }
 
 
-bool		is_illegal(State &s)
+bool			is_illegal(State &s)
 {
 	return (s.free_threes == 2);
 }
+
 
 bitboard		State::make_illegal_move_board(void)
 {
