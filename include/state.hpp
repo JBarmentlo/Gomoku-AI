@@ -17,7 +17,7 @@ class State
 		bitboard	live_board;
 		int			last_move;
 
-		int			player					= WHITE;
+		int			player					= BLACK;
 		int			w_captures				= 0;
 		int			b_captures				= 0;
 		int			free_threes				= 0;

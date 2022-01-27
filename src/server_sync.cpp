@@ -120,6 +120,7 @@ public:
 	std::string	handle_message_move(json json_msg);
 	std::string	play_received_move(json json_msg);
 	std::string	AI_move_or_predict(void);
+	bool		is_game_over(void);
 };
 
 
@@ -135,25 +136,33 @@ game_handler::~game_handler()
 }
 
 
+bool			game_handler::is_game_over(void)
+{
+	return (this->s.game_win);
+}
+
+
 std::string 	game_handler::handle_message_start(json json_msg)
 {
 	this->s = State();
 	this->s.coord_evaluation_function = eval_surround_square;
+	this->waiting_on_AI = false;
 	this->cpu           = json_msg["cpu"];
 	this->depth         = json_msg["depth"];
 
 
 	json response;
 
-	if (json_msg["first_player"] == "black")
+	// if (json_msg["first_player"] == "black")
+	if (this->s.player == BLACK)
 	{
-		this->s.player = BLACK;
 		response["player"] = "black";
 	}
 	else
 	{
 		response["player"] = "white";
 	}
+
 	response["type"]	= "game_start";
 	response["cpu"]		= this->cpu;
 	response["depth"]	= this->depth;
@@ -282,7 +291,7 @@ void	do_session(tcp::socket socket)
             ostream(reply_buffer) << game.handle_message(msg);
             ws.write(reply_buffer.data());
 
-			if (game.waiting_on_AI)
+			if (game.waiting_on_AI and not game.is_game_over())
 			{
 				ostream(reply_buffer2) << game.AI_move_or_predict();
 				ws.write(reply_buffer2.data());

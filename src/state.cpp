@@ -12,7 +12,6 @@
 
 State::State(/* args */)
 {
-	this->player = WHITE;
 	this->w_captures = 0;
 	this->b_captures = 0;
 
