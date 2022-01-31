@@ -410,6 +410,7 @@ State			State::make_baby_from_coord_no_eval(int coord)
 	return (s);
 }
 
+
 State			State::make_baby_from_coord(int coord)
 {
 	State s = *this;
@@ -537,29 +538,28 @@ bool			State::can_capture_to_avoid_defeat(void)
 	int		last_row	= last_move / BOARD_WIDTH;
 	int		last_col	= last_move % BOARD_WIDTH;
 
+	int		previous_captures = this->get_player_captures();
+	int		new_captures;
+
 	State	bb;
 
 	for(int c = 0; c < BOARD_SIZE; c++)
 	{
-		if (this->get_square(c) == EMPTY)
+		if (this->live_board.test(c) && (this->get_square(c) == EMPTY))
 		{
 			bb = this->make_baby_from_coord_no_eval(c);
 			if (is_illegal(bb))
 				continue;
+			new_captures = bb.get_enemy_captures();
 			if (bb.get_enemy_captures() == 5)
 			{
 				// std::cout << "yes for captures" << std::endl;
 				return true;
 			}
-			if (not bb.count_to_5(last_row, last_col, bb.player))
+			if ((new_captures != previous_captures) && not bb.count_to_5(last_row, last_col, bb.player))
 			{
-			// 	std::cout << "----------" << std::endl;
-			// 	std::cout << "yes for interupt: " << c / BOARD_WIDTH << ", " << c % BOARD_WIDTH << std::endl;
-			// 	bb.print();
-			// 	std::cout << "----------" << std::endl;
 				return true;
 			}
-
 		}
 	}
 	return false;

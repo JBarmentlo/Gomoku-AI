@@ -87,7 +87,7 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 		// s.print_score_board();
 		std::cout << "free threes: " << s.free_threes << std::endl;
 		std::cout << "fold: " << folds << std::endl;
-		s.print();
+		// s.print();
 		// if (folds == 12)
 		// 	return s;
 
@@ -112,8 +112,8 @@ bool compare_scores(const State& s1, const State& s2)
 
 int main()
 {
-
-	run_websocket_server("0.0.0.0", 8080);
+	// play_game(3, true, true, 20);
+	run_websocket_server("0.0.0.0", 16784);
 	// State s = State();
 	// s.coord_evaluation_function = eval_surround_square;
 	// s = s.make_baby_from_coord(80);
