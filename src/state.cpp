@@ -70,7 +70,6 @@ void			State::set_piece(int coord)
 
 int				State::get_square(int coord) const
 {
-	// return (this->b_board[coord]) * BLACK + (this->w_board[coord]) * WHITE + (!this->w_board[coord]) * (!this->b_board[coord]) * EMPTY;
 	if (this->b_board[coord])
 	{
 		return  (BLACK);
@@ -88,13 +87,11 @@ int				State::get_square(int coord) const
 
 int				State::get_square(int row, int col) const
 {
-	// int test =  this->get_square(row * BOARD_WIDTH + col);
-	// return (this->b_board.test(row * BOARD_WIDTH + col)) * BLACK + (this->w_board.test(row * BOARD_WIDTH + col)) * WHITE + (!this->w_board.test(row * BOARD_WIDTH + col)) * (!this->b_board.test(row * BOARD_WIDTH + col)) * EMPTY;
-	if (this->b_board.test(row * BOARD_WIDTH + col))
+	if (this->b_board[row * BOARD_WIDTH + col])
 	{
 		return  (BLACK);
 	}
-	else if (this->w_board.test(row * BOARD_WIDTH + col))
+	else if (this->w_board[row * BOARD_WIDTH + col])
 	{
 		return  (WHITE);
 	}
