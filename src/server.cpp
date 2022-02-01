@@ -20,6 +20,7 @@ void	error(const char *msg)
     exit(1);
 }
 
+
 State	run_server(int portno, State s)
 {
 	int sockfd, newsockfd;
@@ -109,6 +110,7 @@ State	run_server(int portno, State s)
 	return s; 
 }
 
+
 static void	add_board_to_json(json &response, State s)
 {
 	std::stringstream ss;
@@ -120,6 +122,7 @@ static void	add_board_to_json(json &response, State s)
 	std::string out2 = sss.str();
 	response["white"] = out2;
 }
+
 
 void	run_server_perma(State s)
 {
@@ -354,6 +357,7 @@ State	run_server_once(State s)
 	return s;
 }
 
+
 State	run_server_once_human(State s)
 {
 	int sockfd, newsockfd;
@@ -471,6 +475,7 @@ State	run_server_once_human(State s)
 	return s;
 }
 
+
 void	play_vs_cpu()
 {
 	State s = State();
@@ -482,6 +487,7 @@ void	play_vs_cpu()
 	}
 }
 
+
 void	play_hotseat()
 {
 	State s = State();
@@ -492,6 +498,7 @@ void	play_hotseat()
 		s.print();
 	}
 }
+
 
 void	await_game_request()
 {

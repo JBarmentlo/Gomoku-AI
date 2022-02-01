@@ -93,8 +93,11 @@ static void	add_game_state_to_json(json &response, State &s)
 	set_winner(response, s);
 	set_player(response, s);
 	add_board_to_json(response, s);
-	response["w_captures"] = s.w_captures;
-	response["b_captures"] = s.b_captures;
+
+	response["w_captures"] 	= s.w_captures;
+	response["b_captures"] 	= s.b_captures;
+	response["score"] 		= s.score;
+
 }
 
 #define MSGLEN 2048

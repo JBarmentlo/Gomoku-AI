@@ -112,8 +112,8 @@ bool compare_scores(const State& s1, const State& s2)
 
 int main()
 {
-	play_game(7, true, true, 15);
-	// run_websocket_server("0.0.0.0", 16784);
+	// play_game(7, true, true, 15);
+	run_websocket_server("0.0.0.0", 16784);
 	// State s = State();
 	// s.coord_evaluation_function = eval_surround_square;
 	// s = s.make_baby_from_coord(80);
