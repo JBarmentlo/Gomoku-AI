@@ -85,8 +85,8 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 		std::cout << std::endl;
 
 		// s.print_score_board();
-		std::cout << "free threes: " << s.free_threes << std::endl;
-		std::cout << "fold: " << folds << std::endl;
+		// std::cout << "free threes: " << s.free_threes << std::endl;
+		// std::cout << "fold: " << folds << std::endl;
 		// s.print();
 		// if (folds == 12)
 		// 	return s;

@@ -6,7 +6,7 @@
 #include "state.hpp"
 
 int		eval_surround_square(State &state, int coord);
-int			count_free_threes(State &state, int coord);
+int			count_free_threes(const State &state, int coord);
 
 
 typedef int (*evaluation_function)(State&);

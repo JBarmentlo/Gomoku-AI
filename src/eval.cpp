@@ -4,10 +4,10 @@
 #include "pattern.hpp"
 
 
-int			count_free_threes(State &state, int coord)
+int			count_free_threes(const State &state, int coord)
 {
-	int	r_d_arr[4] = {0, 1, 1,  1};
-	int c_d_arr[4] = {1, 0, 1, -1};
+	const static int	r_d_arr[4] = {0, 1, 1,  1};
+	const static int 	c_d_arr[4] = {1, 0, 1, -1};
 	int r_d;
 	int c_d;
 	int	row = coord / BOARD_WIDTH;
