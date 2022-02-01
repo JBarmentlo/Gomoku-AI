@@ -84,15 +84,19 @@ int				State::get_square(int row, int col) const
 
 int				State::get_square(int coord) const
 {
-	if (this->b_board.test(coord))
-	{
-		return  (BLACK);
-	}
-	if (this->w_board.test(coord))
-	{
-		return  (WHITE);
-	}
-	return  (EMPTY);
+	return (this->b_board[coord]) * BLACK + (this->w_board[coord]) * WHITE + (this->w_board[coord]) * (this->b_board[coord]) *EMPTY;
+	// if (this->b_board[coord])
+	// {
+	// 	return  (BLACK);
+	// }
+	// else if (this->w_board[coord])
+	// {
+	// 	return  (WHITE);
+	// }
+	// else
+	// {
+	// 	return  (EMPTY);
+	// }
 }
 
 

@@ -8,7 +8,7 @@ import os
 
 HOST = "localhost"  # The server's hostname or IP address
 # HOST = os.environ["GOHOST"]  # The server's hostname or IP address
-PORT = 1234        # The port used by the server
+PORT = 8889        # The port used by the server
 # PORT = int(os.environ["GOPORT"])        # The port used by the server
 
 class  PermanentClient():
