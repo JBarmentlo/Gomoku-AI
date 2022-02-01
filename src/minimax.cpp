@@ -458,6 +458,135 @@ int		minimax_fred_root(State state, int limit, std::deque<int> past_scores, int 
 	}
 }
 
+
+int		minimax_fred_start_brother(State state, int limit)
+{
+	int 							depth 	= 0;
+	int 							alpha 	= BLACK_WIN;
+	int 							beta 	= WHITE_WIN;
+	bool							maximizer = (state.player == WHITE);
+	int 							eval;
+	int 							best_move = -12;
+	int								counter = 0;
+	bool							first 	= true;
+	int								bestEval;
+	thread_pool 					pool(std::thread::hardware_concurrency() - 1);
+	std::queue<std::future<int>> 	fut_queue;
+	std::queue<int>				 	move_queue;
+	std::deque<int> 				past_scores;
+	State							babie_states[200];
+	std::pair<int, int>				babies[200]; 	// <Score, state_index>
+	int								start_score = init_past_score(past_scores, state.score, maximizer);
+
+
+	// std::cout << "Started thread pool with: " << pool.get_thread_count() << " threads." << std::endl;
+	fill_baby_tables(babies, babie_states, state, counter);
+
+
+	if (maximizer)
+	{
+		bestEval = INT32_MIN;
+		std::sort(babies, babies + counter, compare_score);
+		for(int i = 0; i < counter; i++)
+		{
+			if (first)
+			{
+				eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+				if (eval != ILLEGAL)
+				{
+					first = false;
+					if (eval > bestEval)
+					{
+						best_move = babie_states[babies[i].second].last_move;
+						bestEval = eval;
+					}
+					alpha = std::max(alpha, eval);
+					if (beta <= alpha)
+					{
+						break;
+					}
+				}
+			}
+			else
+			{
+				fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
+				move_queue.push(babie_states[babies[i].second].last_move);
+			}
+		}
+		pool.wait_for_tasks();
+		while(! fut_queue.empty())
+		{
+			eval = fut_queue.front().get();
+			int tmp_move = move_queue.front();
+			move_queue.pop();
+			fut_queue.pop();
+			if (eval != ILLEGAL)
+			{
+				if (eval > bestEval)
+				{
+					best_move = tmp_move;
+					bestEval = eval;
+				}
+			}
+		}
+	}
+	else
+	{
+		bestEval = INT32_MAX;
+		std::sort(babies, babies + counter, compare_score_reverse); 
+		for(int i = 0; i < counter; i++)
+		{
+			if (first)
+			{
+				eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+				if (eval != ILLEGAL)
+				{
+					first = false;
+					if (eval < bestEval)
+					{
+						best_move = babie_states[babies[i].second].last_move;
+						bestEval = eval;
+					}
+					beta = std::min(beta, eval);
+					if (beta <= alpha)
+					{
+						break;
+					}
+				}
+			}
+			else
+			{
+				fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
+				move_queue.push(babie_states[babies[i].second].last_move);
+			}
+		}
+		pool.wait_for_tasks();
+		while(!fut_queue.empty())
+		{
+			eval = fut_queue.front().get();
+			int tmp_move = move_queue.front();
+			move_queue.pop();
+			fut_queue.pop();
+			if (eval != ILLEGAL)
+			{
+				if (eval < bestEval)
+				{
+					best_move = tmp_move;
+					bestEval = eval;
+				}
+			}
+		}
+	}
+	if (depth == 0)
+	{
+		return (best_move);
+	}
+	else
+	{
+		return (bestEval);
+	}
+}
+
 int		minimax_fred_start(State state, int limit)
 {
 	int 							depth 	= 0;
@@ -487,30 +616,8 @@ int		minimax_fred_start(State state, int limit)
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
-			if (first)
-			{
-				eval = minimax_fred_root(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-				if (eval != ILLEGAL)
-				{
-					first = false;
-					if (eval > bestEval)
-					{
-						best_move = babie_states[babies[i].second].last_move;
-						bestEval = eval;
-					}
-					update_alpha_if_needed(alpha, eval);
-					// alpha = std::max(alpha, eval);
-					if (read_alpha_beta(beta) <= read_alpha_beta(alpha))
-					{
-						break;
-					}
-				}
-			}
-			else
-			{
-				fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
-				move_queue.push(babie_states[babies[i].second].last_move);
-			}
+			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+			move_queue.push(babie_states[babies[i].second].last_move);
 		}
 		pool.wait_for_tasks();
 		while(! fut_queue.empty())
@@ -535,29 +642,8 @@ int		minimax_fred_start(State state, int limit)
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
-			if (first)
-			{
-				eval = minimax_fred_root(babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta));
-				if (eval != ILLEGAL)
-				{
-					first = false;
-					if (eval < bestEval)
-					{
-						best_move = babie_states[babies[i].second].last_move;
-						bestEval = eval;
-					}
-					update_beta_if_needed(beta, eval);
-					if (read_alpha_beta(beta) <= read_alpha_beta(alpha))
-					{
-						break;
-					}
-				}
-			}
-			else
-			{
-				fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
-				move_queue.push(babie_states[babies[i].second].last_move);
-			}
+			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+			move_queue.push(babie_states[babies[i].second].last_move);
 		}
 		pool.wait_for_tasks();
 		while(!fut_queue.empty())

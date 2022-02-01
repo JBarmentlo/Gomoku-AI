@@ -14,6 +14,7 @@ int		minimax_beam(State state, int limit, int depth = 0, int alpha = BLACK_WIN, 
 // int		minimax_no_len(State state, int limit,  int depth = 0, int alpha = BLACK_WIN, int beta =  WHITE_WIN);
 
 int		minimax_fred_start(State state, int limit);
+int		minimax_fred_start_brother(State state, int limit);
 
 
 #endif // !MINIMAX_H
