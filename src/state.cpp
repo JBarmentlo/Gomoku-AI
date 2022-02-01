@@ -586,10 +586,10 @@ bool			State::is_win(void)
 
 	if (this->last_chance)
 	{
-		if (count_to_5(last_chance_move / BOARD_WIDTH, last_chance_move % BOARD_WIDTH, next_player(this->player)))
+		if (count_to_5(last_chance_move / BOARD_WIDTH, last_chance_move % BOARD_WIDTH, this->player))
 		{
 			this->game_win	= true;
-			this->winner	= next_player(this->player);
+			this->winner	= this->player;
 			return true;
 		}
 		else
@@ -603,6 +603,8 @@ bool			State::is_win(void)
 		this->last_chance		= true;
 		this->last_chance_move	= this->last_move;
 		this->game_win			= not this->can_capture_to_avoid_defeat();
+		// this->game_win			= true;
+
 
 		// std::cout << "can capture: " << not this->game_win << std::endl;
 
