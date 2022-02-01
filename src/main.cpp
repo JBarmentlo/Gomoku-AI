@@ -79,7 +79,7 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 		s = s.make_baby_from_coord(move);
 		std::cout << std::endl;
 
-		s.print();
+		// s.print();
 
 		folds += 1;
 		if (folds >= limit and cpu1 and cpu2)

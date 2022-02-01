@@ -435,7 +435,7 @@ int		minimax_fred_start(State state, int limit)
 			}
 		}
 		pool.wait_for_tasks();
-		while(! fut_queue.empty())
+		while(!fut_queue.empty())
 		{
 			eval = fut_queue.front().get();
 			int tmp_move = move_queue.front();
