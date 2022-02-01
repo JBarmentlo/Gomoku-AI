@@ -21,17 +21,9 @@ bool	compare_score_reverse(const std::pair<int, int>& s1, const std::pair<int, i
 	return (s1.first < s2.first);
 }
 
-int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+int	init_past_score(std::deque<int> &past_scores, int state_score, bool maximizer)
 {
-	bool	maximizer = (state.player == WHITE);
-
-	if (state.free_threes == 2)
-	{
-		return ILLEGAL;
-	}
-
-	past_scores.push_front(state.score);
-
+	past_scores.push_front(state_score);
 	int	start_score;
 	if (maximizer)
 		start_score = INT32_MIN;
@@ -43,23 +35,29 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 	 	start_score = past_scores.back();
 		past_scores.pop_back();
 	}
+	return start_score;
+}
 
 
-	if (state.game_win)
-	{
-		return state.score;
-	}
-	if (depth == limit)
-		return (state.score);
 
-	int eval;
-	int best_move = -12;
-
+int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+{
+	bool				maximizer = (state.player == WHITE);
+	int 				best_move = -12;
+	int					counter   = 0;
+	int 				eval;
+	int					start_score;
 	std::pair<int, int>	babies[200]; 		// <Score, state_index>
 	State				babie_states[200];
 
-	int counter = 0;
+	if (state.free_threes == 2)
+		return ILLEGAL;
+	if (state.game_win)
+		return state.score;
+	if (depth == limit)
+		return (state.score);
 
+	start_score = init_past_score(past_scores, state.score, maximizer);
 	if (maximizer)
 	{
 		if (past_scores.size() == TACTICS_LEN and start_score > state.score)
@@ -77,8 +75,8 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 				if (counter == 200)
 					break;
 			}
-			std::sort(babies, babies + counter, compare_score);
 		}
+		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
 			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
@@ -120,9 +118,8 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 				if (counter == 200)
 					break;
 			}
-			std::sort(babies, babies + counter, compare_score_reverse); 
-
 		}
+		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
 			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
@@ -258,6 +255,9 @@ int		minimax_beam(State state, int limit, int depth, int alpha, int beta)
 #include "thread_pool.hpp"
 
 
+
+
+
 template<typename R>
   bool is_ready(std::future<R> const& f)
   { return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready; }
@@ -268,38 +268,18 @@ int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth
 	bool	maximizer = (state.player == WHITE);
 
 	if (state.free_threes == 2)
-	{
 		return ILLEGAL;
-	}
-
-	past_scores.push_front(state.score);
-
-	int	start_score;
-	if (maximizer)
-		start_score = INT32_MIN;
-	else
-		start_score = INT32_MAX;
-
-	if (past_scores.size() > TACTICS_LEN)
-	{
-	 	start_score = past_scores.back();
-		past_scores.pop_back();
-	}
-
-
 	if (state.game_win)
-	{
 		return state.score;
-	}
 	if (depth == limit)
 		return (state.score);
 
+	int start_score = init_past_score(past_scores, state.score, maximizer);
+
 	int eval;
 	int best_move = -12;
-
 	std::pair<int, int>	babies[200]; 		// <Score, state_index>
 	State				babie_states[200];
-
 	int counter = 0;
 
 	if (maximizer)
@@ -338,12 +318,7 @@ int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth
 				}
 			}
 		}
-		if (depth == 0)
-		{
-			return best_move;
-		}
-		else
-			return (maxEval);
+		return (maxEval);
 	}
 	else
 	{
@@ -382,12 +357,7 @@ int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth
 				}
 			}
 		}
-		if (depth == 0)
-		{
-			return best_move;
-		}
-		else
-			return (minEval);
+		return (minEval);
 	}
 }
 
@@ -400,19 +370,8 @@ int		minimax_fred_start(State state, int limit)
 	thread_pool pool(std::thread::hardware_concurrency() - 1);
 	bool		maximizer = (state.player == WHITE);
 
-	past_scores.push_front(state.score);
+	int	start_score = init_past_score(past_scores, state.score, maximizer);
 
-	int	start_score;
-	if (maximizer)
-		start_score = INT32_MIN;
-	else
-		start_score = INT32_MAX;
-
-	if (past_scores.size() > TACTICS_LEN)
-	{
-	 	start_score = past_scores.back();
-		past_scores.pop_back();
-	}
 
 	int eval;
 	int best_move = -12;
@@ -439,8 +398,9 @@ int		minimax_fred_start(State state, int limit)
 				if (counter == 200)
 					break;
 			}
-			std::sort(babies, babies + counter, compare_score);
 		}
+		std::sort(babies, babies + counter, compare_score);
+
 		for(int i = 0; i < counter; i++)
 		{
 			if (first)
@@ -463,10 +423,8 @@ int		minimax_fred_start(State state, int limit)
 			}
 			else
 			{
-				// std::cout << "/* LKJHASD */" << std::endl;
 				fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
 				move_queue.push(babie_states[babies[i].second].last_move);
-				// std::cout << "/* :LKJASD */" << std::endl;
 			}
 		}
 		pool.wait_for_tasks();
@@ -478,26 +436,13 @@ int		minimax_fred_start(State state, int limit)
 			fut_queue.pop();
 			if (eval != ILLEGAL)
 			{
-				first = false;
 				if (eval > maxEval)
 				{
 					best_move = tmp_move;
 					maxEval = eval;
 				}
-				// alpha = std::max(alpha, eval);
-				// if (beta <= alpha)
-				// {
-				// 	break;
-				// }
 			}
 		}
-
-		if (depth == 0)
-		{
-			return best_move;
-		}
-		else
-			return (maxEval);
 	}
 	else
 	{
@@ -516,9 +461,8 @@ int		minimax_fred_start(State state, int limit)
 				if (counter == 200)
 					break;
 			}
-			std::sort(babies, babies + counter, compare_score_reverse); 
-
 		}
+		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
 			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
@@ -536,11 +480,6 @@ int		minimax_fred_start(State state, int limit)
 				}
 			}
 		}
-		if (depth == 0)
-		{
-			return best_move;
-		}
-		else
-			return (minEval);
 	}
+	return (best_move);
 }
