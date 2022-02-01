@@ -286,7 +286,7 @@ int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval > bestEval)
@@ -308,7 +308,7 @@ int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval < bestEval)
@@ -354,7 +354,7 @@ int		minimax_fred_start(State state, int limit)
 	int								start_score = init_past_score(past_scores, state.score, maximizer);
 
 
-	std::cout << "Started thread pool with: " << pool.get_thread_count() << " threads." << std::endl;
+	// std::cout << "Started thread pool with: " << pool.get_thread_count() << " threads." << std::endl;
 	fill_baby_tables(babies, babie_states, state, counter);
 
 
