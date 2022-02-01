@@ -354,6 +354,7 @@ int		minimax_fred_start(State state, int limit)
 	int								start_score = init_past_score(past_scores, state.score, maximizer);
 
 
+	std::cout << "Started thread pool with: " << pool.get_thread_count() << " threads." << std::endl;
 	fill_baby_tables(babies, babie_states, state, counter);
 
 
