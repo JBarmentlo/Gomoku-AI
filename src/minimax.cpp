@@ -11,6 +11,7 @@
 #include <deque>
 #include <mutex>
 #include <shared_mutex>
+#include "thread_pool.hpp"
 
 
 
@@ -247,7 +248,6 @@ int		minimax_beam(State state, int limit, int depth, int alpha, int beta)
 	}
 }
 
-#include "thread_pool.hpp"
 
 
 template<typename R>
@@ -295,7 +295,7 @@ inline void update_beta_if_needed(int &beta, int new_ab)
 
 
 
-int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+int			minimax_fred(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
 {
 	bool				maximizer		= (state.player == WHITE);
 	int 				best_move 		= -12;
@@ -373,7 +373,8 @@ int		minimax_fred(State state, int limit, std::deque<int> past_scores, int depth
 	}
 }
 
-int		minimax_fred_root(State state, int limit, std::deque<int> past_scores, int depth, int &root_alpha, int &root_beta)
+
+int			minimax_fred_root(State state, int limit, std::deque<int> past_scores, int depth, int &root_alpha, int &root_beta)
 {
 	int					alpha			= root_alpha;
 	int					beta			= root_beta;
@@ -459,7 +460,7 @@ int		minimax_fred_root(State state, int limit, std::deque<int> past_scores, int 
 }
 
 
-int		minimax_fred_start_brother(State state, int limit)
+int			minimax_fred_start_brother(thread_pool& pool, State state, int limit)
 {
 	int 							depth 	= 0;
 	int 							alpha 	= BLACK_WIN;
@@ -470,7 +471,7 @@ int		minimax_fred_start_brother(State state, int limit)
 	int								counter = 0;
 	bool							first 	= true;
 	int								bestEval;
-	thread_pool 					pool(std::thread::hardware_concurrency() - 1);
+	// thread_pool 					pool(std::thread::hardware_concurrency() - 1);
 	std::queue<std::future<int>> 	fut_queue;
 	std::queue<int>				 	move_queue;
 	std::deque<int> 				past_scores;
@@ -491,7 +492,13 @@ int		minimax_fred_start_brother(State state, int limit)
 		{
 			if (first)
 			{
-				eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+				eval = minimax_fred_start(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
+				// eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+				// if (eval != fred_eval)
+				// {
+				// 	std::cout << "eval: " << eval << ", nulti: " << fred_eval <<std::endl;
+				// 	babie_states[babies[i].second].print();
+				// }
 				if (eval != ILLEGAL)
 				{
 					first = false;
@@ -538,7 +545,13 @@ int		minimax_fred_start_brother(State state, int limit)
 		{
 			if (first)
 			{
-				eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+				eval = minimax_fred_start(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
+				// eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+				// if (eval != fred_eval)
+				// {
+				// 	std::cout << "eval: " << eval << ", nulti: " << fred_eval <<std::endl;
+				// 	babie_states[babies[i].second].print();
+				// }
 				if (eval != ILLEGAL)
 				{
 					first = false;
@@ -579,6 +592,7 @@ int		minimax_fred_start_brother(State state, int limit)
 	}
 	if (depth == 0)
 	{
+		// std::cout << "best eval bro: " << bestEval << std::endl;
 		return (best_move);
 	}
 	else
@@ -587,21 +601,21 @@ int		minimax_fred_start_brother(State state, int limit)
 	}
 }
 
-int		minimax_fred_start(State state, int limit)
+
+int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<int> past_scores, bool return_eval)
 {
-	int 							depth 	= 0;
-	int 							alpha 	= BLACK_WIN;
-	int 							beta 	= WHITE_WIN;
-	bool							maximizer = (state.player == WHITE);
+	int 							alpha 		= BLACK_WIN;
+	int 							beta 		= WHITE_WIN;
+	bool							maximizer 	= (state.player == WHITE);
 	int 							eval;
-	int 							best_move = -12;
-	int								counter = 0;
-	bool							first 	= false;
+	int 							best_move 	= -12;
+	int								counter 	= 0;
+	bool							first 		= false;
 	int								bestEval;
-	thread_pool 					pool(std::thread::hardware_concurrency() - 1);
+	// thread_pool 					pool(std::thread::hardware_concurrency() - 1);
 	std::queue<std::future<int>> 	fut_queue;
 	std::queue<int>				 	move_queue;
-	std::deque<int> 				past_scores;
+	// std::deque<int> 				past_scores;
 	State							babie_states[200];
 	std::pair<int, int>				babies[200]; 	// <Score, state_index>
 	int								start_score = init_past_score(past_scores, state.score, maximizer);
@@ -616,7 +630,7 @@ int		minimax_fred_start(State state, int limit)
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
-			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, 1, std::ref(alpha), std::ref(beta)));
 			move_queue.push(babie_states[babies[i].second].last_move);
 		}
 		pool.wait_for_tasks();
@@ -642,7 +656,7 @@ int		minimax_fred_start(State state, int limit)
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
-			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores,  1, std::ref(alpha), std::ref(beta)));
 			move_queue.push(babie_states[babies[i].second].last_move);
 		}
 		pool.wait_for_tasks();
@@ -662,12 +676,12 @@ int		minimax_fred_start(State state, int limit)
 			}
 		}
 	}
-	if (depth == 0)
+	if (return_eval)
 	{
-		return (best_move);
+		return (bestEval);
 	}
 	else
 	{
-		return (bestEval);
+		return (best_move);
 	}
 }

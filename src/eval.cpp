@@ -110,33 +110,6 @@ inline int	count_full_and_empty(State &state, int row, int col, int r_delta, int
 	return (1 << (2 * count));
 }
 
-// int			new_eval(State &state, int row, int col, int r_d_free, int r_c_free)
-// {
-// 	int score		= 0;
-// 	int player		= state.get_square(row, col);
-
-// 	if (player == EMPTY) // ! MAYBE DONT DO THIS
-// 	{
-// 		return (0);
-// 	}
-// 	else
-// 	{
-// 		score += count_full_and_empty(state, row, col, 0, 1, player, ((0 == r_d_free) and (1 == r_c_free)));
-// 		score += count_full_and_empty(state, row, col, 1, 0, player, ((1 == r_d_free) and (0 == r_c_free)));
-// 		score += count_full_and_empty(state, row, col, 1, 1, player, ((1 == r_d_free) and (1 == r_c_free)));
-// 		score += count_full_and_empty(state, row, col, 1, -1, player, ((1 == r_d_free) and (-1 == r_c_free)));
-// 	}
-
-// 	if (player == BLACK)
-// 	{
-// 		return (-score);
-// 	}
-// 	else
-// 	{
-// 		return (score);
-// 	}
-// }
-
 int			new_eval(State &state, int row, int col)
 {
 	int score		= 0;
