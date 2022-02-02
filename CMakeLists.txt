@@ -21,8 +21,7 @@ set(SOURCES
     src/eval.cpp
     src/minimax.cpp
     src/pattern.cpp
-    src/server.cpp
-    src/server_sync.cpp
+    # src/server_sync.cpp
 )
 
 add_executable(Gomook ${SOURCES})

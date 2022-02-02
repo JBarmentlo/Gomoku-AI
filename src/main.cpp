@@ -18,9 +18,14 @@
 // typedef std::chrono::steady_clock::time_point timepoint;
 
 
+void	print_live_board_size(State &s)
+{
+	std::cout << "Live board size: " << s.live_board.count() << std::endl;
+}
+
 State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State())
 {
-	thread_pool	pool(std::thread::hardware_concurrency() - 1);
+	// thread_pool	pool(std::thread::hardware_concurrency() - 1);
 	s.coord_evaluation_function = eval_surround_square;
 	int folds = 0;
 	int move;
@@ -38,8 +43,9 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 			std::cout << "White to play" << std::endl;
 			if (cpu1)
 			{
+				print_live_board_size(s);
 				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax_fred_start_brother(pool, s, depth);
+				move = minimax_fred_start_brother(s, depth);
 				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
 				std::setfill(' ');
@@ -59,8 +65,9 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 			std::cout << "Black to play" << std::endl;
 			if (cpu2)
 			{
+				print_live_board_size(s);
 				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax_fred_start_brother(pool, s, depth);
+				move = minimax_fred_start_brother(s, depth);
 
 				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
@@ -82,162 +89,8 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 		std::cout << std::endl;
 
 		std::cout << "Fold: " << folds << std::endl;
-		s.print();
+		// s.print();
 		// s.print_score_board();
-
-		folds += 1;
-		if (folds >= limit and cpu1 and cpu2)
-		{
-			s.print();
-			// s.print_score_board();
-			break;
-		}
-	}
-	return s;
-}
-
-
-State play_game_beam(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State())
-{
-	s.coord_evaluation_function = eval_surround_square;
-	int folds = 0;
-	int move;
-	if (cpu1)
-		s.live_board.set(9 * BOARD_WIDTH + 9, true);
-	while(true)
-	{
-		if (s.player == WHITE)
-		{
-			if (s.game_win)
-			{
-				std::cout << "BLACK WON" << std::endl;
-				return s;
-			}
-			std::cout << "White to play" << std::endl;
-			if (cpu1)
-			{
-				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax_beam(s, depth);
-				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
-				std::setfill(' ');
-			}
-			else
-			{
-				move = get_move_keyboard();				
-			}
-		}
-		else
-		{
-			if (s.game_win)
-			{
-				std::cout << "WHITE WON" << std::endl;
-				return s;
-			}
-			std::cout << "Black to play" << std::endl;
-			if (cpu2)
-			{
-				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				// move = minimax(s, depth);
-				move = minimax_beam(s, depth);
-
-				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
-				
-				std::setfill(' ');
-			}
-			else
-			{
-				move = get_move_keyboard();				
-			}
-		}
-		std::cout << "Move: " << move /  BOARD_WIDTH << ", " << move % BOARD_WIDTH  << std::endl;
-		if (move == -12)
-		{
-			std::cout << "NO MORE MOVES" << std::endl;
-			return s;
-		}
-		s = s.make_baby_from_coord(move);
-		std::cout << std::endl;
-
-		s.print();
-
-		folds += 1;
-		if (folds >= limit and cpu1 and cpu2)
-		{
-			s.print();
-			// s.print_score_board();
-			break;
-		}
-	}
-	return s;
-}
-
-
-State play_game_beam_vs_classic(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State())
-{
-	s.coord_evaluation_function = eval_surround_square;
-	int folds = 0;
-	int move;
-	if (cpu1)
-		s.live_board.set(9 * BOARD_WIDTH + 9, true);
-	while(true)
-	{
-		if (s.player == WHITE)
-		{
-			if (s.game_win)
-			{
-				std::cout << "BLACK WON" << std::endl;
-				return s;
-			}
-			std::cout << "White to play" << std::endl;
-			if (cpu1)
-			{
-				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax_beam(s, depth);
-				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
-				std::setfill(' ');
-			}
-			else
-			{
-				move = get_move_keyboard();				
-			}
-		}
-		else
-		{
-			if (s.game_win)
-			{
-				std::cout << "WHITE WON" << std::endl;
-				return s;
-			}
-			std::cout << "Black to play" << std::endl;
-			if (cpu2)
-			{
-				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax(s, depth);
-				// move = minimax_beam(s, depth);
-
-				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
-				
-				std::setfill(' ');
-			}
-			else
-			{
-				move = get_move_keyboard();				
-			}
-		}
-		std::cout << "Move: " << move /  BOARD_WIDTH << ", " << move % BOARD_WIDTH  << std::endl;
-		if (move == -12)
-		{
-			std::cout << "NO MORE MOVES" << std::endl;
-			return s;
-		}
-		s = s.make_baby_from_coord(move);
-		std::cout << std::endl;
-
-		s.print();
 
 		folds += 1;
 		if (folds >= limit and cpu1 and cpu2)
@@ -263,7 +116,7 @@ int main()
 	// fut2.wait_for(std::chrono::seconds(1));
 
 
-	play_game(7, true, true, 20);
+	play_game(10, true, true, 20);
 	// play_game_beam(7, true, true, 15);
 
 	// State s;

@@ -59,7 +59,7 @@ void	fill_baby_tables(std::pair<int, int>* babies , State* babie_states, State &
 
 
 
-int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+int		minimax_single_fred(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
 {
 	bool				maximizer = (state.player == WHITE);
 	int 				best_move = -12;
@@ -89,7 +89,7 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			eval = minimax_single_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval > bestEval)
@@ -118,7 +118,7 @@ int		minimax(State state, int limit, std::deque<int> past_scores, int depth, int
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			eval = minimax_single_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval < bestEval)
@@ -293,6 +293,10 @@ inline void update_beta_if_needed(int &beta, int new_ab)
 	}
 }
 
+int			minimax_multifred(thread_pool& pool, State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+{
+	return minimax_fred_start_brother(state, depth);
+}
 
 
 int			minimax_fred(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
@@ -460,7 +464,7 @@ int			minimax_fred_root(State state, int limit, std::deque<int> past_scores, int
 }
 
 
-int			minimax_fred_start_brother(thread_pool& pool, State state, int limit)
+int			minimax_fred_start_brother(State state, int limit)
 {
 	int 							depth 	= 0;
 	int 							alpha 	= BLACK_WIN;
@@ -471,7 +475,7 @@ int			minimax_fred_start_brother(thread_pool& pool, State state, int limit)
 	int								counter = 0;
 	bool							first 	= true;
 	int								bestEval;
-	// thread_pool 					pool(std::thread::hardware_concurrency() - 1);
+	thread_pool 					pool(std::thread::hardware_concurrency() - 1);
 	std::queue<std::future<int>> 	fut_queue;
 	std::queue<int>				 	move_queue;
 	std::deque<int> 				past_scores;
