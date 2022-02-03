@@ -216,7 +216,11 @@ std::string		game_handler::AI_move_or_predict(void)
 
 	if (this->cpu)
 	{
-		this->s = this->s.make_baby_from_coord(minimax(s, this->depth));
+		#if MULTIFRED == 1
+			this->s = this->s.make_baby_from_coord(minimax_fred_start_brother(s, this->depth));
+		#else
+			this->s = this->s.make_baby_from_coord(minimax_single_fred(s, this->depth));
+		#endif
 		response["type2"] = "AI_move";
 
 		if (PRINT_STATE_ON_MOVE)
@@ -224,7 +228,12 @@ std::string		game_handler::AI_move_or_predict(void)
 	}
 	else
 	{
-		response["suggested_move"]	= minimax(s, this->depth);
+		#if MULTIFRED == 1
+			response["suggested_move"]	= minimax_fred_start_brother(s, this->depth);
+		#else
+			response["suggested_move"]	= minimax_single_fred(s, this->depth);
+		#endif
+
 		response["type2"]			= "AI_move_suggestion";
 
 	}
@@ -327,15 +336,6 @@ void run_websocket_server(std::string adress, int porto)
 {
     try
     {
-        // Check command line arguments.
-        // if (argc != 3)
-        // {
-        //     std::cerr <<
-        //         "Usage: websocket-server-sync <address> <port>\n" <<
-        //         "Example:\n" <<
-        //         "    websocket-server-sync 0.0.0.0 8080\n";
-        //     return EXIT_FAILURE;
-        // }
         std::cout << "porto: " << porto << std::endl;
         auto const address = net::ip::make_address(adress);
         unsigned short const port = static_cast<unsigned short>(porto);

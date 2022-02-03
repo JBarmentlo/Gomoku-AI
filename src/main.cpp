@@ -45,7 +45,7 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 			{
 				print_live_board_size(s);
 				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax_multifred(s, depth);
+				move = minimax_single_fred(s, depth);
 				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
 				std::setfill(' ');
@@ -67,7 +67,7 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 			{
 				print_live_board_size(s);
 				std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-				move = minimax_multifred(s, depth);
+				move = minimax_single_fred(s, depth);
 
 				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 				std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000 << "." << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 1000000) / 100000 << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() % 100000) / 10000 <<  "s" << std::endl;
@@ -115,7 +115,7 @@ int main()
 
 	// fut2.wait_for(std::chrono::seconds(1));
 
-
+	run_websocket_server("0.0.0.0", 16784);
 	play_game(7, true, true, 20);
 	// play_game_beam(7, true, true, 15);
 

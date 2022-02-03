@@ -46,4 +46,7 @@
 
 
 typedef std::bitset<BOARD_SIZE> bitboard;
+
+// #define MULTIFRED		1 // 1 = multithreaded, 0 = singlethreaded
+
 #endif
