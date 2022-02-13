@@ -327,6 +327,7 @@ int			minimax_fred(State state, int limit, std::deque<int> past_scores, int dept
 	fill_baby_tables(babies, babie_states, state, counter);
 
 
+
 	if (maximizer)
 	{
 		bestEval = INT32_MIN;

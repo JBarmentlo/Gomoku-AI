@@ -417,7 +417,7 @@ State			State::make_baby_from_coord_no_eval(int coord)
 }
 
 
-State			State::make_baby_from_coord(int coord)
+State			State::make_baby_from_coord(int coord) const
 {
 	State s = *this;
 	s.coord_evaluation_function = this->coord_evaluation_function;
@@ -527,11 +527,6 @@ bool			State::count_to_5(int row, int col, int player)
 {
 	if (count_to_5(row, col, 0, 1, player) or count_to_5(row, col, 1, 0, player) or	count_to_5(row, col, 1, 1, player) or count_to_5(row, col, 1, -1, player))
 	{
-		// std::cout << "---------------------" << std::endl;
-		// std::cout << "Count 5 at: " << row << ", " << col << " for player: " << player << std::endl;
-		// this->print();
-		// std::cout << "---------------------" << std::endl;
-
 		return true;
 	}
 	return false;
