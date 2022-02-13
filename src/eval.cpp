@@ -164,7 +164,7 @@ inline int	potential_captures(State &state, int row, int col, int r_delta, int c
 	if (((lst[1] == player) && (lst[2] == player)) && (((lst[0] == enemy) && (lst[3] == EMPTY)) || ((lst[3] == enemy) && (lst[0] == EMPTY))))
 		potential_captures += 1;
 	
-	if (player == BLACK)
+	if (enemy == BLACK)
 		return (potential_captures * potential_capture_value * (-1));
 	else
 		return (potential_captures * potential_capture_value);
@@ -217,10 +217,10 @@ int			eval_surround_square(State &state, int coord)
 	int	c_d;
 
 	tmp_score = new_eval(state, row, col);
-	// tmp_score += potential_captures(state, row, col, 0, 1);
-	// tmp_score += potential_captures(state, row, col, 1, 1);
-	// tmp_score += potential_captures(state, row, col, 1, 0);
-	// tmp_score += potential_captures(state, row, col, -1, 1);
+	tmp_score += potential_captures(state, row, col, 0, 1);
+	tmp_score += potential_captures(state, row, col, 1, 1);
+	tmp_score += potential_captures(state, row, col, 1, 0);
+	tmp_score += potential_captures(state, row, col, -1, 1);
 	score_diff += tmp_score - state.score_board[flat_coord(row, col)];
 	state.score_board[flat_coord(row, col)] = tmp_score;
 	for (int delta = -SURROUND_SIZE; delta <= SURROUND_SIZE; delta++) // * CAN BE OPTIMIZED TO AVOID vicinity of EDGES + - SURROUND_SIZE WHERE SCORE IS 0
@@ -231,8 +231,8 @@ int			eval_surround_square(State &state, int coord)
 		if (is_in_bounds(row, col + 1 * delta))
 		{
 			tmp_score = new_eval(state, row, col + 1 * delta);
-			// if ((delta == 1) || (delta == -1))
-			// 	tmp_score += potential_captures(state, row, col + 1 * delta, 0, 1);
+			if ((delta == 1) || (delta == -1))
+				tmp_score += potential_captures(state, row, col + 1 * delta, 0, 1);
 			// tmp_score = new_eval_dir(state, row, col + 1 * delta, 0, 1);
 			score_diff += tmp_score - state.score_board[flat_coord(row, col + 1 * delta)];
 			state.score_board[flat_coord(row, col + 1 * delta)] = tmp_score;
@@ -241,8 +241,8 @@ int			eval_surround_square(State &state, int coord)
 		if (is_in_bounds(row + 1 * delta, col))
 		{
 			tmp_score = new_eval(state, row + 1 * delta, col);
-			// if ((delta == 1) || (delta == -1))
-			// 	tmp_score += potential_captures(state, row + 1 * delta, col, 1, 0);
+			if ((delta == 1) || (delta == -1))
+				tmp_score += potential_captures(state, row + 1 * delta, col, 1, 0);
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col, 1, 0);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col)];
 			state.score_board[flat_coord(row + 1 * delta, col)] = tmp_score;
@@ -251,8 +251,8 @@ int			eval_surround_square(State &state, int coord)
 		if (is_in_bounds(row + 1 * delta, col + 1 * delta))
 		{
 			tmp_score = new_eval(state, row + 1 * delta, col + 1 * delta);
-			// if ((delta == 1) || (delta == -1))
-			// 	tmp_score += potential_captures(state, row + 1 * delta, col + 1 * delta, 1, 1);
+			if ((delta == 1) || (delta == -1))
+				tmp_score += potential_captures(state, row + 1 * delta, col + 1 * delta, 1, 1);
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col + 1 * delta, 1, 1);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)];
 			state.score_board[flat_coord(row + 1 * delta, col + 1 * delta)] = tmp_score;
@@ -262,8 +262,8 @@ int			eval_surround_square(State &state, int coord)
 		{
 			// tmp_score = new_eval_dir(state, row + 1 * delta, col - 1 * delta, 1, -1);
 			tmp_score = new_eval(state, row + 1 * delta, col - 1 * delta);
-			// if ((delta == 1) || (delta == -1))
-			// 	tmp_score += potential_captures(state, row + 1 * delta, col - 1 * delta, 1, -1);
+			if ((delta == 1) || (delta == -1))
+				tmp_score += potential_captures(state, row + 1 * delta, col - 1 * delta, 1, -1);
 			score_diff += tmp_score - state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)];
 			state.score_board[flat_coord(row + 1 * delta, col - 1 * delta)] = tmp_score;
 		}

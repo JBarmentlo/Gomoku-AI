@@ -44,11 +44,11 @@
 #define PORTNO			1234
 #define RESET_MOVE		1234
 #define	DEPTH			7
-#define	K_BEAM			4
+#define	K_BEAM			5
 
 #define POTENTIAL_CAPTURES true
 #define POTENTIAL_CAPTURE_VALUE (CAPTURE_VALUE / 8)
-static int potential_capture_value = POTENTIAL_CAPTURE_VALUE;
+static int potential_capture_value = 10;
 
 
 typedef std::bitset<BOARD_SIZE> bitboard;
