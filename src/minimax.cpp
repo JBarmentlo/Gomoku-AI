@@ -70,6 +70,9 @@ int		minimax_single_fred(State state, int limit, std::deque<int> past_scores, in
 	State				babie_states[200];
 	int					bestEval;
 
+	static int nodes = 0;
+
+	nodes += 1;
 	if (state.free_threes == 2)
 		return ILLEGAL;
 	if (state.game_win)
@@ -106,6 +109,8 @@ int		minimax_single_fred(State state, int limit, std::deque<int> past_scores, in
 		}
 		if (depth == 0)
 		{
+			std::cout << "NODES: " << nodes << std::endl;
+			nodes = 0;
 			return best_move;
 		}
 		else
@@ -136,6 +141,8 @@ int		minimax_single_fred(State state, int limit, std::deque<int> past_scores, in
 	}
 	if (depth == 0)
 	{
+		std::cout << "NODES: " << nodes << std::endl;
+		nodes = 0;
 		return best_move;
 	}
 	else
@@ -401,7 +408,6 @@ int			minimax_fred_root(State state, int limit, std::deque<int> past_scores, int
 
 	fill_baby_tables(babies, babie_states, state, counter);
 
-
 	if (maximizer)
 	{
 		bestEval = INT32_MIN;
@@ -494,12 +500,6 @@ int			minimax_fred_start_brother(State state, int limit)
 			if (first)
 			{
 				eval = minimax_fred_start(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
-				// eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-				// if (eval != fred_eval)
-				// {
-				// 	std::cout << "eval: " << eval << ", nulti: " << fred_eval <<std::endl;
-				// 	babie_states[babies[i].second].print();
-				// }
 				if (eval != ILLEGAL)
 				{
 					first = false;
@@ -517,7 +517,8 @@ int			minimax_fred_start_brother(State state, int limit)
 			}
 			else
 			{
-				fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
+				fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+				// fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
 				move_queue.push(babie_states[babies[i].second].last_move);
 			}
 		}
@@ -547,12 +548,6 @@ int			minimax_fred_start_brother(State state, int limit)
 			if (first)
 			{
 				eval = minimax_fred_start(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
-				// eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-				// if (eval != fred_eval)
-				// {
-				// 	std::cout << "eval: " << eval << ", nulti: " << fred_eval <<std::endl;
-				// 	babie_states[babies[i].second].print();
-				// }
 				if (eval != ILLEGAL)
 				{
 					first = false;
@@ -570,7 +565,8 @@ int			minimax_fred_start_brother(State state, int limit)
 			}
 			else
 			{
-				fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
+				fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+				// fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
 				move_queue.push(babie_states[babies[i].second].last_move);
 			}
 		}
@@ -686,3 +682,7 @@ int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<i
 		return (best_move);
 	}
 }
+
+
+
+

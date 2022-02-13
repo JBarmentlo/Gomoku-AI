@@ -216,11 +216,7 @@ std::string		game_handler::AI_move_or_predict(void)
 
 	if (this->cpu)
 	{
-		#if MULTIFRED == 1
-			this->s = this->s.make_baby_from_coord(minimax_fred_start_brother(s, this->depth));
-		#else
-			this->s = this->s.make_baby_from_coord(minimax_single_fred(s, this->depth));
-		#endif
+		this->s = this->s.make_baby_from_coord(minimax_fred_start_brother(s, this->depth));
 		response["type2"] = "AI_move";
 
 		if (PRINT_STATE_ON_MOVE)
@@ -228,11 +224,8 @@ std::string		game_handler::AI_move_or_predict(void)
 	}
 	else
 	{
-		#if MULTIFRED == 1
-			response["suggested_move"]	= minimax_fred_start_brother(s, this->depth);
-		#else
-			response["suggested_move"]	= minimax_single_fred(s, this->depth);
-		#endif
+		response["suggested_move"]	= minimax_fred_start_brother(s, this->depth);
+		// response["suggested_move"]	= minimax_single_fred(s, this->depth);
 
 		response["type2"]			= "AI_move_suggestion";
 

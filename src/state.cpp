@@ -557,9 +557,8 @@ bool			State::can_capture_to_avoid_defeat(void)
 			if (is_illegal(bb))
 				continue;
 			new_captures = bb.get_enemy_captures();
-			if (bb.get_enemy_captures() == 5)
+			if (new_captures == 5)
 			{
-				// std::cout << "yes for captures" << std::endl;
 				return true;
 			}
 			if ((new_captures != previous_captures) && not bb.count_to_5(last_row, last_col, bb.player))
@@ -603,13 +602,10 @@ bool			State::is_win(void)
 		this->last_chance		= true;
 		this->last_chance_move	= this->last_move;
 		this->game_win			= not this->can_capture_to_avoid_defeat();
-		// this->game_win			= true;
-
-
-		// std::cout << "can capture: " << not this->game_win << std::endl;
 
 		if (this->game_win)
 			this->winner		= next_player(this->player);
+			
 		return this->game_win;
 	}
 
