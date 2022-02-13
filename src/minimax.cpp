@@ -686,13 +686,13 @@ int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<i
 
 
 
-int			minimax_fred_k_beam(State state, int limit, std::deque<int> past_scores, int depth, int alpha, int beta)
+
+int			minimax_fred_k_beam(State state, int limit, int depth, int alpha, int beta)
 {
 	bool				maximizer		= (state.player == WHITE);
 	int 				best_move 		= -12;
 	int 				counter  		= 0;
 	int 				eval;
-	int 				start_score 	= init_past_score(past_scores, state.score, maximizer);
 	int					bestEval;
 	std::pair<int, int>	babies[200]; 		// <Score, state_index>
 	State				babie_states[200];
@@ -704,8 +704,6 @@ int			minimax_fred_k_beam(State state, int limit, std::deque<int> past_scores, i
 		return state.score;
 	if (depth == limit)
 		return (state.score);
-	if (past_scores.size() == TACTICS_LEN and ((maximizer && (start_score > state.score)) || ((!maximizer) && (start_score < state.score))))
-		return state.score;
 
 	fill_baby_tables(babies, babie_states, state, counter);
 
@@ -718,7 +716,7 @@ int			minimax_fred_k_beam(State state, int limit, std::deque<int> past_scores, i
 		{
 			if (i == K_BEAM)
 				break;
-			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval > bestEval)
@@ -742,7 +740,7 @@ int			minimax_fred_k_beam(State state, int limit, std::deque<int> past_scores, i
 		{
 			if (i == K_BEAM)
 				break;
-			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval < bestEval)
@@ -769,7 +767,7 @@ int			minimax_fred_k_beam(State state, int limit, std::deque<int> past_scores, i
 }
 
 
-int			minimax_fred_root_k_beam(State state, int limit, std::deque<int> past_scores, int depth, int &root_alpha, int &root_beta)
+int			minimax_fred_root_k_beam(State state, int limit,  int depth, int &root_alpha, int &root_beta)
 {
 	int					alpha			= root_alpha;
 	int					beta			= root_beta;
@@ -777,7 +775,6 @@ int			minimax_fred_root_k_beam(State state, int limit, std::deque<int> past_scor
 	int 				best_move 		= -12;
 	int 				counter  		= 0;
 	int 				eval;
-	int 				start_score 	= init_past_score(past_scores, state.score, maximizer);
 	int					bestEval;
 	std::pair<int, int>	babies[200]; 		// <Score, state_index>
 	State				babie_states[200];
@@ -790,8 +787,7 @@ int			minimax_fred_root_k_beam(State state, int limit, std::deque<int> past_scor
 		return state.score;
 	if (depth == limit)
 		return (state.score);
-	if (past_scores.size() == TACTICS_LEN and ((maximizer && (start_score > state.score)) || ((!maximizer) && (start_score < state.score))))
-		return state.score;
+
 
 	fill_baby_tables(babies, babie_states, state, counter);
 
@@ -801,7 +797,9 @@ int			minimax_fred_root_k_beam(State state, int limit, std::deque<int> past_scor
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			if (i == K_BEAM)
+				break;
+			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval > bestEval)
@@ -825,7 +823,9 @@ int			minimax_fred_root_k_beam(State state, int limit, std::deque<int> past_scor
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
-			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
+			if (i == K_BEAM)
+				break;
+			eval = minimax_fred_k_beam(babie_states[babies[i].second], limit,  depth + 1, alpha, beta);
 			if (eval != ILLEGAL)
 			{
 				if (eval < bestEval)
@@ -853,7 +853,8 @@ int			minimax_fred_root_k_beam(State state, int limit, std::deque<int> past_scor
 	}
 }
 
-int			minimax_fred_start_k_beam(thread_pool& pool, State state, int limit, std::deque<int> past_scores, bool return_eval)
+
+int			minimax_fred_start_k_beam(thread_pool& pool, State state, int limit, bool return_eval)
 {
 	int 							alpha 		= BLACK_WIN;
 	int 							beta 		= WHITE_WIN;
@@ -869,7 +870,6 @@ int			minimax_fred_start_k_beam(thread_pool& pool, State state, int limit, std::
 	// std::deque<int> 				past_scores;
 	State							babie_states[200];
 	std::pair<int, int>				babies[200]; 	// <Score, state_index>
-	int								start_score = init_past_score(past_scores, state.score, maximizer);
 
 	// std::cout << "Started thread pool with: " << pool.get_thread_count() << " threads." << std::endl;
 	fill_baby_tables(babies, babie_states, state, counter);
@@ -881,7 +881,9 @@ int			minimax_fred_start_k_beam(thread_pool& pool, State state, int limit, std::
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
-			fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit, past_scores, 1, std::ref(alpha), std::ref(beta)));
+			if (i == K_BEAM)
+				break;
+			fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit, 1, std::ref(alpha), std::ref(beta)));
 			move_queue.push(babie_states[babies[i].second].last_move);
 		}
 		pool.wait_for_tasks();
@@ -907,7 +909,7 @@ int			minimax_fred_start_k_beam(thread_pool& pool, State state, int limit, std::
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
-			fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit, past_scores,  1, std::ref(alpha), std::ref(beta)));
+			fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit,  1, std::ref(alpha), std::ref(beta)));
 			move_queue.push(babie_states[babies[i].second].last_move);
 		}
 		pool.wait_for_tasks();
@@ -952,10 +954,8 @@ int			minimax_fred_start_brother_k_beam(State state, int limit)
 	thread_pool 					pool(11);
 	std::queue<std::future<int>> 	fut_queue;
 	std::queue<int>				 	move_queue;
-	std::deque<int> 				past_scores;
 	State							babie_states[200];
 	std::pair<int, int>				babies[200]; 	// <Score, state_index>
-	int								start_score = init_past_score(past_scores, state.score, maximizer);
 
 
 	// std::cout << "Started thread pool with: " << pool.get_thread_count() << " threads." << std::endl;
@@ -968,9 +968,11 @@ int			minimax_fred_start_brother_k_beam(State state, int limit)
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
+			if (i == K_BEAM)
+				break;
 			if (first)
 			{
-				eval = minimax_fred_start_k_beam(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
+				eval = minimax_fred_start_k_beam(pool, babie_states[babies[i].second], limit - 1, true);
 				if (eval != ILLEGAL)
 				{
 					first = false;
@@ -988,7 +990,7 @@ int			minimax_fred_start_brother_k_beam(State state, int limit)
 			}
 			else
 			{
-				fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+				fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit,  depth + 1, std::ref(alpha), std::ref(beta)));
 				// fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
 				move_queue.push(babie_states[babies[i].second].last_move);
 			}
@@ -1018,7 +1020,7 @@ int			minimax_fred_start_brother_k_beam(State state, int limit)
 		{
 			if (first)
 			{
-				eval = minimax_fred_start_k_beam(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
+				eval = minimax_fred_start_k_beam(pool, babie_states[babies[i].second], limit - 1,  true);
 				if (eval != ILLEGAL)
 				{
 					first = false;
@@ -1036,7 +1038,7 @@ int			minimax_fred_start_brother_k_beam(State state, int limit)
 			}
 			else
 			{
-				fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit, past_scores, depth + 1, std::ref(alpha), std::ref(beta)));
+				fut_queue.push(pool.submit(minimax_fred_root_k_beam, babie_states[babies[i].second], limit,  depth + 1, std::ref(alpha), std::ref(beta)));
 				// fut_queue.push(pool.submit(minimax_fred, babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta));
 				move_queue.push(babie_states[babies[i].second].last_move);
 			}

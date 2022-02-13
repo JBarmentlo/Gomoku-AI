@@ -44,7 +44,7 @@
 #define PORTNO			1234
 #define RESET_MOVE		1234
 #define	DEPTH			7
-#define	K_BEAM			5
+#define	K_BEAM			3
 
 #define POTENTIAL_CAPTURES true
 #define POTENTIAL_CAPTURE_VALUE (CAPTURE_VALUE / 8)
