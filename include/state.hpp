@@ -60,6 +60,7 @@ class State
 		bool				count_to_5(int row, int col, int player);
 		bool				can_capture_to_avoid_defeat(void);
 		bitboard			make_illegal_move_board(void);
+		bool				is_possible_capture(void);
 
 		State				make_baby_from_coord(int coord) const;
 		State				make_baby_from_coord_no_eval(int coord);
@@ -68,4 +69,5 @@ class State
 };
 
 bool		is_illegal(State &s);
+bool		was_anything_captured(const State& s1, const State& s2);
 #endif

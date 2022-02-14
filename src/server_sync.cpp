@@ -112,6 +112,7 @@ private:
 	bool	game_over = false;
 	int		depth;
 	int		k_beam = false;
+	bool	was_possible_capture = false;
 
 public:
 	game_handler();
@@ -158,7 +159,7 @@ std::string 	game_handler::handle_message_start(json json_msg)
 	this->waiting_on_AI = false;
 	this->cpu           = json_msg["cpu"];
 	this->depth         = json_msg["depth"];
-	this->k_beam        = json_msg["k_beam"];
+	// this->k_beam        = json_msg["k_beam"];
 
 
 	json response;
@@ -200,7 +201,11 @@ std::string		game_handler::play_received_move(json json_msg)
 		std::cout << "Illegal move, reverting" << std::endl;
 	}
 	add_game_state_to_json(response, this->s);
-
+	if (!was_anything_captured(this->s, tmp)  && tmp.is_possible_capture())
+	{
+		std::cout << "/* message */" << std::endl;
+		potential_capture_value = (potential_capture_value * 8) / 9;
+	}
 
 	this->waiting_on_AI = true;
     return (response.dump().c_str());

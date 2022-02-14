@@ -628,3 +628,37 @@ bitboard		State::make_illegal_move_board(void)
 	}
 	return illegals;
 }
+
+
+bool		was_anything_captured(const State& s1, const State& s2)
+{
+	return ((s1.w_captures != s2.w_captures) || (s1.b_captures != s2.b_captures));
+}
+
+
+State			capture_baby(const State& state, int coord)
+{
+	State s = state;
+	s.coord_evaluation_function = state.coord_evaluation_function;
+	// std::cout << "Set piece: " << coord << std::endl;
+	s.set_piece(coord);
+	// std::cout << "Captures" << std::endl;
+	s.compute_captures();
+	return (s);
+}
+
+
+bool			State::is_possible_capture(void)
+{
+	for (int c = 0; c < BOARD_SIZE; c++)
+	{
+		if (this->live_board.test(c))
+		{
+			if (was_anything_captured(capture_baby(*this, c), *this))
+			{
+				return (true);
+			}
+		}
+	}
+	return (false);
+}
