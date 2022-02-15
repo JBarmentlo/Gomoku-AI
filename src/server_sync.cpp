@@ -85,7 +85,6 @@ static void	add_board_to_json(json &response, State s)
 	illegal_sstr << s.make_illegal_move_board() << std::endl;
 	std::string illegal_str = illegal_sstr.str();
 	response["illegal_board"] = illegal_str;
-	std::cout << "illegal: " << illegal_str << std::endl;
 }
 
 
@@ -160,8 +159,8 @@ std::string 	game_handler::handle_message_start(json json_msg)
 	this->waiting_on_AI = false;
 	this->cpu           = json_msg["cpu"];
 	this->depth         = json_msg["depth"];
-	// this->k_beam        = json_msg["k_beam"];
-
+	this->k_beam        = json_msg["k_beam"];
+	potential_capture_value 	= POTENTIAL_CAPTURE_VALUE;
 
 	json response;
 
@@ -236,7 +235,7 @@ std::string		game_handler::AI_move_or_predict(void)
 			#ifdef SINGLE_THREAD
 				this->s = this->s.make_baby_from_coord(minimax_single_fred(s, this->depth));
 			#else
-				this->s = this->s.make_baby_from_coord(minimax_fred_start_brother(s, this->depth + 3));
+				this->s = this->s.make_baby_from_coord(minimax_fred_start_brother(s, this->depth));
 			#endif
 		}
 		response["type2"] = "AI_move";

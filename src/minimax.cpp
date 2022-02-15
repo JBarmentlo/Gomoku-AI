@@ -335,19 +335,18 @@ int			minimax_fred(State state, int limit, std::deque<int> past_scores, int dept
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-			if (eval != ILLEGAL)
+			if (eval > bestEval)
 			{
-				if (eval > bestEval)
-				{
-					best_move = babie_states[babies[i].second].last_move;
-					bestEval = eval;
-				}
-				alpha = std::max(alpha, eval);
-				if (beta <= alpha)
-				{
-					break;
-				}
+				best_move = babie_states[babies[i].second].last_move;
+				bestEval = eval;
+			}
+			alpha = std::max(alpha, eval);
+			if (beta <= alpha)
+			{
+				break;
 			}
 		}
 	}
@@ -357,19 +356,18 @@ int			minimax_fred(State state, int limit, std::deque<int> past_scores, int dept
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-			if (eval != ILLEGAL)
+			if (eval < bestEval)
 			{
-				if (eval < bestEval)
-				{
-					best_move = babie_states[babies[i].second].last_move;
-					bestEval = eval;
-				}
-				beta = std::min(beta, eval);
-				if (beta <= alpha)
-				{
-					break;
-				}
+				best_move = babie_states[babies[i].second].last_move;
+				bestEval = eval;
+			}
+			beta = std::min(beta, eval);
+			if (beta <= alpha)
+			{
+				break;
 			}
 		}
 	}
@@ -379,8 +377,13 @@ int			minimax_fred(State state, int limit, std::deque<int> past_scores, int dept
 	}
 	else
 	{
-		return (bestEval);
+		#ifdef FASTER_KILL
+			return (bestEval - (maximizer ? 1 : -1));
+		#else
+			return (bestEval)
+		#endif
 	}
+
 }
 
 
@@ -416,20 +419,19 @@ int			minimax_fred_root(State state, int limit, std::deque<int> past_scores, int
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-			if (eval != ILLEGAL)
+			if (eval > bestEval)
 			{
-				if (eval > bestEval)
-				{
-					best_move = babie_states[babies[i].second].last_move;
-					bestEval = eval;
-				}
-				alpha = std::max(alpha, eval);
-				beta  = std::min(read_alpha_beta(root_beta), beta);
-				if (beta <= alpha)
-				{
-					break;
-				}
+				best_move = babie_states[babies[i].second].last_move;
+				bestEval = eval;
+			}
+			alpha = std::max(alpha, eval);
+			beta  = std::min(read_alpha_beta(root_beta), beta);
+			if (beta <= alpha)
+			{
+				break;
 			}
 		}
 		update_beta_if_needed(root_beta, bestEval);
@@ -440,20 +442,19 @@ int			minimax_fred_root(State state, int limit, std::deque<int> past_scores, int
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			eval = minimax_fred(babie_states[babies[i].second], limit, past_scores, depth + 1, alpha, beta);
-			if (eval != ILLEGAL)
+			if (eval < bestEval)
 			{
-				if (eval < bestEval)
-				{
-					best_move = babie_states[babies[i].second].last_move;
-					bestEval = eval;
-				}
-				beta = std::min(beta, eval);
-				alpha = std::min(read_alpha_beta(root_alpha), alpha);
-				if (beta <= alpha)
-				{
-					break;
-				}
+				best_move = babie_states[babies[i].second].last_move;
+				bestEval = eval;
+			}
+			beta = std::min(beta, eval);
+			alpha = std::min(read_alpha_beta(root_alpha), alpha);
+			if (beta <= alpha)
+			{
+				break;
 			}
 		}
 		update_alpha_if_needed(root_alpha, bestEval);
@@ -464,7 +465,11 @@ int			minimax_fred_root(State state, int limit, std::deque<int> past_scores, int
 	}
 	else
 	{
-		return (bestEval);
+		#ifdef FASTER_KILL
+			return (bestEval - (maximizer ? 1 : -1));
+		#else
+			return (bestEval)
+		#endif
 	}
 }
 
@@ -499,22 +504,21 @@ int			minimax_fred_start_brother(State state, int limit)
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			if (first)
 			{
 				eval = minimax_fred_start(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
-				if (eval != ILLEGAL)
+				first = false;
+				if (eval > bestEval)
 				{
-					first = false;
-					if (eval > bestEval)
-					{
-						best_move = babie_states[babies[i].second].last_move;
-						bestEval = eval;
-					}
-					alpha = std::max(alpha, eval);
-					if (beta <= alpha)
-					{
-						break;
-					}
+					best_move = babie_states[babies[i].second].last_move;
+					bestEval = eval;
+				}
+				alpha = std::max(alpha, eval);
+				if (beta <= alpha)
+				{
+					break;
 				}
 			}
 			else
@@ -531,13 +535,10 @@ int			minimax_fred_start_brother(State state, int limit)
 			int tmp_move = move_queue.front();
 			move_queue.pop();
 			fut_queue.pop();
-			if (eval != ILLEGAL)
+			if (eval > bestEval)
 			{
-				if (eval > bestEval)
-				{
-					best_move = tmp_move;
-					bestEval = eval;
-				}
+				best_move = tmp_move;
+				bestEval = eval;
 			}
 		}
 	}
@@ -547,22 +548,21 @@ int			minimax_fred_start_brother(State state, int limit)
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			if (first)
 			{
 				eval = minimax_fred_start(pool, babie_states[babies[i].second], limit - 1, past_scores, true);
-				if (eval != ILLEGAL)
+				first = false;
+				if (eval < bestEval)
 				{
-					first = false;
-					if (eval < bestEval)
-					{
-						best_move = babie_states[babies[i].second].last_move;
-						bestEval = eval;
-					}
-					beta = std::min(beta, eval);
-					if (beta <= alpha)
-					{
-						break;
-					}
+					best_move = babie_states[babies[i].second].last_move;
+					bestEval = eval;
+				}
+				beta = std::min(beta, eval);
+				if (beta <= alpha)
+				{
+					break;
 				}
 			}
 			else
@@ -579,13 +579,10 @@ int			minimax_fred_start_brother(State state, int limit)
 			int tmp_move = move_queue.front();
 			move_queue.pop();
 			fut_queue.pop();
-			if (eval != ILLEGAL)
+			if (eval < bestEval)
 			{
-				if (eval < bestEval)
-				{
-					best_move = tmp_move;
-					bestEval = eval;
-				}
+				best_move = tmp_move;
+				bestEval = eval;
 			}
 		}
 	}
@@ -596,7 +593,11 @@ int			minimax_fred_start_brother(State state, int limit)
 	}
 	else
 	{
-		return (bestEval);
+		#ifdef FASTER_KILL
+			return (bestEval - (maximizer ? 1 : -1));
+		#else
+			return (bestEval)
+		#endif
 	}
 }
 
@@ -629,6 +630,8 @@ int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<i
 		std::sort(babies, babies + counter, compare_score);
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores, 1, std::ref(alpha), std::ref(beta)));
 			move_queue.push(babie_states[babies[i].second].last_move);
 		}
@@ -639,13 +642,10 @@ int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<i
 			int tmp_move = move_queue.front();
 			move_queue.pop();
 			fut_queue.pop();
-			if (eval != ILLEGAL)
+			if (eval > bestEval)
 			{
-				if (eval > bestEval)
-				{
-					best_move = tmp_move;
-					bestEval = eval;
-				}
+				best_move = tmp_move;
+				bestEval = eval;
 			}
 		}
 	}
@@ -655,6 +655,8 @@ int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<i
 		std::sort(babies, babies + counter, compare_score_reverse); 
 		for(int i = 0; i < counter; i++)
 		{
+			if (is_illegal(babie_states[babies[i].second]))
+				continue;
 			fut_queue.push(pool.submit(minimax_fred_root, babie_states[babies[i].second], limit, past_scores,  1, std::ref(alpha), std::ref(beta)));
 			move_queue.push(babie_states[babies[i].second].last_move);
 		}
@@ -665,19 +667,20 @@ int			minimax_fred_start(thread_pool& pool, State state, int limit, std::deque<i
 			int tmp_move = move_queue.front();
 			move_queue.pop();
 			fut_queue.pop();
-			if (eval != ILLEGAL)
+			if (eval < bestEval)
 			{
-				if (eval < bestEval)
-				{
-					best_move = tmp_move;
-					bestEval = eval;
-				}
+				best_move = tmp_move;
+				bestEval = eval;
 			}
 		}
 	}
 	if (return_eval)
 	{
-		return (bestEval);
+		#ifdef FASTER_KILL
+			return (bestEval - (maximizer ? 1 : -1));
+		#else
+			return (bestEval)
+		#endif
 	}
 	else
 	{
