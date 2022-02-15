@@ -232,13 +232,13 @@ int&			State::get_enemy_captures(void)
 }
 
 
-inline void		increase_score_capture(int &score, int player_captures)
+inline void		increase_score_capture(int &score, int player_captures, int mult)
 {
 	#ifdef INCREASING_CAPTURE_VALUE
-		score += CAPTURE_VALUE << (player_captures);
+		score += (CAPTURE_VALUE << (player_captures)) * mult;
 	#else
-		score += CAPTURE_VALUE * 2;
-	#endif // DEBUG
+		score += CAPTURE_VALUE * 2 * mult;
+	#endif
 }
 
 int				State::compute_captures(void)
@@ -266,7 +266,7 @@ int				State::compute_captures(void)
 		enemy_board.set(last_coord + 1, false);
 		this->score += this->coord_evaluation_function(*this, last_coord + 2);
 		enemy_board.set(last_coord + 2, false);
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		score += 1;
 		player_captures += 1;
 		
@@ -279,7 +279,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2);
 		enemy_board.set(last_coord - 2, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 	
@@ -291,7 +291,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2 * BOARD_WIDTH + 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH + 2, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 	p = create_capture_pattern(DOWN_RIGHT, this->player, 3);
@@ -302,7 +302,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2 * BOARD_WIDTH - 2);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH - 2, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 
@@ -314,7 +314,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 	p = create_capture_pattern(DOWN, this->player, 3);
@@ -325,7 +325,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 
@@ -337,7 +337,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord + 2 * BOARD_WIDTH - 2);
 		enemy_board.set(last_coord + 2 * BOARD_WIDTH - 2, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 	p = create_capture_pattern(DOWN_LEFT, this->player, 3);
@@ -348,7 +348,7 @@ int				State::compute_captures(void)
 		this->score += this->coord_evaluation_function(*this, last_coord - 2 * BOARD_WIDTH);
 		enemy_board.set(last_coord - 2 * BOARD_WIDTH + 2, false);
 		score += 1;
-		increase_score_capture(this->score, player_captures);
+		increase_score_capture(this->score, player_captures, mult);
 		player_captures += 1;
 	}
 	return (score);

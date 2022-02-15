@@ -115,8 +115,8 @@ int main()
 
 	// fut2.wait_for(std::chrono::seconds(1));
 
-	// play_game(10, true, true, 100);
-	run_websocket_server("0.0.0.0", 16784);
+	play_game(10, true, true, 100);
+	// run_websocket_server("0.0.0.0", 16784);
 
 	// play_game(10, true, true, 100);
 
