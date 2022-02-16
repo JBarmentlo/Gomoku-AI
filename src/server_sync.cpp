@@ -421,7 +421,7 @@ void run_websocket_server(std::string adress, int porto)
 
 		ctx.use_private_key_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/privkey.pem",boost::asio::ssl::context::file_format::pem);
 
-		ctx.use_tmp_dh_file("dh512.pem");
+		// ctx.use_tmp_dh_file("dh512.pem");
 
         tcp::acceptor acceptor{ioc, {address, port}};
         for(;;)
