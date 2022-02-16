@@ -15,13 +15,16 @@
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
-// #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <thread>
 #include <chrono>
+#include <boost/beast/websocket/ssl.hpp>
+#include <boost/asio/ssl/stream.hpp>
+
 // #include <math>
 
 #include "state.hpp"
@@ -32,6 +35,7 @@ using json = nlohmann::json;
 
 // #include <boost/json.hpp>
 
+namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
@@ -317,19 +321,21 @@ std::string		game_handler::handle_message(std::string msg)
 
 //------------------------------------------------------------------------------
 
-void	do_session(tcp::socket socket)
+void do_session(tcp::socket& socket, ssl::context& ctx)
 {
     try
     {
         // Construct the stream by moving in the socket
-        websocket::stream<tcp::socket> ws{std::move(socket)};
+        websocket::stream<ssl::stream<tcp::socket&>> ws{socket, ctx};
 
-        // Set a decorator to change the Server of the handshake
-        ws.set_option(websocket::stream_base::decorator(
-            [](websocket::response_type& res)
-            {
-                res.set(http::field::server," websocket-server-gomoku");
-            }));
+        // // Set a decorator to change the Server of the handshake
+        // ws.set_option(websocket::stream_base::decorator(
+        //     [](websocket::response_type& res)
+        //     {
+        //         res.set(http::field::server," websocket-server-gomoku");
+        //     }));
+
+        ws.next_layer().handshake(ssl::stream_base::server);
 
         // Accept the websocket handshake
         ws.accept();
@@ -389,8 +395,14 @@ void run_websocket_server(std::string adress, int porto)
         unsigned short const port = static_cast<unsigned short>(porto);
         std::cout << "Starting WebSocket Server on adrress: " << address << ":" << port << std::endl;
 
-        // The io_context is required for all I/O
-        net::io_context ioc{1};
+        boost::asio::io_context ioc{1};
+
+        // The SSL context is required, and holds certificates
+        ssl::context ctx{ssl::context::sslv23};
+
+        // This holds the self-signed certificate used by the server
+		ctx.set_default_verify_paths();
+
         // The acceptor receives incoming connections
         tcp::acceptor acceptor{ioc, {address, port}};
         for(;;)
@@ -404,9 +416,10 @@ void run_websocket_server(std::string adress, int porto)
             
 
             // Launch the session, transferring ownership of the socket
-            std::thread(
+            std::thread{std::bind(
                 &do_session,
-                std::move(socket)).detach();
+                std::move(socket),
+                std::ref(ctx))}.detach();
         }
     }
     catch (const std::exception& e)

@@ -37,7 +37,7 @@
 
 #define	K_BEAM			3
 
-#define POTENTIAL_CAPTURE
+// #define POTENTIAL_CAPTURE
 #define POTENTIAL_CAPTURE_VALUE 	(CAPTURE_VALUE / 8)
 static int potential_capture_value 	= POTENTIAL_CAPTURE_VALUE;
 
