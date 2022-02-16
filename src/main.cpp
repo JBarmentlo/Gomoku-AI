@@ -106,7 +106,7 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 
 // #include "thread_pool.hpp"
 
-
+#include "test.hpp"
 int main()
 {
 	// thread_pool pool(std::thread::hardware_concurrency() - 1);
@@ -116,6 +116,7 @@ int main()
 	// fut2.wait_for(std::chrono::seconds(1));
 
 	// play_game(10, true, true, 100);
+	// runino();
 	run_websocket_server("0.0.0.0", 16784);
 
 	// play_game(10, true, true, 100);
