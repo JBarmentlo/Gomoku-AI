@@ -404,8 +404,8 @@ void run_websocket_server(std::string adress, int porto)
 		// ctx.set_default_verify_paths();
 		std::cout << "chain" << std::endl;
 		ctx.use_certificate_chain_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/chain.pem");
-		std::cout << "key" << std::endl;
-        ctx.use_private_key_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/privkey.pem", boost::asio::ssl::context::pem);
+		// std::cout << "key" << std::endl;
+        // ctx.use_private_key_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/privkey.pem", boost::asio::ssl::context::pem);
 		std::cout << "cert" << std::endl;
 		ctx.use_certificate_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/cert.pem", boost::asio::ssl::context::pem);
 		std::cout << "end" << std::endl;
