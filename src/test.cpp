@@ -101,6 +101,18 @@ int runino()
         // The SSL context is required, and holds certificates
         ssl::context ctx{ssl::context::tlsv12};
 
+        // // This holds the self-signed certificate used by the server
+        // // load_server_certificate(ctx);
+		// std::cout << "key" << std::endl;
+        // ctx.use_private_key_file("privkey.pem", boost::asio::ssl::context::pem);
+        // // ctx.use_private_key_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/privkey.pem", boost::asio::ssl::context::pem);
+		// std::cout << "cert" << std::endl;
+		// ctx.use_certificate_chain_file("newcert.pem");
+		// // ctx.use_certificate_file("/etc/letsencrypt/live/gomoku.deyaberger.fr/cert.pem", boost::asio::ssl::context::pem);
+		// std::cout << "end" << std::endl;
+        // // The acceptor receives incoming connections
+
+
 		ctx.set_password_callback(
 			[](std::size_t,
 				boost::asio::ssl::context_base::password_purpose)
@@ -118,6 +130,13 @@ int runino()
 		ctx.use_private_key_file("privkey.pem",boost::asio::ssl::context::file_format::pem);
 
 		ctx.use_tmp_dh_file("dh512.pem");
+
+
+
+
+
+
+
 
         tcp::acceptor acceptor{ioc, {address, port}};
         for(;;)
