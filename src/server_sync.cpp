@@ -22,11 +22,14 @@
 #include <string>
 #include <thread>
 #include <chrono>
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio/ssl/stream.hpp>
-#include <boost/beast/ssl.hpp>
 
-// #include <math>
+
+#ifdef SSL
+	#include <boost/beast/websocket/ssl.hpp>
+	#include <boost/asio/ssl/stream.hpp>
+	#include <boost/beast/ssl.hpp>
+	namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
+#endif
 
 #include "state.hpp"
 #include "minimax.hpp"
@@ -36,7 +39,6 @@ using json = nlohmann::json;
 
 // #include <boost/json.hpp>
 
-namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
@@ -177,12 +179,12 @@ std::string 	game_handler::handle_message_start(json json_msg)
 	this->waiting_on_AI = false;
 	this->cpu           = json_msg["cpu"];
 	this->depth         = json_msg["depth"];
-	this->algo_type     = json_msg["k_beam"] ? MINMAX_BEAM : MINMAX_CLASSIC ;
-
+	this->algo_type     = json_msg["k_beam"] ? K_BEAM : MINMAX_CLASSIC ;
 	potential_capture_value 	= POTENTIAL_CAPTURE_VALUE;
 
 	json response;
 
+	// if (json_msg["first_player"] == "black")
 	if (this->s.player == BLACK)
 	{
 		response["player"] = "black";
@@ -286,8 +288,9 @@ std::string		game_handler::handle_message(std::string msg)
     return ("Please send a valid JSON");
 }
 
-//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+#ifdef SSL
 void 	do_session(tcp::socket& socket, ssl::context& ctx)
 {
     try
@@ -413,8 +416,9 @@ void 	run_websocket_server_tls(std::string adress, int porto)
     }
 }
 
-//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+#else
 void	do_session_unsafe(tcp::socket socket)
 {
     try
@@ -513,6 +517,7 @@ void 	run_websocket_server_unsafe(std::string adress, int porto)
         return;
     }
 }
+#endif
 
 
 /**

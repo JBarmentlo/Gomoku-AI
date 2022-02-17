@@ -43,6 +43,7 @@ static int potential_capture_value 	= POTENTIAL_CAPTURE_VALUE;
 // #define POTENTIAL_CAPTURE
 // #define SINGLE_THREAD
 // #define SSL
+// #define V_TERM
 
 
 
