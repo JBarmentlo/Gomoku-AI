@@ -113,7 +113,7 @@ void starter(void)
 int main()
 {
 	#ifdef V_TERM
-		play_game(10, true, true, 1000);
+		play_game(10, true, false, 1000);
 	#else
 		run_websocket_server("0.0.0.0", 16784);
 	#endif
