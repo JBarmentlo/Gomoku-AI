@@ -88,6 +88,7 @@ endif()
 target_include_directories(Gomook
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
+	${Boost_INCLUDE_DIRS}
 )
 
 
