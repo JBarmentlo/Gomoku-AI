@@ -106,16 +106,18 @@ State play_game(int depth, bool cpu1, bool cpu2, int limit = 10, State s = State
 
 // #include "thread_pool.hpp"
 
-#include "test.hpp"
+void starter(void)
+{
+	return;
+}
+
 int main()
 {
-	// thread_pool pool(std::thread::hardware_concurrency() - 1);
-	// std::cout << pool.get_thread_count() << std::endl;
-	// std::future<int> fut2 = pool.submit(lolilol, 2);
+	#ifdef SINGLE_THREAD
+		std::cout << "/* message */" << std::endl;
+		std::cout << "/* message */" << std::endl;
+		std::cout << "/* message */" << std::endl;
+	#endif
 
-	// fut2.wait_for(std::chrono::seconds(1));
-
-	// play_game(10, true, true, 100);
-	// runino();
-	run_websocket_server("0.0.0.0", 16784);
+	// run_websocket_server("0.0.0.0", 16784);
 }
